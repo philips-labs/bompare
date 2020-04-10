@@ -1,0 +1,17 @@
+# Binary executable
+bompare
+bompare.exe
+
+# Files and directories created by pub
+.dart_tool/
+.packages
+
+# Conventional directory for build outputs
+build/
+
+# Directory created by dartdoc
+doc/api/
+
+# Intellij IDE
+.idea/
+*.iml
