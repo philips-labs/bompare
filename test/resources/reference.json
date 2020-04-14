@@ -1,0 +1,11 @@
+[
+  {
+    "name": "component_1",
+    "version": "v_1"
+  },
+  {
+    "name": "component_2",
+    "version": "v_2",
+    "licenses": ["license_1", "license_2"]
+  }
+]
