@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:bompare/service/domain/item_id.dart';
-import 'package:bompare/service/domain/scan_result.dart';
+
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/result_parser.dart';
+import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/scan_result.dart';
 import 'package:path/path.dart' as path;
 
 /// Decoder for files in "reference" file format.
