@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:bompare/service/domain/item_id.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/reference/reference_result_parser.dart';
+import 'package:bompare/service/domain/item_id.dart';
 import 'package:test/test.dart';
 
 void main() {

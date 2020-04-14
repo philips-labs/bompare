@@ -28,7 +28,19 @@ void main() {
 
       verify(service.loadResult(ScannerType.reference,
           argThat(predicate<File>((File f) => f.path == filename))));
-      verify(service.compareResults());
+      verify(
+          service.compareResults(bomFile: argThat(isNull, named: 'bomFile')));
+    });
+
+    test('outputs CSV to provided file name', () {
+      const csvFile = 'file.csv';
+      when(service.compareResults(bomFile: anyNamed('bomFile')))
+          .thenReturn(<BomResult>[]);
+
+      runner.run([BomCommand.command, '-r', filename, '-o', csvFile]);
+      verify(service.compareResults(
+          bomFile: argThat(predicate<File>((File f) => f.path == csvFile),
+              named: 'bomFile')));
     });
   });
 }

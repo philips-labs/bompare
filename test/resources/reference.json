@@ -6,6 +6,9 @@
   {
     "name": "component_2",
     "version": "v_2",
-    "licenses": ["license_1", "license_2"]
+    "licenses": [
+      "license_1",
+      "license_2"
+    ]
   }
 ]
