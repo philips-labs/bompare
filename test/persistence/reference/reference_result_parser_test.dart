@@ -1,23 +1,25 @@
 import 'dart:io';
 
+import 'package:bompare/domain/item_id.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
-import 'package:bompare/persistence/reference/reference_parser.dart';
+import 'package:bompare/persistence/reference/reference_result_parser.dart';
 import 'package:test/test.dart';
 
 void main() {
-  group('$ReferenceParser', () {
+  group('$ReferenceResultParser', () {
     const files = 'test/resources';
 
-    final parser = ReferenceParser();
+    final parser = ReferenceResultParser();
 
     test('parses from file', () {
-      final inventory = parser.parse(File('$files/reference.json'));
+      final result = parser.parse(File('$files/reference.json'));
 
-      expect(inventory[0].name, equals('component_1'));
-      expect(inventory[0].version, equals('v_1'));
-
-      expect(inventory[1].name, equals('component_2'));
-      expect(inventory[1].version, equals('v_2'));
+      expect(
+          result.items,
+          containsAll([
+            ItemId('component_1', 'v_1'),
+            ItemId('component_2', 'v_2'),
+          ]));
     });
 
     test('throws when file does not exist', () {
@@ -29,9 +31,9 @@ void main() {
 
     test('throws for malformed file', () {
       expect(
-              () => parser.parse(File('$files/testfile.txt')),
+          () => parser.parse(File('$files/testfile.txt')),
           throwsA(predicate<PersistenceException>(
-                  (e) => e.toString().contains('Unexpected format'))));
+              (e) => e.toString().contains('Unexpected format'))));
     });
   });
 }
