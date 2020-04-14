@@ -12,11 +12,12 @@ import 'package:path/path.dart' as path;
 /// (String) 'version', and (array of String) 'licenses' fields.
 class ReferenceResultParser implements ResultParser {
   static const field_name = 'name';
+  static const field_version = 'version';
 
   @override
   ScanResult parse(File file) {
     if (!file.existsSync()) {
-      throw PersistenceException(file, 'Reference file not found');
+      throw PersistenceException(file, 'Reference (JSON) file not found');
     }
 
     try {
@@ -24,7 +25,7 @@ class ReferenceResultParser implements ResultParser {
       final str = file.readAsStringSync();
 
       (jsonDecode(str) as Iterable)
-          .map((obj) => ItemId(obj[field_name], obj['version']))
+          .map((obj) => ItemId(obj[field_name], obj[field_version]))
           .forEach((id) => result.addItem(id));
 
       return result;

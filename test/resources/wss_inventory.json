@@ -1,0 +1,36 @@
+{
+  "libraries": [
+    {
+      "keyUuid": "b74a9c51-34aa-4c13-bcfe-53abd58a813",
+      "type": "javascript/Node.js",
+      "directDependency": false,
+      "matchType": "Filename Match",
+      "name": "wrong-answer",
+      "artifactId": "js_package-1.0.tgz",
+      "version": "1.0",
+      "groupId": "js_package",
+      "licenses": [
+        {
+          "name": "Apache 2.0",
+          "references": []
+        }
+      ]
+    },
+    {
+      "keyUuid": "d6439bfd-34aa-4c13-bcfe-029acc55a79d",
+      "type": "Java",
+      "directDependency": false,
+      "matchType": "Filename Match",
+      "name": "java_package-2.0.tgz",
+      "artifactId": "java_package-2.0.tgz",
+      "version": "2.0",
+      "groupId": "wrong-answer",
+      "licenses": [
+        {
+          "name": "Apache 2.0",
+          "references": []
+        }
+      ]
+    }
+  ]
+}

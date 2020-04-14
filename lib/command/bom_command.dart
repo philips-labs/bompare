@@ -5,6 +5,7 @@ import 'package:bompare/service/bom_service.dart';
 
 class BomCommand extends Command {
   static const option_reference = 'reference';
+  static const option_white_source = 'whitesource';
   static const option_output = 'out';
   static const command = 'bom';
 
@@ -15,6 +16,10 @@ class BomCommand extends Command {
       ..addMultiOption(option_reference,
           abbr: 'r',
           help: 'Scan result in "reference" (JSON) format',
+          valueHelp: 'filename')
+      ..addMultiOption(option_white_source,
+          abbr: 'w',
+          help: 'Scan result in WhiteSource "inventory" (JSON) format',
           valueHelp: 'filename')
       ..addOption(option_output,
           abbr: 'o',
@@ -31,8 +36,8 @@ class BomCommand extends Command {
 
   @override
   void run() {
-    argResults[option_reference].forEach((filename) =>
-        service.loadResult(ScannerType.reference, File(filename)));
+    _loadTypedResults(option_reference, ScannerType.reference);
+    _loadTypedResults(option_white_source, ScannerType.white_source);
 
     final file = (argResults[option_output] != null)
         ? File(argResults[option_output])
@@ -44,5 +49,10 @@ class BomCommand extends Command {
           '${result.additional} extra, '
           '${result.missing} missing');
     });
+  }
+
+  void _loadTypedResults(String option, ScannerType type) {
+    argResults[option].forEach((filename) =>
+        service.loadResult(type, File(filename)));
   }
 }

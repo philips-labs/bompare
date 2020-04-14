@@ -21,12 +21,23 @@ void main() {
         ..addCommand(BomCommand(service));
     });
 
-    test('loads scanner result files', () {
+    test('loads reference result files', () {
       when(service.compareResults()).thenReturn(<BomResult>[]);
 
       runner.run([BomCommand.command, '-r', filename]);
 
       verify(service.loadResult(ScannerType.reference,
+          argThat(predicate<File>((File f) => f.path == filename))));
+      verify(
+          service.compareResults(bomFile: argThat(isNull, named: 'bomFile')));
+    });
+
+    test('loads WhiteSource result files', () {
+      when(service.compareResults()).thenReturn(<BomResult>[]);
+
+      runner.run([BomCommand.command, '-w', filename]);
+
+      verify(service.loadResult(ScannerType.white_source,
           argThat(predicate<File>((File f) => f.path == filename))));
       verify(
           service.compareResults(bomFile: argThat(isNull, named: 'bomFile')));

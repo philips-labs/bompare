@@ -23,4 +23,9 @@ class ItemId implements Comparable<ItemId> {
 
     return version.compareTo(other.version);
   }
+
+  @override
+  String toString() {
+    return '$package-$version';
+  }
 }

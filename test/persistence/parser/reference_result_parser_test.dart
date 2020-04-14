@@ -1,7 +1,8 @@
 import 'dart:io';
 
+import 'package:bompare/persistence/parser/reference_result_parser.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
-import 'package:bompare/persistence/reference/reference_result_parser.dart';
+import 'package:bompare/persistence/result_parser.dart';
 import 'package:bompare/service/domain/item_id.dart';
 import 'package:test/test.dart';
 
@@ -9,7 +10,7 @@ void main() {
   group('$ReferenceResultParser', () {
     const files = 'test/resources';
 
-    final parser = ReferenceResultParser();
+    final ResultParser parser = ReferenceResultParser();
 
     test('parses from file', () async {
       final result = await parser.parse(File('$files/reference.json'));
