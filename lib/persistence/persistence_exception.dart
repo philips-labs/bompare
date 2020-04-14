@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:bompare/domain/business_exception.dart';
+import 'package:bompare/service/domain/business_exception.dart';
 
 class PersistenceException extends BusinessException {
   PersistenceException(File file, [String message = 'I/O error'])

@@ -1,5 +1,5 @@
-import 'package:bompare/domain/item_id.dart';
-import 'package:bompare/domain/scan_result.dart';
+import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/scan_result.dart';
 import 'package:test/test.dart';
 
 void main() {

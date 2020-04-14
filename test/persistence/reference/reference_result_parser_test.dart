@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:bompare/domain/item_id.dart';
+import 'package:bompare/service/domain/item_id.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/reference/reference_result_parser.dart';
 import 'package:test/test.dart';
@@ -11,8 +11,8 @@ void main() {
 
     final parser = ReferenceResultParser();
 
-    test('parses from file', () {
-      final result = parser.parse(File('$files/reference.json'));
+    test('parses from file', () async {
+      final result = await parser.parse(File('$files/reference.json'));
 
       expect(
           result.items,
