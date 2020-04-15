@@ -49,6 +49,7 @@ class BomCommand extends Command {
 
     service.compareResults(bomFile: file, diffOnly: diffOnly).forEach((result) {
       stdout.writeln('BOM according to "${result.name}": '
+          '${result.detected} detected, '
           '${result.common} in common, '
           '${result.additional} extra, '
           '${result.missing} missing');

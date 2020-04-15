@@ -62,9 +62,11 @@ void main() {
       final summary = service.compareResults();
 
       expect(summary, hasLength(2));
+      expect(summary[0].detected, equals(2));
       expect(summary[0].common, equals(1));
       expect(summary[0].additional, equals(1));
       expect(summary[0].missing, equals(2));
+      expect(summary[1].detected, equals(3));
       expect(summary[1].common, equals(1));
       expect(summary[1].additional, equals(2));
       expect(summary[1].missing, equals(1));

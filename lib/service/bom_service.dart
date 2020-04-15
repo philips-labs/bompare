@@ -50,7 +50,8 @@ class BomService {
       _scans.map((r) {
         final missing = all.difference(r.items).length;
         final additional = r.items.difference(common).length;
-        return BomResult(r.name, common.length, additional, missing);
+        return BomResult(
+            r.name, r.items.length, common.length, additional, missing);
       }).toList();
 }
 
@@ -58,9 +59,11 @@ enum ScannerType { reference, black_duck, white_source }
 
 class BomResult {
   String name;
+  int detected;
   int common;
   int additional;
   int missing;
 
-  BomResult(this.name, this.common, this.additional, this.missing);
+  BomResult(
+      this.name, this.detected, this.common, this.additional, this.missing);
 }
