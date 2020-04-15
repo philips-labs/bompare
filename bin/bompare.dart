@@ -11,8 +11,10 @@ import 'package:bompare/service/domain/business_exception.dart';
 
 void main(List<String> arguments) async {
   final loader = ScanResultLoader(
-    {ScannerType.reference: ReferenceResultParser(),
-    ScannerType.white_source: WhiteSourceInventoryResultParser()},
+    {
+      ScannerType.reference: ReferenceResultParser(),
+      ScannerType.white_source: WhiteSourceInventoryResultParser()
+    },
   );
   final reporter = ReportWriter();
   final service = BomService(loader, reporter);

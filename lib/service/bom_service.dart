@@ -22,15 +22,16 @@ class BomService {
   }
 
   /// Returns bill-of-material summary, and optionally writes the content
-  /// to [bomFile].
-  List<BomResult> compareResults({File bomFile}) {
+  /// to [bomFile] as a full index or [diffOnly].
+  List<BomResult> compareResults({File bomFile, bool diffOnly = false}) {
     if (_scans.isEmpty) return <BomResult>[];
 
     final all = <ItemId>{};
     final common = _buildBom(_scans[0].items, all);
 
     if (bomFile != null) {
-      reports.writeBomComparison(bomFile, all, _scans);
+      reports.writeBomComparison(
+          bomFile, diffOnly ? all.difference(common) : all, _scans);
     }
 
     return _bomResultPerScanResult(all, common);

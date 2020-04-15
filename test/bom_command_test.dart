@@ -49,9 +49,26 @@ void main() {
           .thenReturn(<BomResult>[]);
 
       runner.run([BomCommand.command, '-r', filename, '-o', csvFile]);
+
       verify(service.compareResults(
           bomFile: argThat(predicate<File>((File f) => f.path == csvFile),
-              named: 'bomFile')));
+              named: 'bomFile'),
+          diffOnly: argThat(isFalse, named: 'diffOnly')));
+    });
+
+    test('outputs diff only CSV to provided file name', () {
+      const csvFile = 'file.csv';
+      when(service.compareResults(
+              bomFile: anyNamed('bomFile'), diffOnly: anyNamed('diffOnly')))
+          .thenReturn(<BomResult>[]);
+
+      runner.run(
+          [BomCommand.command, '-r', filename, '-o', csvFile, '--diffOnly']);
+
+      verify(service.compareResults(
+          bomFile: argThat(predicate<File>((File f) => f.path == csvFile),
+              named: 'bomFile'),
+          diffOnly: argThat(isTrue, named: 'diffOnly')));
     });
   });
 }

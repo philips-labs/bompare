@@ -7,6 +7,7 @@ class BomCommand extends Command {
   static const option_reference = 'reference';
   static const option_white_source = 'whitesource';
   static const option_output = 'out';
+  static const option_diff_only = 'diffOnly';
   static const command = 'bom';
 
   final BomService service;
@@ -24,7 +25,9 @@ class BomCommand extends Command {
       ..addOption(option_output,
           abbr: 'o',
           help: 'Write detail report to (CSV) file',
-          valueHelp: 'filename');
+          valueHelp: 'filename')
+      ..addFlag(option_diff_only,
+          help: 'Only output diff lines in output file');
   }
 
   @override
@@ -42,8 +45,9 @@ class BomCommand extends Command {
     final file = (argResults[option_output] != null)
         ? File(argResults[option_output])
         : null;
+    final diffOnly = argResults[option_diff_only];
 
-    service.compareResults(bomFile: file).forEach((result) {
+    service.compareResults(bomFile: file, diffOnly: diffOnly).forEach((result) {
       stdout.writeln('BOM according to "${result.name}": '
           '${result.common} in common, '
           '${result.additional} extra, '
@@ -52,7 +56,7 @@ class BomCommand extends Command {
   }
 
   void _loadTypedResults(String option, ScannerType type) {
-    argResults[option].forEach((filename) =>
-        service.loadResult(type, File(filename)));
+    argResults[option]
+        .forEach((filename) => service.loadResult(type, File(filename)));
   }
 }

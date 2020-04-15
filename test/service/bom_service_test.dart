@@ -81,5 +81,21 @@ void main() {
 
       verify(reports.writeBomComparison(bomFile, [id], [result]));
     });
+
+    test('writes diff BOM report', () {
+      final bomFile = File('bom.csv');
+      final id1 = ItemId('a', '1');
+      final id2 = ItemId('b', '2');
+      final result1 = ScanResult('A')..addItem(id1);
+      final result2 = ScanResult('B')..addItem(id1)..addItem(id2);
+      when(results.load(ScannerType.reference, file))..thenReturn(result1);
+      when(results.load(ScannerType.black_duck, file))..thenReturn(result2);
+
+      service.loadResult(ScannerType.reference, file);
+      service.loadResult(ScannerType.black_duck, file);
+      service.compareResults(bomFile: bomFile, diffOnly: true);
+
+      verify(reports.writeBomComparison(bomFile, [id2], [result1, result2]));
+    });
   });
 }

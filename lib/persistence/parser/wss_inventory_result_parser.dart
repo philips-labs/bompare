@@ -31,8 +31,8 @@ class WhiteSourceInventoryResultParser implements ResultParser {
           .forEach((id) => result.addItem(id));
 
       return result;
-    } on FormatException {
-      throw PersistenceException(file, 'Unexpected format');
+    } on FormatException catch (e) {
+      throw PersistenceException(file, 'Unexpected format: $e');
     }
   }
 
@@ -46,9 +46,8 @@ class WhiteSourceInventoryResultParser implements ResultParser {
         final package = name.substring(0, name.indexOf('-$version'));
         return ItemId(package, version);
       case 'javascript/Node.js':
-        return ItemId(obj[field_group_id], obj[field_version]);
       default:
-        throw FormatException('Can not decode $type');
+        return ItemId(obj[field_group_id], obj[field_version]);
     }
   }
 }
