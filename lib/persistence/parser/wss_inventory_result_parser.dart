@@ -46,8 +46,16 @@ class WhiteSourceInventoryResultParser implements ResultParser {
         final package = name.substring(0, name.indexOf('-$version'));
         return ItemId(package, version);
       case 'javascript/Node.js':
-      default:
+      case 'JavaScript':
         return ItemId(obj[field_group_id], obj[field_version]);
+      case 'ActionScript':
+      case 'Source Library':
+      case 'Unknown Library':
+        return ItemId(obj[field_name], obj[field_version]);
+      default:
+        final id = ItemId(obj[field_group_id], obj[field_version]);
+        stderr.writeln('Warning: Assumed $id for WhiteSource type "$type"');
+        return id;
     }
   }
 }
