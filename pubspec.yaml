@@ -1,6 +1,5 @@
 name: bompare
-description: A simple command-line application.
-# version: 0.0.1
+description: Bill-of-materials comparison tool.
 
 environment:
   sdk: '>=2.7.0 <3.0.0'
