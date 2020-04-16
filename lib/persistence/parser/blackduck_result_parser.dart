@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive.dart';
 import 'package:bompare/service/domain/item_id.dart';
 import 'package:bompare/service/domain/scan_result.dart';
 import 'package:path/path.dart' as path;
@@ -9,29 +10,56 @@ import '../persistence_exception.dart';
 import '../result_parser.dart';
 
 class BlackDuckResultParser implements ResultParser {
+  static const source_file_prefix = 'source_';
+
   @override
   Future<ScanResult> parse(File file) async {
-    final directory = Directory(file.path);
-
-    if (!file.existsSync() && !directory.existsSync()) {
-      throw PersistenceException(
-          file, 'BlackDuck ZIP file or directory not found');
+    if (file.existsSync()) {
+      return _processZipFile(file);
     }
 
-    final result = ScanResult(path.basenameWithoutExtension(file.path));
+    final directory = Directory(file.path);
+    if (directory.existsSync()) {
+      return _processDirectory(directory);
+    }
 
-    await Future.forEach(
-        directory
-            .listSync()
-            .whereType<File>()
-            .where((f) => path.basename(f.path).startsWith('source_')),
-        (f) => _parseSourceFile(f, result));
+    throw PersistenceException(
+        file, 'BlackDuck ZIP file or directory not found');
+  }
+
+  Future<ScanResult> _processZipFile(File file) async {
+    final result = ScanResult(path.basenameWithoutExtension(file.path));
+    final buffer = file.readAsBytesSync();
+    final archive = ZipDecoder().decodeBytes(buffer);
+
+    final sourceFiles = archive
+        .where((f) => f.isFile)
+        .where((f) => path.basename(f.name).startsWith(source_file_prefix));
+    await Future.forEach(sourceFiles, (f) {
+      final data = f.content as List<int>;
+      return _parseSourceStream(Stream.value(data), result);
+    });
+
     return result;
   }
 
-  Future<void> _parseSourceFile(File file, ScanResult result) async {
-    final lineStream =
-        file.openRead().transform(utf8.decoder).transform(LineSplitter());
+  Future<ScanResult> _processDirectory(Directory directory) async {
+    final result = ScanResult(path.basename(directory.path));
+
+    final sourceFiles = directory
+        .listSync()
+        .whereType<File>()
+        .where((f) => path.basename(f.path).startsWith(source_file_prefix));
+    await Future.forEach(sourceFiles, (f) => _parseSourceFile(f, result));
+
+    return result;
+  }
+
+  Future<void> _parseSourceFile(File file, ScanResult result) async =>
+      _parseSourceStream(file.openRead(), result);
+
+  Future<void> _parseSourceStream(Stream<List<int>> stream, ScanResult result) {
+    final lineStream = stream.transform(utf8.decoder).transform(LineSplitter());
 
     return BlackDuckCsvParser(result).parse(lineStream);
   }

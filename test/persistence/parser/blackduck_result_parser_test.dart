@@ -37,6 +37,6 @@ void main() {
       final result = await parser.parse(zipFile);
 
       expect(result.items, contains(ItemId('package/js', 'v1')));
-    }, skip: true);
+    });
   });
 }
