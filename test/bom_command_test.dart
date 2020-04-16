@@ -21,10 +21,11 @@ void main() {
         ..addCommand(BomCommand(service));
     });
 
-    test('loads reference result files', () {
-      when(service.compareResults()).thenReturn(<BomResult>[]);
+    test('loads reference result files', () async {
+      when(service.compareResults())
+          .thenAnswer((_) => Future.value(<BomResult>[]));
 
-      runner.run([BomCommand.command, '-r', filename]);
+      await runner.run([BomCommand.command, '-r', filename]);
 
       verify(service.loadResult(ScannerType.reference,
           argThat(predicate<File>((File f) => f.path == filename))));
@@ -32,10 +33,11 @@ void main() {
           service.compareResults(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
-    test('loads WhiteSource result files', () {
-      when(service.compareResults()).thenReturn(<BomResult>[]);
+    test('loads WhiteSource result files', () async {
+      when(service.compareResults())
+          .thenAnswer((_) => Future.value(<BomResult>[]));
 
-      runner.run([BomCommand.command, '-w', filename]);
+      await runner.run([BomCommand.command, '-w', filename]);
 
       verify(service.loadResult(ScannerType.white_source,
           argThat(predicate<File>((File f) => f.path == filename))));
@@ -43,12 +45,12 @@ void main() {
           service.compareResults(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
-    test('outputs CSV to provided file name', () {
+    test('outputs CSV to provided file name', () async {
       const csvFile = 'file.csv';
       when(service.compareResults(bomFile: anyNamed('bomFile')))
-          .thenReturn(<BomResult>[]);
+          .thenAnswer((_) => Future.value(<BomResult>[]));
 
-      runner.run([BomCommand.command, '-r', filename, '-o', csvFile]);
+      await runner.run([BomCommand.command, '-r', filename, '-o', csvFile]);
 
       verify(service.compareResults(
           bomFile: argThat(predicate<File>((File f) => f.path == csvFile),
@@ -56,13 +58,13 @@ void main() {
           diffOnly: argThat(isFalse, named: 'diffOnly')));
     });
 
-    test('outputs diff only CSV to provided file name', () {
+    test('outputs diff only CSV to provided file name', () async {
       const csvFile = 'file.csv';
       when(service.compareResults(
               bomFile: anyNamed('bomFile'), diffOnly: anyNamed('diffOnly')))
-          .thenReturn(<BomResult>[]);
+          .thenAnswer((_) => Future.value(<BomResult>[]));
 
-      runner.run(
+      await runner.run(
           [BomCommand.command, '-r', filename, '-o', csvFile, '--diffOnly']);
 
       verify(service.compareResults(

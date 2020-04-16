@@ -12,7 +12,7 @@ class ScanResultLoader implements ResultPersistence {
   ScanResultLoader(this.parsers);
 
   @override
-  ScanResult load(ScannerType type, File file) {
+  Future<ScanResult> load(ScannerType type, File file) {
     final parser = parsers[type];
     if (parser == null) {
       throw PersistenceException(file, 'No parser registered for ${type}');

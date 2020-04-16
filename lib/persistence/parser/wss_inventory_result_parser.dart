@@ -15,7 +15,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   static const field_type = 'type';
 
   @override
-  ScanResult parse(File file) {
+  Future<ScanResult> parse(File file) {
     if (!file.existsSync()) {
       throw PersistenceException(
           file, 'WhiteSource inventory (JSON) file not found');
@@ -30,9 +30,9 @@ class WhiteSourceInventoryResultParser implements ResultParser {
           .map(_decodeItemId)
           .forEach((id) => result.addItem(id));
 
-      return result;
+      return Future.value(result);
     } on FormatException catch (e) {
-      throw PersistenceException(file, 'Unexpected format: $e');
+      return Future.error(PersistenceException(file, 'Unexpected format: $e'));
     }
   }
 

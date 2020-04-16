@@ -15,7 +15,7 @@ class ReferenceResultParser implements ResultParser {
   static const field_version = 'version';
 
   @override
-  ScanResult parse(File file) {
+  Future<ScanResult> parse(File file) {
     if (!file.existsSync()) {
       throw PersistenceException(file, 'Reference (JSON) file not found');
     }
@@ -28,9 +28,9 @@ class ReferenceResultParser implements ResultParser {
           .map((obj) => ItemId(obj[field_name], obj[field_version]))
           .forEach((id) => result.addItem(id));
 
-      return result;
+      return Future.value(result);
     } on FormatException {
-      throw PersistenceException(file, 'Unexpected format');
+      return Future.error(PersistenceException(file, 'Unexpected format'));
     }
   }
 }

@@ -27,16 +27,17 @@ void main() {
       service = BomService(results, reports);
     });
 
-    test('loads empty scan resuls', () {
-      expect(service.compareResults(), isEmpty);
+    test('loads empty scan result', () async {
+      expect(await service.compareResults(), isEmpty);
     });
 
-    test('loads scan result from single scanner', () {
+    test('loads scan result from single scanner', () async {
       final result = ScanResult(name)..addItem(ItemId('a', '1'));
-      when(results.load(ScannerType.black_duck, file)).thenReturn(result);
+      when(results.load(ScannerType.black_duck, file))
+          .thenAnswer((_) => Future.value(result));
 
-      service.loadResult(ScannerType.black_duck, file);
-      final summary = service.compareResults();
+      await service.loadResult(ScannerType.black_duck, file);
+      final summary = await service.compareResults();
 
       expect(summary, hasLength(1));
       expect(summary[0].name, equals(name));
@@ -45,21 +46,23 @@ void main() {
       expect(summary[0].additional, isZero);
     });
 
-    test('loads scan results from multiple scanners', () {
+    test('loads scan results from multiple scanners', () async {
       final commonItem = ItemId('common', '0');
       final result1 = ScanResult('A')
         ..addItem(commonItem)
         ..addItem(ItemId('a', '1'));
-      when(results.load(ScannerType.reference, file))..thenReturn(result1);
+      when(results.load(ScannerType.reference, file))
+          .thenAnswer((_) => Future.value(result1));
       final result2 = ScanResult('B')
         ..addItem(commonItem)
         ..addItem(ItemId('b', '2'))
         ..addItem(ItemId('c', '3'));
-      when(results.load(ScannerType.black_duck, file))..thenReturn(result2);
+      when(results.load(ScannerType.black_duck, file))
+          .thenAnswer((_) => Future.value(result2));
 
-      service.loadResult(ScannerType.reference, file);
-      service.loadResult(ScannerType.black_duck, file);
-      final summary = service.compareResults();
+      await service.loadResult(ScannerType.reference, file);
+      await service.loadResult(ScannerType.black_duck, file);
+      final summary = await service.compareResults();
 
       expect(summary, hasLength(2));
       expect(summary[0].detected, equals(2));
@@ -72,30 +75,33 @@ void main() {
       expect(summary[1].missing, equals(1));
     });
 
-    test('writes BOM report', () {
+    test('writes BOM report', () async {
       final bomFile = File('bom.csv');
       final id = ItemId('a', '1');
       final result = ScanResult('A')..addItem(id);
-      when(results.load(ScannerType.reference, file))..thenReturn(result);
+      when(results.load(ScannerType.reference, file))
+          .thenAnswer((_) => Future.value(result));
 
-      service.loadResult(ScannerType.reference, file);
-      service.compareResults(bomFile: bomFile);
+      await service.loadResult(ScannerType.reference, file);
+      await service.compareResults(bomFile: bomFile);
 
       verify(reports.writeBomComparison(bomFile, [id], [result]));
     });
 
-    test('writes diff BOM report', () {
+    test('writes diff BOM report', () async {
       final bomFile = File('bom.csv');
       final id1 = ItemId('a', '1');
       final id2 = ItemId('b', '2');
       final result1 = ScanResult('A')..addItem(id1);
       final result2 = ScanResult('B')..addItem(id1)..addItem(id2);
-      when(results.load(ScannerType.reference, file))..thenReturn(result1);
-      when(results.load(ScannerType.black_duck, file))..thenReturn(result2);
+      when(results.load(ScannerType.reference, file))
+          .thenAnswer((_) => Future.value(result1));
+      when(results.load(ScannerType.black_duck, file))
+          .thenAnswer((_) => Future.value(result2));
 
-      service.loadResult(ScannerType.reference, file);
-      service.loadResult(ScannerType.black_duck, file);
-      service.compareResults(bomFile: bomFile, diffOnly: true);
+      await service.loadResult(ScannerType.reference, file);
+      await service.loadResult(ScannerType.black_duck, file);
+      await service.compareResults(bomFile: bomFile, diffOnly: true);
 
       verify(reports.writeBomComparison(bomFile, [id2], [result1, result2]));
     });

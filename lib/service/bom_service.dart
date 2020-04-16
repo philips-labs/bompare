@@ -17,20 +17,21 @@ class BomService {
   BomService(this.results, this.reports);
 
   /// Loads a scanner result of [type] from [file].
-  void loadResult(ScannerType type, File file) {
-    _scans.add(results.load(type, file));
+  Future<void> loadResult(ScannerType type, File file) async {
+    _scans.add(await results.load(type, file));
   }
 
   /// Returns bill-of-material summary, and optionally writes the content
   /// to [bomFile] as a full index or [diffOnly].
-  List<BomResult> compareResults({File bomFile, bool diffOnly = false}) {
+  Future<List<BomResult>> compareResults(
+      {File bomFile, bool diffOnly = false}) async {
     if (_scans.isEmpty) return <BomResult>[];
 
     final all = <ItemId>{};
     final common = _buildBom(_scans[0].items, all);
 
     if (bomFile != null) {
-      reports.writeBomComparison(
+      await reports.writeBomComparison(
           bomFile, diffOnly ? all.difference(common) : all, _scans);
     }
 

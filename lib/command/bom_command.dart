@@ -38,16 +38,20 @@ class BomCommand extends Command {
       'Analyze the BOM differences between selected scanners';
 
   @override
-  void run() {
-    _loadTypedResults(option_reference, ScannerType.reference);
-    _loadTypedResults(option_white_source, ScannerType.white_source);
+  void run() async {
+    await Future.wait([
+      _loadTypedResults(option_reference, ScannerType.reference),
+      _loadTypedResults(option_white_source, ScannerType.white_source)
+    ]);
 
     final file = (argResults[option_output] != null)
         ? File(argResults[option_output])
         : null;
     final diffOnly = argResults[option_diff_only];
 
-    service.compareResults(bomFile: file, diffOnly: diffOnly).forEach((result) {
+    final results =
+        await service.compareResults(bomFile: file, diffOnly: diffOnly);
+    results.forEach((result) {
       stdout.writeln('BOM according to "${result.name}": '
           '${result.detected} detected, '
           '${result.common} in common, '
@@ -56,8 +60,8 @@ class BomCommand extends Command {
     });
   }
 
-  void _loadTypedResults(String option, ScannerType type) {
-    argResults[option]
-        .forEach((filename) => service.loadResult(type, File(filename)));
+  Future<void> _loadTypedResults(String option, ScannerType type) async {
+    return Future.forEach(argResults[option],
+        (filename) => service.loadResult(type, File(filename)));
   }
 }
