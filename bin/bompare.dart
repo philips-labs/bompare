@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:bompare/command/bom_command.dart';
+import 'package:bompare/persistence/parser/blackduck_result_parser.dart';
 import 'package:bompare/persistence/parser/reference_result_parser.dart';
 import 'package:bompare/persistence/parser/wss_inventory_result_parser.dart';
 import 'package:bompare/persistence/report_writer.dart';
@@ -13,7 +14,8 @@ void main(List<String> arguments) async {
   final loader = ScanResultLoader(
     {
       ScannerType.reference: ReferenceResultParser(),
-      ScannerType.white_source: WhiteSourceInventoryResultParser()
+      ScannerType.white_source: WhiteSourceInventoryResultParser(),
+      ScannerType.black_duck: BlackDuckResultParser(),
     },
   );
   final reporter = ReportWriter();

@@ -6,6 +6,7 @@ import 'package:bompare/service/bom_service.dart';
 class BomCommand extends Command {
   static const option_reference = 'reference';
   static const option_white_source = 'whitesource';
+  static const option_black_duck = 'blackduck';
   static const option_output = 'out';
   static const option_diff_only = 'diffOnly';
   static const command = 'bom';
@@ -22,6 +23,10 @@ class BomCommand extends Command {
           abbr: 'w',
           help: 'Scan result in WhiteSource "inventory" (JSON) format',
           valueHelp: 'filename')
+      ..addMultiOption(option_black_duck,
+          abbr: 'b',
+          help: 'Scan result in Black Duck "report" (ZIP/directory) format',
+          valueHelp: 'filename or directory')
       ..addOption(option_output,
           abbr: 'o',
           help: 'Write detail report to (CSV) file',
@@ -41,7 +46,8 @@ class BomCommand extends Command {
   void run() async {
     await Future.wait([
       _loadTypedResults(option_reference, ScannerType.reference),
-      _loadTypedResults(option_white_source, ScannerType.white_source)
+      _loadTypedResults(option_white_source, ScannerType.white_source),
+      _loadTypedResults(option_black_duck, ScannerType.black_duck),
     ]);
 
     final file = (argResults[option_output] != null)
@@ -60,7 +66,7 @@ class BomCommand extends Command {
     });
   }
 
-  Future<void> _loadTypedResults(String option, ScannerType type) async {
+  Future<void> _loadTypedResults(String option, ScannerType type) {
     return Future.forEach(argResults[option],
         (filename) => service.loadResult(type, File(filename)));
   }

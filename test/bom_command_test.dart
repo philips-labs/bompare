@@ -45,6 +45,18 @@ void main() {
           service.compareResults(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
+    test('loads Black Duck result files', () async {
+      when(service.compareResults())
+          .thenAnswer((_) => Future.value(<BomResult>[]));
+
+      await runner.run([BomCommand.command, '-b', filename]);
+
+      verify(service.loadResult(ScannerType.black_duck,
+          argThat(predicate<File>((File f) => f.path == filename))));
+      verify(
+          service.compareResults(bomFile: argThat(isNull, named: 'bomFile')));
+    });
+
     test('outputs CSV to provided file name', () async {
       const csvFile = 'file.csv';
       when(service.compareResults(bomFile: anyNamed('bomFile')))
