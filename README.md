@@ -8,15 +8,17 @@ It currently supports:
 
 - [x] (Internal) reference format
 - [x] WhiteSource inventory JSON export format
-- [ ] BlackDuck report export format
+- [x] BlackDuck report export ZIP and directory format
 - [ ] Tern format
 
 The executable is a multi-platform command line executable with built-in usage help.
 It should compile and run on OSX/Linux/Windows, but has been developed on OSX.
 
 ## Building the executable
-1. Install Dart 2.7 (or newer) SDK according to the instructions on 
-https://dart.dev/get-dart.
+1. Install Dart 2.7 (or newer) SDK according to the [instructions](https://dart.dev/get-dart).
+E.g.:
+    - OSX (Mac) using brew: `brew tap dart-lang/dart` and then `brew install dart`
+    - Windows using [Chocolatey](https://chocolatey.org): `choco install dart-sdk`
 2. Run `build.sh` to run all tests and build a native executable
 called `bompare`.
 
