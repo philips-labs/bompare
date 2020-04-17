@@ -4,16 +4,19 @@ import 'package:bompare/persistence/parser/reference_result_parser.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/result_parser.dart';
 import 'package:bompare/service/domain/item_id.dart';
+import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
   group('$ReferenceResultParser', () {
-    const files = 'test/resources';
+    final resourcePath = path.join('test', 'resources');
+    final referenceFile = File(path.join(resourcePath, 'reference.json'));
+    final lorumFile = File(path.join(resourcePath, 'testfile.txt'));
 
     final ResultParser parser = ReferenceResultParser();
 
     test('parses from file', () async {
-      final result = await parser.parse(File('$files/reference.json'));
+      final result = await parser.parse(referenceFile);
 
       expect(
           result.items,
@@ -25,14 +28,14 @@ void main() {
 
     test('throws when file does not exist', () {
       expect(
-          () => parser.parse(File('$files/Unknown_file')),
+          () => parser.parse(File('unknown_file')),
           throwsA(predicate<PersistenceException>(
               (e) => e.toString().contains('not found'))));
     });
 
     test('throws for malformed file', () {
       expect(
-          () => parser.parse(File('$files/testfile.txt')),
+          () => parser.parse(lorumFile),
           throwsA(predicate<PersistenceException>(
               (e) => e.toString().contains('Unexpected format'))));
     });

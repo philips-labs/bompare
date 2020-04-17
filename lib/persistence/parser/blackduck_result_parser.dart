@@ -67,6 +67,7 @@ class BlackDuckResultParser implements ResultParser {
 
 class BlackDuckCsvParser {
   final ScanResult result;
+  final assumed = <ItemId>{};
 
   var _versionIndex = -1;
   var _originIndex = -1;
@@ -106,7 +107,10 @@ class BlackDuckCsvParser {
         break;
       default:
         final id = _itemIdFromColumns(columns, '/');
-        stderr.writeln('Warning: Assumed $id for WhiteSource type "$type"');
+        if (!assumed.contains(id)) {
+          stderr.writeln('Warning: Assumed $id for WhiteSource type "$type"');
+          assumed.add(id);
+        }
         result.addItem(id);
     }
   }

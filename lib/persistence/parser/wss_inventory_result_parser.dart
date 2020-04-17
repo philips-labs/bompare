@@ -14,6 +14,8 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   static const field_group_id = 'groupId';
   static const field_type = 'type';
 
+  final assumed = <ItemId>{};
+
   @override
   Future<ScanResult> parse(File file) {
     if (!file.existsSync()) {
@@ -41,9 +43,9 @@ class WhiteSourceInventoryResultParser implements ResultParser {
 
     switch (type) {
       case 'Java':
-        final version = obj[field_version];
+        final version = obj[field_version] ?? '';
         final name = obj[field_name] as String;
-        final package = name.substring(0, name.indexOf('-$version'));
+        final package = _packageFromName(name, version);
         return ItemId(package, version);
       case 'javascript/Node.js':
       case 'JavaScript':
@@ -54,8 +56,16 @@ class WhiteSourceInventoryResultParser implements ResultParser {
         return ItemId(obj[field_name], obj[field_version]);
       default:
         final id = ItemId(obj[field_group_id], obj[field_version]);
-        stderr.writeln('Warning: Assumed $id for WhiteSource type "$type"');
+        if (!assumed.contains(id)) {
+          stderr.writeln('Warning: Assumed $id for WhiteSource type "$type"');
+          assumed.add(id);
+        }
         return id;
     }
   }
+
+  String _packageFromName(String name, String version) =>
+      (version.isEmpty || !name.contains(version))
+          ? name
+          : name.substring(0, name.indexOf('$version') - 1);
 }

@@ -16,7 +16,7 @@ void main() {
 
     test('throws for missing file', () {
       expect(
-          () => parser.parse(File('/not/a/file')),
+          () => parser.parse(File('not_a_file')),
           throwsA(predicate<PersistenceException>(
               (e) => e.toString().contains('not found'))));
     });

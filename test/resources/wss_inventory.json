@@ -31,6 +31,25 @@
           "references": []
         }
       ]
+    },
+    {
+      "keyUuid": "Empty version",
+      "type": "Java",
+      "directDependency": false,
+      "matchType": "Filename Match",
+      "name": "empty_version",
+      "artifactId": "package",
+      "version": "",
+      "groupId": "wrong-answer"
+    },
+    {
+      "keyUuid": "No version",
+      "type": "Java",
+      "directDependency": false,
+      "matchType": "Filename Match",
+      "name": "no_version",
+      "artifactId": "package",
+      "groupId": "wrong-answer"
     }
   ]
 }
