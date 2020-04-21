@@ -39,6 +39,13 @@ void main() {
       expect(result.items, contains(ItemId('empty_version', '')));
     });
 
+    test('reads licenses', () async {
+     final result =await parser .parse(inventoryFile);
+
+     final id = result.items.lookup(ItemId('licenses', 'v'));
+     expect(id.licenses, containsAll(['l1', 'l2']));
+    });
+
     test('throws when file does not exist', () {
       expect(
           () => parser.parse(File('Unknown_file')),

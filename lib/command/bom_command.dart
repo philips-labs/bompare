@@ -43,7 +43,7 @@ class BomCommand extends Command {
       'Analyze the BOM differences between selected scanners';
 
   @override
-  void run() async {
+  Future<void> run() async {
     await Future.wait([
       _loadTypedResults(option_reference, ScannerType.reference),
       _loadTypedResults(option_white_source, ScannerType.white_source),

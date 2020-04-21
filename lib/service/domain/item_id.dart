@@ -2,8 +2,13 @@
 class ItemId implements Comparable<ItemId> {
   final String package;
   final String version;
+  final licenses = <String>{};
 
   ItemId(this.package, this.version);
+
+  void addLicense(String license) {
+    licenses.add(license);
+  }
 
   @override
   bool operator ==(Object other) =>

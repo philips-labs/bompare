@@ -29,13 +29,20 @@ class WhiteSourceInventoryResultParser implements ResultParser {
 
       final map = jsonDecode(str) as Map<String, dynamic>;
       (map['libraries'] as Iterable)
-          .map(_decodeItemId)
-          .forEach((id) => result.addItem(id));
+          .map(_decodeItem)
+          .forEach((itemId) => result.addItem(itemId));
 
       return Future.value(result);
     } on FormatException catch (e) {
       return Future.error(PersistenceException(file, 'Unexpected format: $e'));
     }
+  }
+
+  ItemId _decodeItem(dynamic obj) {
+    final itemId = _decodeItemId(obj);
+
+    _decodeLicenses(itemId, obj);
+    return itemId;
   }
 
   ItemId _decodeItemId(dynamic obj) {
@@ -68,4 +75,12 @@ class WhiteSourceInventoryResultParser implements ResultParser {
       (version.isEmpty || !name.contains(version))
           ? name
           : name.substring(0, name.indexOf('$version') - 1);
+
+  void _decodeLicenses(ItemId itemId, dynamic obj) {
+    final licenses = obj['licenses'] as Iterable ?? [];
+    licenses.forEach((lic) {
+      final license = lic['name'];
+      itemId.addLicense(license);
+    });
+  }
 }

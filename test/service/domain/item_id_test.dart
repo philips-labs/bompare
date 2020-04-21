@@ -5,19 +5,21 @@ void main() {
   group('$ItemId', () {
     const package = 'package';
     const version = 'version';
+    const license = 'license';
 
     test('createsInstance', () {
-      final id = ItemId(package, version);
+      final id = ItemId(package, version)..addLicense(license);
 
       expect(id.package, equals(package));
       expect(id.version, equals(version));
+      expect(id.licenses, containsAll([license]));
     });
 
     test('implements equality', () {
       final id = ItemId(package, version);
       final other1 = ItemId('other', version);
       final other2 = ItemId(package, 'other');
-      final equal = ItemId(package, version);
+      final equal = ItemId(package, version)..addLicense('ignored');
 
       expect(id, equals(id));
       expect(id, equals(equal));
