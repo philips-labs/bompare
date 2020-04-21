@@ -38,7 +38,7 @@ void main() {
 
       final itemId = result.items.lookup(ItemId('license', 'v1'));
       expect(itemId.licenses, containsAll(['lic_1', 'lic_2']));
-    }, skip: true);
+    });
 
     test('parses packages from ZIP file', () async {
       final result = await parser.parse(zipFile);
@@ -47,10 +47,10 @@ void main() {
     });
 
     test('parses licenses from ZIP file', () async {
-      final result = await parser.parse(directory);
+      final result = await parser.parse(zipFile);
 
       final itemId = result.items.lookup(ItemId('license', 'v1'));
       expect(itemId.licenses, containsAll(['lic_1', 'lic_2']));
-    }, skip: true);
+    });
   });
 }
