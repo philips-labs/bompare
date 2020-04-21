@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:bompare/command/bom_command.dart';
+import 'package:bompare/command/licenses_command.dart';
 import 'package:bompare/persistence/parser/blackduck_result_parser.dart';
 import 'package:bompare/persistence/parser/reference_result_parser.dart';
 import 'package:bompare/persistence/parser/wss_inventory_result_parser.dart';
@@ -24,7 +25,8 @@ void main(List<String> arguments) async {
 
   try {
     final command = CommandRunner('bompare', 'Bill-Of-Material scan comparator')
-      ..addCommand(BomCommand(service));
+      ..addCommand(BomCommand(service))
+      ..addCommand(LicensesCommand(service));
     await command.run(arguments);
   } on UsageException catch (error) {
     print(error);

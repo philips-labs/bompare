@@ -1,12 +1,11 @@
 import 'dart:core';
 import 'dart:io';
 
-import 'package:bompare/service/domain/scan_result.dart';
-import 'package:bompare/service/report_persistence.dart';
-import 'package:bompare/service/result_persistence.dart';
-
 import '../bom_service.dart';
+import '../report_persistence.dart';
+import '../result_persistence.dart';
 import 'item_id.dart';
+import 'scan_result.dart';
 
 /// Use case implementations for a bill-of-material.
 class BomInteractor implements BomService {
@@ -23,7 +22,7 @@ class BomInteractor implements BomService {
   }
 
   @override
-  Future<List<BomResult>> compareResults(
+  Future<List<BomResult>> compareBom(
       {File bomFile, bool diffOnly = false}) async {
     if (_scans.isEmpty) return <BomResult>[];
 
@@ -48,10 +47,36 @@ class BomInteractor implements BomService {
 
   List<BomResult> _bomResultPerScanResult(
           Set<ItemId> all, Set<ItemId> common) =>
-      _scans.map((r) {
-        final missing = all.difference(r.items).length;
-        final additional = r.items.difference(common).length;
-        return BomResult(
-            r.name, r.items.length, common.length, additional, missing);
-      }).toList();
+      _scans
+          .map((r) => BomResult(
+                r.name,
+                r.items.length,
+                common: common.length,
+                additional: r.items.difference(common).length,
+                missing: all.difference(r.items).length,
+              ))
+          .toList();
+
+  @override
+  Future<LicenseResult> compareLicenses() async {
+    if (_scans.isEmpty) return LicenseResult(0, 0);
+
+    final bom = _commonBom();
+    final common = _agreement(bom);
+
+    return LicenseResult(bom.length, common.length);
+  }
+
+  Set<ItemId> _commonBom() {
+    var bom = _scans[0].items;
+    _scans.forEach((s) {
+      bom = bom.intersection(s.items);
+    });
+    return bom;
+  }
+
+  Set<ItemId> _agreement(Set<ItemId> bom) => bom
+      .where(
+          (c) => !_scans.any((s) => s.items.lookup(c).licenses != c.licenses))
+      .toSet();
 }

@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:bompare/persistence/persistence_exception.dart';
-import 'package:bompare/persistence/result_parser.dart';
-import 'package:bompare/service/bom_service.dart';
-import 'package:bompare/service/domain/scan_result.dart';
-import 'package:bompare/service/result_persistence.dart';
+import '../service/bom_service.dart';
+import '../service/domain/scan_result.dart';
+import '../service/result_persistence.dart';
+import 'persistence_exception.dart';
+import 'result_parser.dart';
 
 class ScanResultLoader implements ResultPersistence {
   final Map<ScannerType, ResultParser> parsers;

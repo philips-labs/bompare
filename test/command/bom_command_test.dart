@@ -1,19 +1,19 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:bompare/command/abstract_command.dart';
 import 'package:bompare/command/bom_command.dart';
 import 'package:bompare/service/bom_service.dart';
-import 'package:bompare/service/domain/bom_interactor.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-class BomServiceMock extends Mock implements BomInteractor {}
+class BomServiceMock extends Mock implements BomService {}
 
 void main() {
   group('$BomCommand', () {
     const filename = 'filename';
 
-    BomInteractor service;
+    BomService service;
     CommandRunner runner;
 
     setUp(() {
@@ -23,49 +23,61 @@ void main() {
     });
 
     test('loads reference result files', () async {
-      when(service.compareResults())
-          .thenAnswer((_) => Future.value(<BomResult>[]));
+      when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
 
-      await runner.run([BomCommand.command, '-r', filename]);
+      await runner.run([
+        BomCommand.command,
+        '--${AbstractCommand.option_reference}',
+        filename
+      ]);
 
       verify(service.loadResult(ScannerType.reference,
           argThat(predicate<File>((File f) => f.path == filename))));
-      verify(
-          service.compareResults(bomFile: argThat(isNull, named: 'bomFile')));
+      verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
     test('loads WhiteSource result files', () async {
-      when(service.compareResults())
-          .thenAnswer((_) => Future.value(<BomResult>[]));
+      when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
 
-      await runner.run([BomCommand.command, '-w', filename]);
+      await runner.run([
+        BomCommand.command,
+        '--${AbstractCommand.option_white_source}',
+        filename
+      ]);
 
       verify(service.loadResult(ScannerType.white_source,
           argThat(predicate<File>((File f) => f.path == filename))));
-      verify(
-          service.compareResults(bomFile: argThat(isNull, named: 'bomFile')));
+      verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
     test('loads Black Duck result files', () async {
-      when(service.compareResults())
-          .thenAnswer((_) => Future.value(<BomResult>[]));
+      when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
 
-      await runner.run([BomCommand.command, '-b', filename]);
+      await runner.run([
+        BomCommand.command,
+        '--${AbstractCommand.option_black_duck}',
+        filename
+      ]);
 
       verify(service.loadResult(ScannerType.black_duck,
           argThat(predicate<File>((File f) => f.path == filename))));
-      verify(
-          service.compareResults(bomFile: argThat(isNull, named: 'bomFile')));
+      verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
     test('outputs CSV to provided file name', () async {
       const csvFile = 'file.csv';
-      when(service.compareResults(bomFile: anyNamed('bomFile')))
+      when(service.compareBom(bomFile: anyNamed('bomFile')))
           .thenAnswer((_) => Future.value(<BomResult>[]));
 
-      await runner.run([BomCommand.command, '-r', filename, '-o', csvFile]);
+      await runner.run([
+        BomCommand.command,
+        '--${AbstractCommand.option_reference}',
+        filename,
+        '--${AbstractCommand.option_output}',
+        csvFile
+      ]);
 
-      verify(service.compareResults(
+      verify(service.compareBom(
           bomFile: argThat(predicate<File>((File f) => f.path == csvFile),
               named: 'bomFile'),
           diffOnly: argThat(isFalse, named: 'diffOnly')));
@@ -73,14 +85,20 @@ void main() {
 
     test('outputs diff only CSV to provided file name', () async {
       const csvFile = 'file.csv';
-      when(service.compareResults(
+      when(service.compareBom(
               bomFile: anyNamed('bomFile'), diffOnly: anyNamed('diffOnly')))
           .thenAnswer((_) => Future.value(<BomResult>[]));
 
-      await runner.run(
-          [BomCommand.command, '-r', filename, '-o', csvFile, '--diffOnly']);
+      await runner.run([
+        BomCommand.command,
+        '--${AbstractCommand.option_reference}',
+        filename,
+        '--${AbstractCommand.option_output}',
+        csvFile,
+        '--${AbstractCommand.option_diff_only}'
+      ]);
 
-      verify(service.compareResults(
+      verify(service.compareBom(
           bomFile: argThat(predicate<File>((File f) => f.path == csvFile),
               named: 'bomFile'),
           diffOnly: argThat(isTrue, named: 'diffOnly')));

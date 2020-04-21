@@ -1,14 +1,13 @@
 import 'dart:io';
 
-import 'package:bompare/service/domain/bom_interactor.dart';
-
+import '../service/bom_service.dart';
 import 'abstract_command.dart';
 
 /// Bill-of-Materials comparison command.
 class BomCommand extends AbstractCommand {
   static const command = 'bom';
 
-  BomCommand(BomInteractor service) : super(service);
+  BomCommand(BomService service) : super(service);
 
   @override
   String get name => command;
@@ -24,8 +23,7 @@ class BomCommand extends AbstractCommand {
         : null;
     final diffOnly = argResults[AbstractCommand.option_diff_only];
 
-    final results =
-        await service.compareResults(bomFile: file, diffOnly: diffOnly);
+    final results = await service.compareBom(bomFile: file, diffOnly: diffOnly);
     results.forEach((result) {
       stdout.writeln('BOM according to "${result.name}": '
           '${result.detected} detected, '

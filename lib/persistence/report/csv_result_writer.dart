@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:bompare/persistence/persistence_exception.dart';
-import 'package:bompare/service/domain/item_id.dart';
-import 'package:bompare/service/domain/scan_result.dart';
+import '../../service/domain/item_id.dart';
+import '../../service/domain/scan_result.dart';
+import '../persistence_exception.dart';
 
 /// CSV report output.
 class CsvResultWriter {

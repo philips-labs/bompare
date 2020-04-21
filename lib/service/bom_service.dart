@@ -7,18 +7,45 @@ abstract class BomService {
 
   /// Returns bill-of-material summary, and optionally writes the content
   /// to [bomFile] as a full index or [diffOnly].
-  Future<List<BomResult>> compareResults({File bomFile, bool diffOnly = false});
+  Future<List<BomResult>> compareBom({File bomFile, bool diffOnly = false});
+
+  /// Returns licenses summary.
+  Future<LicenseResult> compareLicenses();
 }
 
 enum ScannerType { reference, black_duck, white_source }
 
+/// Return value for bill-or-materials comparison.
 class BomResult {
-  String name;
-  int detected;
-  int common;
-  int additional;
-  int missing;
+  /// Scanner identification
+  final String name;
 
-  BomResult(
-      this.name, this.detected, this.common, this.additional, this.missing);
+  /// Total items found by scanner
+  final int detected;
+
+  /// Agreed by all scanners
+  final int common;
+
+  /// Extra found by this scanner
+  final int additional;
+
+  /// Missed by this scanner
+  final int missing;
+
+  BomResult(this.name, this.detected,
+      {int common = 0, int additional = 0, int missing = 0})
+      : common = common,
+        additional = additional,
+        missing = missing;
+}
+
+/// Return value for license comparison.
+class LicenseResult {
+  /// Shared bill-of-materials between scanners
+  final int bom;
+
+  /// Agreed by all scanners
+  final int common;
+
+  LicenseResult(this.bom, this.common);
 }

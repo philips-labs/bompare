@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:bompare/persistence/persistence_exception.dart';
-import 'package:bompare/persistence/result_parser.dart';
-import 'package:bompare/service/domain/item_id.dart';
-import 'package:bompare/service/domain/scan_result.dart';
 import 'package:path/path.dart' as path;
+
+import '../../service/domain/item_id.dart';
+import '../../service/domain/scan_result.dart';
+import '../persistence_exception.dart';
+import '../result_parser.dart';
 
 /// Decoder for files in "reference" file format.
 /// This format consists of a list of JSON objects containing (String) 'name',
