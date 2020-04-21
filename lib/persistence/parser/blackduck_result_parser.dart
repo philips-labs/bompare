@@ -32,31 +32,40 @@ class BlackDuckResultParser implements ResultParser {
     final buffer = file.readAsBytesSync();
     final archive = ZipDecoder().decodeBytes(buffer);
 
-    final sourceFiles = archive
-        .where((f) => f.isFile)
-        .where((f) => path.basename(f.name).startsWith(source_file_prefix));
-    await Future.forEach(sourceFiles, (f) {
-      final data = f.content as List<int>;
-      return _parseSourceStream(Stream.value(data), result);
-    });
+    await _applyToArchive(archive, source_file_prefix,
+        (Stream<List<int>> stream) => _parseSourceStream(stream, result));
 
     return result;
+  }
+
+  Future<void> _applyToArchive(Archive archive, String prefix,
+      void Function(Stream<List<int>> stream) apply) async {
+    final sourceFiles = archive
+        .where((f) => f.isFile)
+        .where((f) => path.basename(f.name).startsWith(prefix));
+    return Future.forEach(sourceFiles, (f) {
+      final data = f.content as List<int>;
+      return apply(Stream.value(data));
+    });
   }
 
   Future<ScanResult> _processDirectory(Directory directory) async {
     final result = ScanResult(path.basename(directory.path));
 
-    final sourceFiles = directory
-        .listSync()
-        .whereType<File>()
-        .where((f) => path.basename(f.path).startsWith(source_file_prefix));
-    await Future.forEach(sourceFiles, (f) => _parseSourceFile(f, result));
+    await _applyToDirectory(directory, source_file_prefix,
+        (Stream<List<int>> stream) => _parseSourceStream(stream, result));
 
     return result;
   }
 
-  Future<void> _parseSourceFile(File file, ScanResult result) async =>
-      _parseSourceStream(file.openRead(), result);
+  Future<void> _applyToDirectory(Directory directory, String prefix,
+      void Function(Stream<List<int>> stream) apply) async {
+    final sourceFiles = directory
+        .listSync()
+        .whereType<File>()
+        .where((f) => path.basename(f.path).startsWith(prefix));
+    return await Future.forEach(sourceFiles, (f) => apply(f.openRead()));
+  }
 
   Future<void> _parseSourceStream(Stream<List<int>> stream, ScanResult result) {
     final lineStream = stream.transform(utf8.decoder).transform(LineSplitter());
