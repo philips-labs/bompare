@@ -25,14 +25,14 @@ void main() {
           CsvResultWriter(File(path.join('does', 'not', 'exist.csv')), []);
 
       expect(
-          () => writer.writeBomComparison([ItemId('a', 'b')]),
+          () => writer.writeBomComparison({ItemId('a', 'b')}),
           throwsA(predicate<PersistenceException>(
               (e) => e.toString().contains('write'))));
     });
 
-    test('writes csv file', () async {
-      final ids = [ItemId('p', 'v')];
-      final scans = [ScanResult('A')..addItem(ids[0]), ScanResult('B')];
+    test('writes bill-of-materials file', () async {
+      final ids = {ItemId('p', 'v')};
+      final scans = [ScanResult('A')..addItem(ids.first), ScanResult('B')];
       final writer = CsvResultWriter(file, scans);
 
       await writer.writeBomComparison(ids);
@@ -42,6 +42,20 @@ void main() {
           csv,
           equals('"package","version","A","B"\r\n'
               '"p","v","yes",""\r\n'));
+    });
+
+    test('writes licenses file', () async {
+      final ids = {ItemId('p', 'v')..addLicense('lic1')..addLicense('lic2')};
+      final scans = [ScanResult('A')..addItem(ids.first), ScanResult('B')];
+      final writer = CsvResultWriter(file, scans);
+
+      await writer.writeLicensesComparison(ids);
+
+      final csv = file.readAsStringSync();
+      expect(
+          csv,
+          equals('"package","version","A","B"\r\n'
+              '"p","v","lic1 OR lic2",""\r\n'));
     });
   });
 }

@@ -8,6 +8,11 @@ import 'report/csv_result_writer.dart';
 class ReportWriter implements ReportPersistence {
   @override
   Future<void> writeBomComparison(
-          File file, Iterable<ItemId> ids, List<ScanResult> scans) =>
+          File file, Iterable<ItemId> ids, Iterable<ScanResult> scans) =>
       CsvResultWriter(file, scans).writeBomComparison(ids);
+
+  @override
+  Future<void> writeLicenseComparison(
+          File file, Iterable<ItemId> ids, Iterable<ScanResult> scans) =>
+      CsvResultWriter(file, scans).writeLicensesComparison(ids);
 }
