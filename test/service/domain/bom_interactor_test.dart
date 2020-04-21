@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bompare/service/bom_service.dart';
+import 'package:bompare/service/domain/bom_interactor.dart';
 import 'package:bompare/service/domain/item_id.dart';
 import 'package:bompare/service/domain/scan_result.dart';
 import 'package:bompare/service/report_persistence.dart';
@@ -13,7 +14,7 @@ class ResultPersistenceMock extends Mock implements ResultPersistence {}
 class ReportPersistenceMock extends Mock implements ReportPersistence {}
 
 void main() {
-  group('$BomService', () {
+  group('$BomInteractor', () {
     const name = 'scan_result';
     final file = File('scan_result.json');
 
@@ -24,7 +25,7 @@ void main() {
     setUp(() {
       results = ResultPersistenceMock();
       reports = ReportPersistenceMock();
-      service = BomService(results, reports);
+      service = BomInteractor(results, reports);
     });
 
     test('loads empty scan result', () async {

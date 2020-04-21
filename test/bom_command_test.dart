@@ -3,16 +3,17 @@ import 'dart:io';
 import 'package:args/command_runner.dart';
 import 'package:bompare/command/bom_command.dart';
 import 'package:bompare/service/bom_service.dart';
+import 'package:bompare/service/domain/bom_interactor.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
-class BomServiceMock extends Mock implements BomService {}
+class BomServiceMock extends Mock implements BomInteractor {}
 
 void main() {
   group('$BomCommand', () {
     const filename = 'filename';
 
-    BomService service;
+    BomInteractor service;
     CommandRunner runner;
 
     setUp(() {

@@ -1,13 +1,14 @@
 import 'dart:io';
 
-import 'package:bompare/service/bom_service.dart';
+import 'package:bompare/service/domain/bom_interactor.dart';
 
 import 'abstract_command.dart';
 
+/// Bill-of-Materials comparison command.
 class BomCommand extends AbstractCommand {
   static const command = 'bom';
 
-  BomCommand(BomService service) : super(service);
+  BomCommand(BomInteractor service) : super(service);
 
   @override
   String get name => command;

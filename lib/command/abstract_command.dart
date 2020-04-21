@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:args/command_runner.dart';
 import 'package:bompare/service/bom_service.dart';
+import 'package:bompare/service/domain/bom_interactor.dart';
 
 /// Base command to act upon provided scan result files.
 abstract class AbstractCommand extends Command {
@@ -11,7 +12,7 @@ abstract class AbstractCommand extends Command {
   static const option_output = 'out';
   static const option_diff_only = 'diffOnly';
 
-  final BomService service;
+  final BomInteractor service;
 
   AbstractCommand(this.service) {
     argParser
