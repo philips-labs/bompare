@@ -21,11 +21,11 @@ abstract class CsvParser {
               .replaceAll(r'""', '"'))
           .toList();
 
-      if (!foundHeaders) {
-        setColumnIndexes(columns);
+      if (hasHeader && !foundHeaders) {
+        headerRow(columns);
         foundHeaders = true;
       } else {
-        processRow(columns);
+        dataRow(columns);
       }
     }
   }
@@ -52,8 +52,8 @@ abstract class CsvParser {
   }
 
   /// Notifies the [columns] in the header of the CSV.
-  void setColumnIndexes(List<String> columns);
+  void headerRow(List<String> columns);
 
   /// Notifies a single row of [columns] in the CSV.
-  void processRow(List<String> columns);
+  void dataRow(List<String> columns);
 }

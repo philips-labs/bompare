@@ -84,11 +84,11 @@ class BlackDuckResultParser implements ResultParser {
 
   Future<void> _parseLicenseStream(
           Stream<List<int>> stream, _LicenseDictionary dictionary) =>
-      BlackDuckComponentsCsvParser(dictionary).parse(_toLineStream(stream));
+      _BlackDuckComponentsCsvParser(dictionary).parse(_toLineStream(stream));
 
   Future<void> _parseSourceStream(Stream<List<int>> stream, ScanResult result,
           _LicenseDictionary licenses) =>
-      BlackDuckSourceCsvParser(result, licenses).parse(_toLineStream(stream));
+      _BlackDuckSourceCsvParser(result, licenses).parse(_toLineStream(stream));
 
   Stream<String> _toLineStream(Stream<List<int>> stream) =>
       stream.transform(utf8.decoder).transform(LineSplitter());
@@ -108,7 +108,7 @@ class _LicenseDictionary {
 }
 
 /// Extracts license info per component from the Black Duck components CSV file.
-class BlackDuckComponentsCsvParser extends CsvParser {
+class _BlackDuckComponentsCsvParser extends CsvParser {
   static final _andOrSeparator = RegExp(r'\s((OR)|(AND))\s');
   static final _enclosingBraces = RegExp(r'(^\()|(\)$)');
 
@@ -119,17 +119,17 @@ class BlackDuckComponentsCsvParser extends CsvParser {
   var _componentVersionIndex = -1;
   var _licensesIndex = -1;
 
-  BlackDuckComponentsCsvParser(this._dictionary);
+  _BlackDuckComponentsCsvParser(this._dictionary);
 
   @override
-  void setColumnIndexes(List<String> columns) {
+  void headerRow(List<String> columns) {
     _componentNameIndex = columns.indexOf('Component name');
     _componentVersionIndex = columns.indexOf('Component version name');
     _licensesIndex = columns.indexOf('License names');
   }
 
   @override
-  void processRow(List<String> columns) {
+  void dataRow(List<String> columns) {
     final component = columns[_componentNameIndex];
     final version = columns[_componentVersionIndex];
     final id = ItemId(component, version);
@@ -142,7 +142,7 @@ class BlackDuckComponentsCsvParser extends CsvParser {
 }
 
 /// Extracts dependencies from a Black Duck source CSV.
-class BlackDuckSourceCsvParser extends CsvParser {
+class _BlackDuckSourceCsvParser extends CsvParser {
   final ScanResult result;
   final _LicenseDictionary licenseDictionary;
   final assumed = <ItemId>{};
@@ -153,10 +153,10 @@ class BlackDuckSourceCsvParser extends CsvParser {
   var _componentNameIndex = -1;
   var _componentVersionIndex = -1;
 
-  BlackDuckSourceCsvParser(this.result, this.licenseDictionary);
+  _BlackDuckSourceCsvParser(this.result, this.licenseDictionary);
 
   @override
-  void setColumnIndexes(List<String> columns) {
+  void headerRow(List<String> columns) {
     _versionIndex = columns.indexOf('Component origin version name');
     _originIndex = columns.indexOf('Origin name');
     _nameIndex = columns.indexOf('Origin name id');
@@ -165,7 +165,7 @@ class BlackDuckSourceCsvParser extends CsvParser {
   }
 
   @override
-  void processRow(List<String> columns) {
+  void dataRow(List<String> columns) {
     final type = columns[_originIndex];
     switch (type) {
       case 'maven':

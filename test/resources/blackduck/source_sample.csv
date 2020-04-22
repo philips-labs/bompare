@@ -1,4 +1,4 @@
 Component id,Version id,Origin id,Component name,Component version name,Component origin version name,Match type,Match content,Path,Archive context,Usage,Adjusted,Component policy status,Overridden By,Origin name,Origin name id,Snippet Review status
 comp,version,origin,component,version,v1,match,content,,,DYNAMICALLY_LINKED,false,,,npmjs,package/js/v1,
 comp,version,origin,component,version,v2,match,content,,,DYNAMICALLY_LINKED,false,,,maven,package:java:v2,
-comp,version,origin,component_name,version_name,v1,match,content,,,DYNAMICALLY_LINKED,false,,,origin,license/v1,
+comp,version,origin,component_name,version_name,v1,match,content,,,DYNAMICALLY_LINKED,false,,,npmjs,license/v1,
