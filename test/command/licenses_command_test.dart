@@ -37,32 +37,40 @@ void main() {
       verify(service.compareLicenses());
     });
 
-//    test('outputs CSV to provided file name', () async {
-//      const csvFile = 'file.csv';
-//      when(service.compareBom(bomFile: anyNamed('bomFile')))
-//          .thenAnswer((_) => Future.value(<BomResult>[]));
-//
-//      await runner.run([BomCommand.command, '-r', filename, '-o', csvFile]);
-//
-//      verify(service.compareBom(
-//          bomFile: argThat(predicate<File>((File f) => f.path == csvFile),
-//              named: 'bomFile'),
-//          diffOnly: argThat(isFalse, named: 'diffOnly')));
-//    });
-//
-//    test('outputs diff only CSV to provided file name', () async {
-//      const csvFile = 'file.csv';
-//      when(service.compareBom(
-//              bomFile: anyNamed('bomFile'), diffOnly: anyNamed('diffOnly')))
-//          .thenAnswer((_) => Future.value(<BomResult>[]));
-//
-//      await runner.run(
-//          [BomCommand.command, '-r', filename, '-o', csvFile, '--diffOnly']);
-//
-//      verify(service.compareBom(
-//          bomFile: argThat(predicate<File>((File f) => f.path == csvFile),
-//              named: 'bomFile'),
-//          diffOnly: argThat(isTrue, named: 'diffOnly')));
-//    });
+    test('outputs licenses CSV to provided file name', () async {
+      const csvFile = 'file.csv';
+      when(service.compareLicenses(licensesFile: anyNamed('licensesFile')))
+          .thenAnswer((_) => Future.value(LicenseResult(2, 1)));
+
+      await runner
+          .run([LicensesCommand.command, '-r', filename, '-o', csvFile]);
+
+      verify(service.compareLicenses(
+          licensesFile: argThat(predicate<File>((File f) => f.path == csvFile),
+              named: 'licensesFile'),
+          diffOnly: argThat(isFalse, named: 'diffOnly')));
+    });
+
+    test('outputs diff only CSV to provided file name', () async {
+      const csvFile = 'file.csv';
+      when(service.compareLicenses(
+              licensesFile: anyNamed('licensesFile'),
+              diffOnly: anyNamed('diffOnly')))
+          .thenAnswer((_) => Future.value(LicenseResult(2, 1)));
+
+      await runner.run([
+        LicensesCommand.command,
+        '-r',
+        filename,
+        '-o',
+        csvFile,
+        '--diffOnly'
+      ]);
+
+      verify(service.compareLicenses(
+          licensesFile: argThat(predicate<File>((File f) => f.path == csvFile),
+              named: 'licensesFile'),
+          diffOnly: argThat(isTrue, named: 'diffOnly')));
+    });
   });
 }

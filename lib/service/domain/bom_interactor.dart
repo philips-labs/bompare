@@ -30,8 +30,8 @@ class BomInteractor implements BomService {
     final common = _buildBom(_scans[0].items, all);
 
     if (bomFile != null) {
-      await reports.writeBomComparison(
-          bomFile, diffOnly ? all.difference(common) : all, _scans);
+      final ids = diffOnly ? all.difference(common) : all;
+      await reports.writeBomComparison(bomFile, ids, _scans);
     }
 
     return _bomResultPerScanResult(all, common);
@@ -58,11 +58,17 @@ class BomInteractor implements BomService {
           .toList();
 
   @override
-  Future<LicenseResult> compareLicenses() async {
+  Future<LicenseResult> compareLicenses(
+      {File licensesFile, bool diffOnly = false}) async {
     if (_scans.isEmpty) return LicenseResult(0, 0);
 
     final bom = _commonBom();
-    final common = _agreement(bom);
+    final common = _commonLicenses(bom);
+
+    if (licensesFile != null) {
+      final ids = diffOnly ? bom.difference(common) : bom;
+      await reports.writeLicenseComparison(licensesFile, ids, _scans);
+    }
 
     return LicenseResult(bom.length, common.length);
   }
@@ -75,8 +81,13 @@ class BomInteractor implements BomService {
     return bom;
   }
 
-  Set<ItemId> _agreement(Set<ItemId> bom) => bom
-      .where(
-          (c) => !_scans.any((s) => s.items.lookup(c).licenses != c.licenses))
-      .toSet();
+  Set<ItemId> _commonLicenses(Set<ItemId> bom) =>
+      bom.where(_scannedLicensesMatch).toSet();
+
+  bool _scannedLicensesMatch(c) => !_scans.any((s) {
+        final scan = s.items.lookup(c);
+        final match = scan.licenses.containsAll(c.licenses) &&
+            c.licenses.containsAll(scan.licenses);
+        return !match;
+      });
 }

@@ -158,6 +158,19 @@ void main() {
         expect(summary.bom, equals(2));
         expect(summary.common, equals(1));
       });
+
+      test('writes licenses report', () async {
+        final licensesFile = File('licenses.csv');
+        final id = ItemId('a', '1');
+        final result = ScanResult('A')..addItem(id);
+        when(results.load(ScannerType.reference, file))
+            .thenAnswer((_) => Future.value(result));
+
+        await service.loadResult(ScannerType.reference, file);
+        await service.compareLicenses(licensesFile: licensesFile);
+
+        verify(reports.writeLicenseComparison(licensesFile, [id], [result]));
+      });
     });
   });
 }

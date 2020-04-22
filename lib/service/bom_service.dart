@@ -9,8 +9,10 @@ abstract class BomService {
   /// to [bomFile] as a full index or [diffOnly].
   Future<List<BomResult>> compareBom({File bomFile, bool diffOnly = false});
 
-  /// Returns licenses summary.
-  Future<LicenseResult> compareLicenses();
+  /// Returns licenses summary, and optionally writes the content
+  /// to [licensesFile] as a full index or [diffOnly].
+  Future<LicenseResult> compareLicenses(
+      {File licensesFile, bool diffOnly = false});
 }
 
 enum ScannerType { reference, black_duck, white_source }

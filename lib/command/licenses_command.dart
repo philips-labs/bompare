@@ -17,8 +17,10 @@ class LicensesCommand extends AbstractCommand {
 
   @override
   Future<void> execute() async {
-    final result = await service.compareLicenses();
+    final result =
+        await service.compareLicenses(licensesFile: file, diffOnly: diffOnly);
     stdout.writeln('Shared BOM size: ${result.bom}');
     stdout.writeln('Matching licenses: ${result.common}');
+    stdout.writeln('Different licenses: ${result.bom - result.common}');
   }
 }

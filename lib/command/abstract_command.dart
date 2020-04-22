@@ -36,6 +36,14 @@ abstract class AbstractCommand extends Command {
           help: 'Only output diff lines in output file');
   }
 
+  /// Returns the file indicated by the [option_output] parameter.
+  File get file => (argResults[AbstractCommand.option_output] != null)
+      ? File(argResults[AbstractCommand.option_output])
+      : null;
+
+  /// Returns the state of the [option_diff_only] parameter.
+  bool get diffOnly => argResults[AbstractCommand.option_diff_only];
+
   @override
   Future<void> run() async {
     await _loadScanResults();
