@@ -65,7 +65,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
       default:
         final id = ItemId(obj[field_group_id], obj[field_version]);
         if (!assumed.contains(id)) {
-          stderr.writeln('Warning: Assumed $id for WhiteSource type "$type"');
+          print('Warning: Assumed $id for WhiteSource type "$type"');
           assumed.add(id);
         }
         return id;

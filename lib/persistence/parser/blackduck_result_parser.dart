@@ -8,6 +8,7 @@ import '../../service/domain/item_id.dart';
 import '../../service/domain/scan_result.dart';
 import '../persistence_exception.dart';
 import '../result_parser.dart';
+import 'csv_parser.dart';
 import 'spdx_licenses.dart' as spdx;
 
 class BlackDuckResultParser implements ResultParser {
@@ -121,14 +122,14 @@ class BlackDuckComponentsCsvParser extends CsvParser {
   BlackDuckComponentsCsvParser(this._dictionary);
 
   @override
-  void _setColumnIndexes(List<String> columns) {
+  void setColumnIndexes(List<String> columns) {
     _componentNameIndex = columns.indexOf('Component name');
     _componentVersionIndex = columns.indexOf('Component version name');
     _licensesIndex = columns.indexOf('License names');
   }
 
   @override
-  void _processRow(List<String> columns) {
+  void processRow(List<String> columns) {
     final component = columns[_componentNameIndex];
     final version = columns[_componentVersionIndex];
     final id = ItemId(component, version);
@@ -155,7 +156,7 @@ class BlackDuckSourceCsvParser extends CsvParser {
   BlackDuckSourceCsvParser(this.result, this.licenseDictionary);
 
   @override
-  void _setColumnIndexes(List<String> columns) {
+  void setColumnIndexes(List<String> columns) {
     _versionIndex = columns.indexOf('Component origin version name');
     _originIndex = columns.indexOf('Origin name');
     _nameIndex = columns.indexOf('Origin name id');
@@ -164,7 +165,7 @@ class BlackDuckSourceCsvParser extends CsvParser {
   }
 
   @override
-  void _processRow(List<String> columns) {
+  void processRow(List<String> columns) {
     final type = columns[_originIndex];
     switch (type) {
       case 'maven':
@@ -176,7 +177,7 @@ class BlackDuckSourceCsvParser extends CsvParser {
       default:
         final id = _itemIdFromColumns(columns, '/');
         if (!assumed.contains(id)) {
-          stderr.writeln('Warning: Assumed $id for WhiteSource type "$type"');
+          print('Warning: Assumed $id for Black Duck type "$type"');
           assumed.add(id);
         }
         result.addItem(id);
@@ -199,59 +200,4 @@ class BlackDuckSourceCsvParser extends CsvParser {
 
   String _stripLastPart(String name, Pattern pattern) =>
       name.substring(0, name.lastIndexOf(pattern));
-}
-
-/// Base CSV parser for scanning the rows of columns.
-abstract class CsvParser {
-  static final _columnQuotes = RegExp(r'(^")|("$)');
-
-  /// Converts lines to columns, calling abstract methods for both.
-  Future<void> parse(Stream<String> lineStream) async {
-    var foundHeaders = false;
-
-    await for (final line in lineStream) {
-      const tempComma = '\n';
-      final columns = _escapeCommas(line, tempComma)
-          .split(',')
-          .map((c) => c
-              .replaceAll(_columnQuotes, '')
-              .replaceAll(tempComma, ',')
-              .replaceAll(r'""', '"'))
-          .toList();
-
-      if (!foundHeaders) {
-        _setColumnIndexes(columns);
-        foundHeaders = true;
-      } else {
-        _processRow(columns);
-      }
-    }
-  }
-
-  String _escapeCommas(String line, String replacement) {
-    if (!line.contains(',')) return line;
-
-    final buf = StringBuffer();
-    final comma = ','.codeUnitAt(0);
-    final quote = '"'.codeUnitAt(0);
-    var inQuotes = false;
-    for (var ch in line.codeUnits) {
-      if (ch == quote) {
-        inQuotes = !inQuotes;
-      }
-
-      if (inQuotes && (ch == comma)) {
-        buf.write(replacement);
-      } else {
-        buf.writeCharCode(ch);
-      }
-    }
-    return buf.toString();
-  }
-
-  /// Notifies the [columns] in the header of the CSV.
-  void _setColumnIndexes(List<String> columns);
-
-  /// Notifies a single row of [columns] in the CSV.
-  void _processRow(List<String> columns);
 }

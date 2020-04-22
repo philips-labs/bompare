@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import '../service/bom_service.dart';
 import 'abstract_command.dart';
 
@@ -20,7 +18,7 @@ class BomCommand extends AbstractCommand {
   Future<void> execute() async {
     final results = await service.compareBom(bomFile: file, diffOnly: diffOnly);
     results.forEach((result) {
-      stdout.writeln('BOM according to "${result.name}": '
+      print('BOM according to "${result.name}": '
           '${result.detected} detected, '
           '${result.common} in common, '
           '${result.additional} extra, '
