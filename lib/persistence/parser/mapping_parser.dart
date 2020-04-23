@@ -28,8 +28,8 @@ class _MappingCsvParser extends CsvParser {
 
   @override
   void dataRow(List<String> columns) {
-    mapping[columns[0].toLowerCase()] =
-        (columns.length > 1) ? columns[1] : columns[0];
+    final license = (columns.length > 1) ? columns[1] : columns[0];
+    mapping[columns[0].toLowerCase()] = license;
   }
 
   @override

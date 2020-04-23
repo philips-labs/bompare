@@ -21,8 +21,8 @@ void main() {
     test('reads mapping', () async {
       final mapping = await parser.parse(file);
 
-      expect(mapping, containsPair('key', 'value'));
-      expect(mapping, containsPair('single', 'Single'));
+      expect(mapping, containsPair('key', 'Beerware'));
+      expect(mapping, containsPair('aladdin', 'Aladdin'));
     });
   });
 }

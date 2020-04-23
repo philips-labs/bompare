@@ -39,7 +39,16 @@ void main() {
         await persistence.loadMapping(mappingFile);
 
         expect(spdxMapping.length, greaterThan(5));
-        expect(spdxMapping, containsPair('key', 'value'));
+        expect(spdxMapping, containsPair('key', 'Beerware'));
+      });
+
+      test('throws for invalid SPDX tags', () {
+        final loremFile = File(path.join(testDirectory, 'testfile.txt'));
+
+        expect(
+            persistence.loadMapping(loremFile),
+            throwsA(predicate<PersistenceException>(
+                (e) => e.toString().contains('SPDX'))));
       });
     });
 

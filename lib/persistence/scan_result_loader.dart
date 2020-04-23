@@ -20,7 +20,14 @@ class ScanResultLoader implements ResultPersistence {
 
   @override
   Future<void> loadMapping(File file) async {
-    spdxMapping.addAll(await MappingParser().parse(file));
+    final mapping = await MappingParser().parse(file);
+
+    final illegal = mapping.values.toSet()..removeAll(spdxMapping.values);
+    if (illegal.isNotEmpty) {
+      throw PersistenceException(file, 'Non-SPDX identifiers $illegal found');
+    }
+
+    spdxMapping.addAll(mapping);
   }
 
   @override
