@@ -18,19 +18,11 @@ void main() {
               (e) => e.toString().contains('not found'))));
     });
 
-    test('throws for malformed file', () {
-      final jsonFile = File(path.join(directory, 'reference.json'));
-
-      expect(
-          parser.parse(jsonFile),
-          throwsA(predicate<PersistenceException>(
-              (e) => e.toString().contains('two columns'))));
-    });
-
     test('reads mapping', () async {
       final mapping = await parser.parse(file);
 
       expect(mapping, containsPair('key', 'value'));
+      expect(mapping, containsPair('single', 'Single'));
     });
   });
 }

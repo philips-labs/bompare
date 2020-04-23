@@ -13,16 +13,11 @@ class MappingParser {
       throw PersistenceException(file, 'Mapping file not found');
     }
 
-    try {
-      final mapping = <String, String>{};
-      final stream =
-          file.openRead().transform(utf8.decoder).transform(LineSplitter());
-      await _MappingCsvParser(mapping).parse(stream);
-      return mapping;
-    } on RangeError {
-      throw PersistenceException(
-          file, 'Expected at least two columns, separated by a comma');
-    }
+    final mapping = <String, String>{};
+    final stream =
+        file.openRead().transform(utf8.decoder).transform(LineSplitter());
+    await _MappingCsvParser(mapping).parse(stream);
+    return mapping;
   }
 }
 
@@ -33,7 +28,8 @@ class _MappingCsvParser extends CsvParser {
 
   @override
   void dataRow(List<String> columns) {
-    mapping[columns[0]] = columns[1];
+    mapping[columns[0].toLowerCase()] =
+        (columns.length > 1) ? columns[1] : columns[0];
   }
 
   @override

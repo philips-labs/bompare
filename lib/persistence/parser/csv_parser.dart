@@ -12,6 +12,8 @@ abstract class CsvParser {
     var foundHeaders = false;
 
     await for (final line in lineStream) {
+      if (line.isEmpty) continue;
+
       const tempComma = '\n';
       final columns = _escapeCommas(line, tempComma)
           .split(',')

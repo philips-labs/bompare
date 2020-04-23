@@ -83,8 +83,8 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   void _decodeLicenses(ItemId itemId, dynamic obj) {
     final licenses = obj['licenses'] as Iterable ?? [];
     licenses.forEach((lic) {
-      final name = lic['name'];
-      final license = licenseMapping[name] ?? '"$name"';
+      final name = lic['name'] as String;
+      final license = licenseMapping[name.toLowerCase()] ?? '"$name"';
       itemId.addLicense(license);
     });
   }
