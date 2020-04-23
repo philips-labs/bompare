@@ -9,11 +9,19 @@ import 'package:test/test.dart';
 
 void main() {
   group('$WhiteSourceInventoryResultParser', () {
+    const mapped_license = 'mapped_license';
+
     final resourcePath = path.join('test', 'resources');
     final inventoryFile = File(path.join(resourcePath, 'wss_inventory.json'));
     final lorumFile = File(path.join(resourcePath, 'testfile.txt'));
 
-    final ResultParser parser = WhiteSourceInventoryResultParser();
+    final licenseMapping = <String, String>{};
+    final ResultParser parser =
+        WhiteSourceInventoryResultParser(licenseMapping);
+
+    setUpAll(() {
+      licenseMapping['key'] = mapped_license;
+    });
 
     test('parses JavaScript items from file', () async {
       final result = await parser.parse(inventoryFile);
@@ -39,11 +47,11 @@ void main() {
       expect(result.items, contains(ItemId('empty_version', '')));
     });
 
-    test('reads licenses', () async {
+    test('reads licenses using license mapping', () async {
       final result = await parser.parse(inventoryFile);
 
       final id = result.items.lookup(ItemId('licenses', 'v'));
-      expect(id.licenses, containsAll(['l1', 'l2']));
+      expect(id.licenses, containsAll([mapped_license, '"my_license"']));
     });
 
     test('throws when file does not exist', () {

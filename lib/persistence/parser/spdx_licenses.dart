@@ -87,11 +87,15 @@ final dictionary = <String, String>{
   'copyleft-next 0.3.0': 'copyleft-next-0.3.0',
   'copyleft-next 0.3.1': 'copyleft-next-0.3.1',
   'creative commons attribution 1.0 generic': 'CC-BY-1.0',
+  'creative commons attribution 1.0': 'CC-BY-1.0', // Black Duck specific
   'creative commons attribution 2.0 generic': 'CC-BY-2.0',
+  'creative commons attribution 2.0': 'CC-BY-2.0', // Black Duck specific
   'creative commons attribution 2.5 generic': 'CC-BY-2.5',
+  'creative commons attribution 2.5': 'CC-BY-2.5', // Black Duck specific
   'creative commons attribution 3.0 unported': 'CC-BY-3.0',
+  'creative commons attribution 3.0': 'CC-BY-3.0', // Black Duck specific
   'creative commons attribution 4.0 international': 'CC-BY-4.0',
-  'creative commons attribution 4.0': 'CC-BY-4.0', // Black Duck name
+  'creative commons attribution 4.0': 'CC-BY-4.0', // Black Duck specific
   'creative commons attribution no derivatives 1.0 generic': 'CC-BY-ND-1.0',
   'creative commons attribution no derivatives 2.0 generic': 'CC-BY-ND-2.0',
   'creative commons attribution no derivatives 2.5 generic': 'CC-BY-ND-2.5',

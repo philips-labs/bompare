@@ -8,14 +8,13 @@ import 'package:bompare/persistence/persistence_exception.dart';
 /// Expects a comma-separated CSV file without header, providing a source
 /// license description string with the corresponding target SPDX code.
 class MappingParser {
-  final mapping = <String, String>{};
-
   Future<Map<String, String>> parse(File file) async {
     if (!file.existsSync()) {
       throw PersistenceException(file, 'Mapping file not found');
     }
 
     try {
+      final mapping = <String, String>{};
       final stream =
           file.openRead().transform(utf8.decoder).transform(LineSplitter());
       await _MappingCsvParser(mapping).parse(stream);

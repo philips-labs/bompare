@@ -28,6 +28,14 @@ void main() {
       service = BomInteractor(results, reports);
     });
 
+    group('SPDX mapping', () {
+      test('loads SPDX mapping file', () {
+        service.loadSpdxMapping(file);
+
+        verify(results.loadMapping(file));
+      });
+    });
+
     group('compare bill-of-materials', () {
       test('loads empty scan result', () async {
         expect(await service.compareBom(), isEmpty);

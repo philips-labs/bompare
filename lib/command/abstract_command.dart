@@ -11,6 +11,7 @@ abstract class AbstractCommand extends Command {
   static const option_black_duck = 'blackduck';
   static const option_output = 'out';
   static const option_diff_only = 'diffOnly';
+  static const option_spdx_mapping = 'spdx';
 
   final BomService service;
 
@@ -28,6 +29,9 @@ abstract class AbstractCommand extends Command {
           abbr: 'b',
           help: 'Scan result in Black Duck "report" (ZIP/directory) format',
           valueHelp: 'filename or directory')
+      ..addOption(option_spdx_mapping,
+          help: 'Convert license texts using SPDX mapping file',
+          valueHelp: 'CSV file: "license text","SPDX identifier"')
       ..addOption(option_output,
           abbr: 'o',
           help: 'Write detail report to (CSV) file',
@@ -51,11 +55,18 @@ abstract class AbstractCommand extends Command {
     return execute();
   }
 
-  Future<void> _loadScanResults() async => await Future.wait([
-        _loadTypedResults(option_reference, ScannerType.reference),
-        _loadTypedResults(option_white_source, ScannerType.white_source),
-        _loadTypedResults(option_black_duck, ScannerType.black_duck),
-      ]);
+  Future<void> _loadScanResults() async {
+    final spdxMapping = argResults[option_spdx_mapping];
+    if (spdxMapping != null) {
+      await service.loadSpdxMapping(File(spdxMapping));
+    }
+
+    await Future.wait([
+      _loadTypedResults(option_reference, ScannerType.reference),
+      _loadTypedResults(option_white_source, ScannerType.white_source),
+      _loadTypedResults(option_black_duck, ScannerType.black_duck),
+    ]);
+  }
 
   Future<void> _loadTypedResults(String option, ScannerType type) =>
       Future.forEach(argResults[option],

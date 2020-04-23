@@ -17,6 +17,11 @@ class BomInteractor implements BomService {
   BomInteractor(this.results, this.reports);
 
   @override
+  Future<void> loadSpdxMapping(File file) {
+    return results.loadMapping(file);
+  }
+
+  @override
   Future<void> loadResult(ScannerType type, File file) async {
     _scans.add(await results.load(type, file));
   }

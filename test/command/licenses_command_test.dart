@@ -37,6 +37,20 @@ void main() {
       verify(service.compareLicenses());
     });
 
+    test('loads SPDX mapping file', () async {
+      when(service.compareLicenses())
+          .thenAnswer((_) => Future.value(LicenseResult(0, 0)));
+
+      await runner.run([
+        LicensesCommand.command,
+        '--${AbstractCommand.option_spdx_mapping}',
+        filename
+      ]);
+
+      verify(service.loadSpdxMapping(
+          argThat(predicate<File>((File f) => f.path == filename))));
+    });
+
     test('outputs licenses CSV to provided file name', () async {
       const csvFile = 'file.csv';
       when(service.compareLicenses(licensesFile: anyNamed('licensesFile')))

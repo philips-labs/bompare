@@ -15,7 +15,10 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   static const field_group_id = 'groupId';
   static const field_type = 'type';
 
+  final Map<String, String> licenseMapping;
   final assumed = <ItemId>{};
+
+  WhiteSourceInventoryResultParser(this.licenseMapping);
 
   @override
   Future<ScanResult> parse(File file) {
@@ -80,7 +83,8 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   void _decodeLicenses(ItemId itemId, dynamic obj) {
     final licenses = obj['licenses'] as Iterable ?? [];
     licenses.forEach((lic) {
-      final license = lic['name'];
+      final name = lic['name'];
+      final license = licenseMapping[name] ?? '"$name"';
       itemId.addLicense(license);
     });
   }

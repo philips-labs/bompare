@@ -62,11 +62,11 @@
       "groupId": "wrong-answer",
       "licenses": [
         {
-          "name": "l1",
+          "name": "key",
           "references": []
         },
         {
-          "name": "l2",
+          "name": "my_license",
           "references": []
         }
       ]

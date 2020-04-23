@@ -13,13 +13,12 @@ import 'package:bompare/service/business_exception.dart';
 import 'package:bompare/service/domain/bom_interactor.dart';
 
 void main(List<String> arguments) async {
-  final loader = ScanResultLoader(
-    {
-      ScannerType.reference: ReferenceResultParser(),
-      ScannerType.white_source: WhiteSourceInventoryResultParser(),
-      ScannerType.black_duck: BlackDuckResultParser(),
-    },
-  );
+  final spdxMapping = <String, String>{};
+  final loader = ScanResultLoader({
+    ScannerType.reference: ReferenceResultParser(),
+    ScannerType.white_source: WhiteSourceInventoryResultParser(spdxMapping),
+    ScannerType.black_duck: BlackDuckResultParser(),
+  }, spdxMapping);
   final reporter = ReportWriter();
   final service = BomInteractor(loader, reporter);
 

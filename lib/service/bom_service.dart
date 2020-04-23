@@ -2,6 +2,9 @@ import 'dart:io';
 
 /// Bill-of-material service layer interface.
 abstract class BomService {
+  /// Loads a license mapping for normalization of license names to SPDX.
+  Future<void> loadSpdxMapping(File file);
+
   /// Loads a scanner result of [type] from [file].
   Future<void> loadResult(ScannerType type, File file);
 
