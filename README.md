@@ -2,14 +2,17 @@
 
 ## Usage
 The `bompare` tool can be used to compare the generated bill-of-materials
-outputs to identify differences.
+and license outputs to identify differences.
 
 It currently supports:
 
-- [x] (Internal) reference format
+- [x] (Internal) reference format (BOM only)
 - [x] WhiteSource inventory JSON export format
 - [x] BlackDuck report export ZIP and directory format
 - [ ] Tern format
+
+It automatically transforms Black Duck license names to SPDX identifiers, and
+allows the use of an external CSV file to do the same to WhiteSource license names.
 
 The executable is a multi-platform command line executable with built-in usage help.
 It should compile and run on OSX/Linux/Windows, but has been developed on OSX.

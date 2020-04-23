@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:bompare/persistence/persistence_exception.dart';
-import 'package:bompare/persistence/result_parser.dart';
-import 'package:bompare/service/domain/item_id.dart';
-import 'package:bompare/service/domain/scan_result.dart';
 import 'package:path/path.dart' as path;
+
+import '../../service/domain/item_id.dart';
+import '../../service/domain/scan_result.dart';
+import '../persistence_exception.dart';
+import '../result_parser.dart';
 
 /// Decoder for files in WhiteSource "inventory" file format.
 class WhiteSourceInventoryResultParser implements ResultParser {
@@ -14,7 +15,10 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   static const field_group_id = 'groupId';
   static const field_type = 'type';
 
+  final Map<String, String> licenseMapping;
   final assumed = <ItemId>{};
+
+  WhiteSourceInventoryResultParser(this.licenseMapping);
 
   @override
   Future<ScanResult> parse(File file) {
@@ -29,13 +33,20 @@ class WhiteSourceInventoryResultParser implements ResultParser {
 
       final map = jsonDecode(str) as Map<String, dynamic>;
       (map['libraries'] as Iterable)
-          .map(_decodeItemId)
-          .forEach((id) => result.addItem(id));
+          .map(_decodeItem)
+          .forEach((itemId) => result.addItem(itemId));
 
       return Future.value(result);
     } on FormatException catch (e) {
       return Future.error(PersistenceException(file, 'Unexpected format: $e'));
     }
+  }
+
+  ItemId _decodeItem(dynamic obj) {
+    final itemId = _decodeItemId(obj);
+
+    _decodeLicenses(itemId, obj);
+    return itemId;
   }
 
   ItemId _decodeItemId(dynamic obj) {
@@ -57,7 +68,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
       default:
         final id = ItemId(obj[field_group_id], obj[field_version]);
         if (!assumed.contains(id)) {
-          stderr.writeln('Warning: Assumed $id for WhiteSource type "$type"');
+          print('Warning: Assumed $id for WhiteSource type "$type"');
           assumed.add(id);
         }
         return id;
@@ -68,4 +79,13 @@ class WhiteSourceInventoryResultParser implements ResultParser {
       (version.isEmpty || !name.contains(version))
           ? name
           : name.substring(0, name.indexOf('$version') - 1);
+
+  void _decodeLicenses(ItemId itemId, dynamic obj) {
+    final licenses = obj['licenses'] as Iterable ?? [];
+    licenses.forEach((lic) {
+      final name = lic['name'] as String;
+      final license = licenseMapping[name.toLowerCase()] ?? '"$name"';
+      itemId.addLicense(license);
+    });
+  }
 }

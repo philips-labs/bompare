@@ -50,6 +50,26 @@
       "name": "no_version",
       "artifactId": "package",
       "groupId": "wrong-answer"
+    },
+    {
+      "keyUuid": "License import",
+      "type": "Java",
+      "directDependency": false,
+      "matchType": "Filename Match",
+      "name": "licenses",
+      "artifactId": "package",
+      "version": "v",
+      "groupId": "wrong-answer",
+      "licenses": [
+        {
+          "name": "KEY",
+          "references": []
+        },
+        {
+          "name": "my_license",
+          "references": []
+        }
+      ]
     }
   ]
 }

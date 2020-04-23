@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:bompare/service/domain/scan_result.dart';
+import '../service/domain/scan_result.dart';
 
 /// API for scan result parsers.
 abstract class ResultParser {

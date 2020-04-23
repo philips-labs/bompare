@@ -33,10 +33,24 @@ void main() {
       expect(result.items, contains(ItemId('package:java', 'v2')));
     });
 
+    test('parses licenses from directory with SPDX abbreviation', () async {
+      final result = await parser.parse(directory);
+
+      final itemId = result.items.lookup(ItemId('license', 'v1'));
+      expect(itemId.licenses, containsAll(['MIT', '"my "own" license"']));
+    });
+
     test('parses packages from ZIP file', () async {
       final result = await parser.parse(zipFile);
 
       expect(result.items, contains(ItemId('package/js', 'v1')));
+    });
+
+    test('parses licenses from ZIP file', () async {
+      final result = await parser.parse(zipFile);
+
+      final itemId = result.items.lookup(ItemId('license', 'v1'));
+      expect(itemId.licenses, contains('MIT'));
     });
   });
 }

@@ -1,13 +1,18 @@
 import 'dart:io';
 
-import 'package:bompare/persistence/report/csv_result_writer.dart';
-import 'package:bompare/service/domain/item_id.dart';
-import 'package:bompare/service/domain/scan_result.dart';
-import 'package:bompare/service/report_persistence.dart';
+import '../service/domain/item_id.dart';
+import '../service/domain/scan_result.dart';
+import '../service/report_persistence.dart';
+import 'report/csv_result_writer.dart';
 
 class ReportWriter implements ReportPersistence {
   @override
   Future<void> writeBomComparison(
-          File file, Iterable<ItemId> ids, List<ScanResult> scans) =>
+          File file, Iterable<ItemId> ids, Iterable<ScanResult> scans) =>
       CsvResultWriter(file, scans).writeBomComparison(ids);
+
+  @override
+  Future<void> writeLicenseComparison(
+          File file, Iterable<ItemId> ids, Iterable<ScanResult> scans) =>
+      CsvResultWriter(file, scans).writeLicensesComparison(ids);
 }
