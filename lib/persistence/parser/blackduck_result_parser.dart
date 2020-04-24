@@ -168,11 +168,17 @@ class _BlackDuckSourceCsvParser extends CsvParser {
   void dataRow(List<String> columns) {
     final type = columns[_originIndex];
     switch (type) {
+      case 'unknown':
+        break;
       case 'maven':
+      case 'github':
         result.addItem(_itemIdFromColumns(columns, ':'));
         break;
       case 'npmjs':
         result.addItem(_itemIdFromColumns(columns, '/'));
+        break;
+      case 'long_tail':
+        result.addItem(_itemIdFromColumns(columns, '#'));
         break;
       default:
         final id = _itemIdFromColumns(columns, '/');
@@ -198,6 +204,13 @@ class _BlackDuckSourceCsvParser extends CsvParser {
     return itemId;
   }
 
-  String _stripLastPart(String name, Pattern pattern) =>
-      name.substring(0, name.lastIndexOf(pattern));
+  String _stripLastPart(String name, Pattern pattern) {
+    final index = name.lastIndexOf(pattern);
+    if (index < 0) {
+      print('Warning: Could not strip version from Black Duck dependency $name '
+          'at last "$pattern"');
+      return name;
+    }
+    return name.substring(0, index);
+  }
 }

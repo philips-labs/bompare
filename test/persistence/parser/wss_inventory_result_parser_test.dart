@@ -32,7 +32,7 @@ void main() {
     test('parses Java items from file', () async {
       final result = await parser.parse(inventoryFile);
 
-      expect(result.items, contains(ItemId('java_package', '2.0')));
+      expect(result.items, contains(ItemId('group:java_package', '2.0')));
     });
 
     test('handles missing version field', () async {

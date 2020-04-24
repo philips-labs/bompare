@@ -22,9 +22,9 @@
       "directDependency": false,
       "matchType": "Filename Match",
       "name": "java_package-2.0.tgz",
-      "artifactId": "java_package-2.0.tgz",
+      "artifactId": "java_package",
       "version": "2.0",
-      "groupId": "wrong-answer",
+      "groupId": "group",
       "licenses": [
         {
           "name": "Apache 2.0",
@@ -34,32 +34,32 @@
     },
     {
       "keyUuid": "Empty version",
-      "type": "Java",
+      "type": "JavaScript",
       "directDependency": false,
       "matchType": "Filename Match",
-      "name": "empty_version",
-      "artifactId": "package",
+      "name": "wrong-answer",
+      "artifactId": "wrong-answer",
       "version": "",
-      "groupId": "wrong-answer"
+      "groupId": "empty_version"
     },
     {
       "keyUuid": "No version",
-      "type": "Java",
+      "type": "JavaScript",
       "directDependency": false,
       "matchType": "Filename Match",
-      "name": "no_version",
-      "artifactId": "package",
-      "groupId": "wrong-answer"
+      "name": "wrong-answer",
+      "artifactId": "wrong-answer",
+      "groupId": "no_version"
     },
     {
       "keyUuid": "License import",
-      "type": "Java",
+      "type": "JavaScript",
       "directDependency": false,
       "matchType": "Filename Match",
-      "name": "licenses",
-      "artifactId": "package",
+      "name": "wrong-answer",
+      "artifactId": "wrong-answer",
       "version": "v",
-      "groupId": "wrong-answer",
+      "groupId": "licenses",
       "licenses": [
         {
           "name": "KEY",

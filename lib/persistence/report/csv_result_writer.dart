@@ -11,7 +11,7 @@ class CsvResultWriter {
   static StreamTransformer<List<String>, String> csvTransformer =
       StreamTransformer.fromHandlers(handleData: (line, sink) {
     sink.add(line
-        .map((str) => str.replaceAll('"', r'\"'))
+        .map((str) => str?.replaceAll('"', r'\"') ?? '')
         .map((str) => '"$str"')
         .join(','));
     sink.add('\r\n');

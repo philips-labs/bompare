@@ -13,6 +13,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   static const field_name = 'name';
   static const field_version = 'version';
   static const field_group_id = 'groupId';
+  static const field_artifact_id = 'artifactId';
   static const field_type = 'type';
 
   final Map<String, String> licenseMapping;
@@ -51,22 +52,24 @@ class WhiteSourceInventoryResultParser implements ResultParser {
 
   ItemId _decodeItemId(dynamic obj) {
     final type = obj[field_type];
+    final version = obj[field_version] ?? '';
+    final name = obj[field_name] as String;
+    final group = obj[field_group_id] as String;
 
     switch (type) {
       case 'Java':
-        final version = obj[field_version] ?? '';
-        final name = obj[field_name] as String;
-        final package = _packageFromName(name, version);
-        return ItemId(package, version);
+        final artifact = obj[field_artifact_id] as String;
+        return ItemId('$group:$artifact', version);
       case 'javascript/Node.js':
       case 'JavaScript':
-        return ItemId(obj[field_group_id], obj[field_version]);
+        return ItemId(group, version);
       case 'ActionScript':
+      case 'Alpine':
       case 'Source Library':
       case 'Unknown Library':
-        return ItemId(obj[field_name], obj[field_version]);
+        return ItemId(name, version);
       default:
-        final id = ItemId(obj[field_group_id], obj[field_version]);
+        final id = ItemId(group, version);
         if (!assumed.contains(id)) {
           print('Warning: Assumed $id for WhiteSource type "$type"');
           assumed.add(id);
@@ -74,11 +77,6 @@ class WhiteSourceInventoryResultParser implements ResultParser {
         return id;
     }
   }
-
-  String _packageFromName(String name, String version) =>
-      (version.isEmpty || !name.contains(version))
-          ? name
-          : name.substring(0, name.indexOf('$version') - 1);
 
   void _decodeLicenses(ItemId itemId, dynamic obj) {
     final licenses = obj['licenses'] as Iterable ?? [];
