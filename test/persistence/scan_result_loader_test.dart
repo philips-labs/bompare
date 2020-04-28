@@ -4,6 +4,8 @@ import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/result_parser.dart';
 import 'package:bompare/persistence/scan_result_loader.dart';
 import 'package:bompare/service/bom_service.dart';
+import 'package:bompare/service/business_exception.dart';
+import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:bompare/service/result_persistence.dart';
 import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as path;
@@ -17,29 +19,22 @@ void main() {
     final mappingFile = File(path.join(testDirectory, 'mapping.csv'));
     final file = File('some_file.json');
 
-    Map<String, String> spdxMapping;
+    SpdxMapper spdxMapping;
     ResultPersistence persistence;
     ResultParser parser;
 
     setUp(() {
       parser = ResultParserMock();
-      spdxMapping = <String, String>{};
+      spdxMapping = SpdxMapper();
       persistence =
           ScanResultLoader({ScannerType.white_source: parser}, spdxMapping);
     });
 
     group('SPDX mapping', () {
-      test('primes SPDX mapping with 1:1 identifiers', () {
-        expect(spdxMapping, isNotEmpty);
-        final key = spdxMapping.keys.first;
-        expect(key, equals(spdxMapping[key]));
-      });
-
       test('adds SPDX mapping', () async {
         await persistence.loadMapping(mappingFile);
 
-        expect(spdxMapping.length, greaterThan(5));
-        expect(spdxMapping, containsPair('key', 'Beerware'));
+        expect(spdxMapping['key'], equals('Beerware'));
       });
 
       test('throws for invalid SPDX tags', () {
@@ -47,7 +42,7 @@ void main() {
 
         expect(
             persistence.loadMapping(loremFile),
-            throwsA(predicate<PersistenceException>(
+            throwsA(predicate<BusinessException>(
                 (e) => e.toString().contains('SPDX'))));
       });
     });

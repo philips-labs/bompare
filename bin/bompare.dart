@@ -12,14 +12,15 @@ import 'package:bompare/persistence/scan_result_loader.dart';
 import 'package:bompare/service/bom_service.dart';
 import 'package:bompare/service/business_exception.dart';
 import 'package:bompare/service/domain/bom_interactor.dart';
+import 'package:bompare/service/domain/spdx_mapper.dart';
 
 void main(List<String> arguments) async {
-  final spdxMapping = <String, String>{};
+  final spdxMapping = SpdxMapper();
   final loader = ScanResultLoader({
     ScannerType.reference: ReferenceResultParser(),
     ScannerType.jk1: Jk1ResultParser(spdxMapping),
     ScannerType.white_source: WhiteSourceInventoryResultParser(spdxMapping),
-    ScannerType.black_duck: BlackDuckResultParser(),
+    ScannerType.black_duck: BlackDuckResultParser(spdxMapping),
   }, spdxMapping);
   final reporter = ReportWriter();
   final service = BomInteractor(loader, reporter);

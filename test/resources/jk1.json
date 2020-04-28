@@ -11,7 +11,7 @@
       "moduleName": "component_2",
       "moduleUrl": "http://example.com",
       "moduleVersion": "v_2",
-      "moduleLicense": "KEY",
+      "moduleLicense": "MIT",
       "moduleLicenseUrl": "http://example.com/LICENSE"
     }
   ]

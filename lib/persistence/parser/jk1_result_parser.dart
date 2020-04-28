@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:path/path.dart' as path;
 
 import '../../service/domain/item_id.dart';
@@ -16,7 +17,7 @@ class Jk1ResultParser implements ResultParser {
   static const field_module_license = 'moduleLicense';
 
   /// License mapping from name to identifier.
-  final Map<String, String> mapper;
+  final SpdxMapper mapper;
 
   Jk1ResultParser(this.mapper);
 
@@ -33,7 +34,7 @@ class Jk1ResultParser implements ResultParser {
       (jsonDecode(str)['dependencies'] as Iterable)
           .map((obj) =>
               ItemId(obj[field_module_name], obj[field_module_version])
-                ..addLicense(_toLicense(obj[field_module_license])))
+                ..addLicense(mapper[obj[field_module_license]]))
           .forEach((id) => result.addItem(id));
 
       return Future.value(result);
@@ -41,6 +42,4 @@ class Jk1ResultParser implements ResultParser {
       return Future.error(PersistenceException(file, 'Unexpected format'));
     }
   }
-
-  String _toLicense(String name) => mapper[name.toLowerCase()] ?? '"$name"';
 }

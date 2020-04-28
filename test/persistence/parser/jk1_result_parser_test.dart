@@ -3,20 +3,19 @@ import 'dart:io';
 import 'package:bompare/persistence/parser/jk1_result_parser.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
   group('$Jk1ResultParser', () {
-    const license = 'License';
     final resourcePath = path.join('test', 'resources');
     final jk1File = File(path.join(resourcePath, 'jk1.json'));
     final lorumFile = File(path.join(resourcePath, 'testfile.txt'));
     final itemId1 = ItemId('component_1', 'v_1');
     final itemId2 = ItemId('component_2', 'v_2');
 
-    final mapper = {'key': license};
-    final parser = Jk1ResultParser(mapper);
+    final parser = Jk1ResultParser(SpdxMapper());
 
     test('parses from file', () async {
       final result = await parser.parse(jk1File);
@@ -28,7 +27,7 @@ void main() {
       final result = await parser.parse(jk1File);
 
       expect(result.items.lookup(itemId1).licenses, contains('"my_license"'));
-      expect(result.items.lookup(itemId2).licenses, contains(license));
+      expect(result.items.lookup(itemId2).licenses, contains('MIT'));
     });
 
     test('throws when file does not exist', () {

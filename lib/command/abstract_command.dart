@@ -23,8 +23,7 @@ abstract class AbstractCommand extends Command {
           help: 'Scan result in "reference" (JSON) format',
           valueHelp: 'filename')
       ..addMultiOption(option_jk1,
-          help: 'Scan result in JK1 (JSON) format',
-          valueHelp: 'filename')
+          help: 'Scan result in JK1 (JSON) format', valueHelp: 'filename')
       ..addMultiOption(option_white_source,
           abbr: 'w',
           help: 'Scan result in WhiteSource "inventory" (JSON) format',

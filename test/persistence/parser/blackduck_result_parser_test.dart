@@ -4,6 +4,7 @@ import 'package:bompare/persistence/parser/blackduck_result_parser.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/result_parser.dart';
 import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
@@ -12,7 +13,7 @@ void main() {
     final resources = path.join('test', 'resources');
     final directory = File(path.join(resources, 'blackduck'));
     final zipFile = File(path.join(resources, 'blackduck.zip'));
-    final ResultParser parser = BlackDuckResultParser();
+    final ResultParser parser = BlackDuckResultParser(SpdxMapper());
 
     test('throws for missing file', () {
       expect(

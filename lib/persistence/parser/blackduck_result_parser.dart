@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:archive/archive.dart';
+import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:path/path.dart' as path;
 
 import '../../service/domain/item_id.dart';
@@ -9,11 +10,14 @@ import '../../service/domain/scan_result.dart';
 import '../persistence_exception.dart';
 import '../result_parser.dart';
 import 'csv_parser.dart';
-import 'spdx_licenses.dart' as spdx;
 
 class BlackDuckResultParser implements ResultParser {
   static const source_file_prefix = 'source_';
   static const components_file_prefix = 'components_';
+
+  final SpdxMapper mapper;
+
+  BlackDuckResultParser(this.mapper);
 
   @override
   Future<ScanResult> parse(File file) async {
@@ -84,7 +88,8 @@ class BlackDuckResultParser implements ResultParser {
 
   Future<void> _parseLicenseStream(
           Stream<List<int>> stream, _LicenseDictionary dictionary) =>
-      _BlackDuckComponentsCsvParser(dictionary).parse(_toLineStream(stream));
+      _BlackDuckComponentsCsvParser(dictionary, mapper)
+          .parse(_toLineStream(stream));
 
   Future<void> _parseSourceStream(Stream<List<int>> stream, ScanResult result,
           _LicenseDictionary licenses) =>
@@ -114,12 +119,13 @@ class _BlackDuckComponentsCsvParser extends CsvParser {
 
   /// Note: Keys are Black Duck *components*.
   final _LicenseDictionary _dictionary;
+  final SpdxMapper mapper;
 
   var _componentNameIndex = -1;
   var _componentVersionIndex = -1;
   var _licensesIndex = -1;
 
-  _BlackDuckComponentsCsvParser(this._dictionary);
+  _BlackDuckComponentsCsvParser(this._dictionary, this.mapper);
 
   @override
   void headerRow(List<String> columns) {
@@ -136,7 +142,7 @@ class _BlackDuckComponentsCsvParser extends CsvParser {
     columns[_licensesIndex]
         .replaceAll(_enclosingBraces, '')
         .split(_andOrSeparator)
-        .map((l) => spdx.dictionary[l.toLowerCase()] ?? '"$l"')
+        .map((l) => mapper[l])
         .forEach((l) => _dictionary.addLicense(id, l));
   }
 }

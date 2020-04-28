@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:path/path.dart' as path;
 
 import '../../service/domain/item_id.dart';
@@ -16,10 +17,10 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   static const field_artifact_id = 'artifactId';
   static const field_type = 'type';
 
-  final Map<String, String> licenseMapping;
+  final SpdxMapper mapper;
   final assumed = <ItemId>{};
 
-  WhiteSourceInventoryResultParser(this.licenseMapping);
+  WhiteSourceInventoryResultParser(this.mapper);
 
   @override
   Future<ScanResult> parse(File file) {
@@ -82,8 +83,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
     final licenses = obj['licenses'] as Iterable ?? [];
     licenses.forEach((lic) {
       final name = lic['name'] as String;
-      final license = licenseMapping[name.toLowerCase()] ?? '"$name"';
-      itemId.addLicense(license);
+      itemId.addLicense(mapper[name]);
     });
   }
 }

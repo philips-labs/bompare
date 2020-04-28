@@ -4,23 +4,22 @@ import 'package:bompare/persistence/parser/wss_inventory_result_parser.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/result_parser.dart';
 import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
 void main() {
   group('$WhiteSourceInventoryResultParser', () {
-    const mapped_license = 'mapped_license';
-
     final resourcePath = path.join('test', 'resources');
     final inventoryFile = File(path.join(resourcePath, 'wss_inventory.json'));
     final lorumFile = File(path.join(resourcePath, 'testfile.txt'));
 
-    final licenseMapping = <String, String>{};
-    final ResultParser parser =
-        WhiteSourceInventoryResultParser(licenseMapping);
+    final mapper = SpdxMapper();
+    final ResultParser parser = WhiteSourceInventoryResultParser(mapper);
 
     setUpAll(() {
-      licenseMapping['key'] = mapped_license;
+      mapper['Apache 2.0'] = 'Apache-2.0';
+      mapper['key'] = mapper['MIT'];
     });
 
     test('parses JavaScript items from file', () async {
@@ -51,7 +50,7 @@ void main() {
       final result = await parser.parse(inventoryFile);
 
       final id = result.items.lookup(ItemId('licenses', 'v'));
-      expect(id.licenses, containsAll([mapped_license, '"my_license"']));
+      expect(id.licenses, containsAll(['MIT', '"my_license"']));
     });
 
     test('throws when file does not exist', () {
