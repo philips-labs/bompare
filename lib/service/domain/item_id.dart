@@ -6,8 +6,8 @@ class ItemId implements Comparable<ItemId> {
 
   ItemId(this.package, this.version);
 
-  void addLicense(String license) {
-    licenses.add(license);
+  void addLicenses(Iterable<String> values) {
+    licenses.addAll(values);
   }
 
   @override

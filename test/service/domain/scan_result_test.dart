@@ -17,8 +17,7 @@ void main() {
 
       result.addItem(id);
 
-      expect(result.items, isA<Set<ItemId>>());
-      expect(result.items, contains(id));
+      expect(result.items, equals({id}));
     });
   });
 }

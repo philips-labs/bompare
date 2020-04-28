@@ -103,9 +103,9 @@ class BlackDuckResultParser implements ResultParser {
 class _LicenseDictionary {
   final _dict = <ItemId, Set<String>>{};
 
-  void addLicense(ItemId id, String license) {
+  void addLicenses(ItemId id, Iterable<String> values) {
     final licenses = _dict[id] ?? <String>{};
-    licenses.add(license);
+    licenses.addAll(values);
     _dict[id] = licenses;
   }
 
@@ -114,9 +114,6 @@ class _LicenseDictionary {
 
 /// Extracts license info per component from the Black Duck components CSV file.
 class _BlackDuckComponentsCsvParser extends CsvParser {
-  static final _andOrSeparator = RegExp(r'\s((OR)|(AND))\s');
-  static final _enclosingBraces = RegExp(r'(^\()|(\)$)');
-
   /// Note: Keys are Black Duck *components*.
   final _LicenseDictionary _dictionary;
   final SpdxMapper mapper;
@@ -139,11 +136,8 @@ class _BlackDuckComponentsCsvParser extends CsvParser {
     final component = columns[_componentNameIndex];
     final version = columns[_componentVersionIndex];
     final id = ItemId(component, version);
-    columns[_licensesIndex]
-        .replaceAll(_enclosingBraces, '')
-        .split(_andOrSeparator)
-        .map((l) => mapper[l])
-        .forEach((l) => _dictionary.addLicense(id, l));
+    final license = columns[_licensesIndex];
+    _dictionary.addLicenses(id, mapper[license]);
   }
 }
 
@@ -204,8 +198,7 @@ class _BlackDuckSourceCsvParser extends CsvParser {
     final componentName = columns[_componentNameIndex];
     final componentVersion = columns[_componentVersionIndex];
     final component = ItemId(componentName, componentVersion);
-    final licenses = licenseDictionary[component] ?? {};
-    licenses.forEach((license) => itemId.addLicense(license));
+    itemId.addLicenses(licenseDictionary[component] ?? {});
 
     return itemId;
   }

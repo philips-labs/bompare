@@ -32,7 +32,7 @@ class _MappingCsvParser extends CsvParser {
   @override
   void dataRow(List<String> columns) {
     final license = (columns.length > 1) ? columns[1] : columns[0];
-    mapper[columns[0]] = license;
+    mapper[columns[0].trim()] = license.trim();
   }
 
   @override

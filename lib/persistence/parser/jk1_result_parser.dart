@@ -34,7 +34,7 @@ class Jk1ResultParser implements ResultParser {
       (jsonDecode(str)['dependencies'] as Iterable)
           .map((obj) =>
               ItemId(obj[field_module_name], obj[field_module_version])
-                ..addLicense(mapper[obj[field_module_license]]))
+                ..addLicenses(mapper[obj[field_module_license]]))
           .forEach((id) => result.addItem(id));
 
       return Future.value(result);

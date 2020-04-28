@@ -130,7 +130,7 @@ void main() {
 
       test('loads scan result from single scanner', () async {
         final result = ScanResult(name)
-          ..addItem(ItemId('with', '1')..addLicense(license))
+          ..addItem(ItemId('with', '1')..addLicenses([license]))
           ..addItem(ItemId('without', '1'));
         when(results.load(ScannerType.black_duck, file))
             .thenAnswer((_) => Future.value(result));
@@ -145,17 +145,17 @@ void main() {
       test('loads scan results from multiple scanners', () async {
         const common = 'common';
         final equalItem = ItemId('equal', '1')
-          ..addLicense(license)
-          ..addLicense(otherLicense);
+          ..addLicenses([license])
+          ..addLicenses([otherLicense]);
         final result1 = ScanResult('A')
           ..addItem(equalItem)
-          ..addItem(ItemId(common, common)..addLicense(license))
+          ..addItem(ItemId(common, common)..addLicenses([license]))
           ..addItem(ItemId('other', '666'));
         when(results.load(ScannerType.reference, file))
             .thenAnswer((_) => Future.value(result1));
         final result2 = ScanResult('B')
           ..addItem(equalItem)
-          ..addItem(ItemId(common, common)..addLicense(otherLicense));
+          ..addItem(ItemId(common, common)..addLicenses([otherLicense]));
         when(results.load(ScannerType.black_duck, file))
             .thenAnswer((_) => Future.value(result2));
 

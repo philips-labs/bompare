@@ -83,7 +83,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
     final licenses = obj['licenses'] as Iterable ?? [];
     licenses.forEach((lic) {
       final name = lic['name'] as String;
-      itemId.addLicense(mapper[name]);
+      itemId.addLicenses(mapper[name]);
     });
   }
 }

@@ -8,18 +8,18 @@ void main() {
     const license = 'license';
 
     test('createsInstance', () {
-      final id = ItemId(package, version)..addLicense(license);
+      final id = ItemId(package, version)..addLicenses([license]);
 
       expect(id.package, equals(package));
       expect(id.version, equals(version));
-      expect(id.licenses, containsAll([license]));
+      expect(id.licenses, equals({license}));
     });
 
     test('implements equality', () {
       final id = ItemId(package, version);
       final other1 = ItemId('other', version);
       final other2 = ItemId(package, 'other');
-      final equal = ItemId(package, version)..addLicense('ignored');
+      final equal = ItemId(package, version)..addLicenses(['ignored']);
 
       expect(id, equals(id));
       expect(id, equals(equal));

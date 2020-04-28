@@ -31,8 +31,8 @@ void main() {
 
       await parser.parse(file);
 
-      expect(mapper['key'], equals('Beerware'));
-      expect(mapper[aladdin], equals(aladdin));
+      expect(mapper['key'], equals({'Beerware'}));
+      expect(mapper['1001 NIGHTS'], equals({aladdin}));
     });
   });
 }

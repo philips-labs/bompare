@@ -404,4 +404,41 @@ final dictionary = <String, String>{
   'zope public license 1.1': 'ZPL-1.1',
   'zope public license 2.0': 'ZPL-2.0',
   'zope public license 2.1': 'ZPL-2.1',
+
+  // DEPRECATED licenses for SPDX
+  'GNU General Public License v3.0 w/GCC Runtime Library exception':
+      'GPL-3.0-with-GCC-exception',
+  'GNU General Public License v3.0 w/Autoconf exception':
+      'GPL-3.0-with-autoconf-exception',
+  'GNU General Public License v2.0 w/Font exception':
+      'GPL-2.0-with-font-exception',
+  'GNU General Public License v2.0 w/Autoconf exception':
+      'GPL-2.0-with-autoconf-exception',
+  'Nunit License': 'Nunit',
+  'GNU Library General Public License v2 or later': 'LGPL-2.0+',
+  'GNU Affero General Public License v3.0': 'AGPL-3.0',
+  'GNU General Public License v3.0 or later': 'GPL-3.0+',
+  'Affero General Public License v1.0': 'AGPL-1.0',
+  'GNU Lesser General Public License v2.1 only': 'LGPL-2.1',
+  'GNU Free Documentation License v1.2': 'GFDL-1.2',
+  'GNU General Public License v1.0 or later': 'GPL-1.0+',
+  'GNU Library General Public License v2.1 or later': 'LGPL-2.1+',
+  'GNU Lesser General Public License v3.0 only': 'LGPL-3.0',
+  'GNU General Public License v2.0 w/Classpath exception':
+      'GPL-2.0-with-classpath-exception',
+  'GNU Lesser General Public License v3.0 or later': 'LGPL-3.0+',
+  'wxWindows Library License': 'wxWindows',
+  'GNU Free Documentation License v1.1': 'GFDL-1.1',
+  'eCos license version 2.0': 'eCos-2.0',
+  'GNU Library General Public License v2 only': 'LGPL-2.0',
+  'Standard ML of New Jersey License': 'StandardML-NJ',
+  'GNU General Public License v1.0 only': 'GPL-1.0',
+  'GNU General Public License v2.0 w/GCC Runtime Library exception':
+      'GPL-2.0-with-GCC-exception',
+  'GNU General Public License v2.0 only': 'GPL-2.0',
+  'GNU Free Documentation License v1.3': 'GFDL-1.3',
+  'GNU General Public License v2.0 w/Bison exception':
+      'GPL-2.0-with-bison-exception',
+  'GNU General Public License v2.0 or later': 'GPL-2.0+',
+  'GNU General Public License v3.0 only': 'GPL-3.0'
 };

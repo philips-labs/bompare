@@ -38,7 +38,7 @@ void main() {
       final result = await parser.parse(directory);
 
       final itemId = result.items.lookup(ItemId('license', 'v1'));
-      expect(itemId.licenses, containsAll(['MIT', '"my "own" license"']));
+      expect(itemId.licenses, equals({'MIT'}));
     });
 
     test('parses packages from ZIP file', () async {
@@ -51,7 +51,7 @@ void main() {
       final result = await parser.parse(zipFile);
 
       final itemId = result.items.lookup(ItemId('license', 'v1'));
-      expect(itemId.licenses, contains('MIT'));
+      expect(itemId.licenses, equals({'MIT'}));
     });
   });
 }

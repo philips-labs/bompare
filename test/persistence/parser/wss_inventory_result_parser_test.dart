@@ -19,7 +19,7 @@ void main() {
 
     setUpAll(() {
       mapper['Apache 2.0'] = 'Apache-2.0';
-      mapper['key'] = mapper['MIT'];
+      mapper['key'] = 'MIT';
     });
 
     test('parses JavaScript items from file', () async {
@@ -50,7 +50,7 @@ void main() {
       final result = await parser.parse(inventoryFile);
 
       final id = result.items.lookup(ItemId('licenses', 'v'));
-      expect(id.licenses, containsAll(['MIT', '"my_license"']));
+      expect(id.licenses, equals({'MIT', '"my_license"'}));
     });
 
     test('throws when file does not exist', () {

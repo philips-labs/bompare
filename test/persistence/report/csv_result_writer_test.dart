@@ -45,7 +45,9 @@ void main() {
     });
 
     test('writes licenses file', () async {
-      final ids = {ItemId('p', 'v')..addLicense('lic1')..addLicense('lic2')};
+      final ids = {
+        ItemId('p', 'v')..addLicenses(['lic1', 'lic2'])
+      };
       final scans = [ScanResult('A')..addItem(ids.first), ScanResult('B')];
       final writer = CsvResultWriter(file, scans);
 

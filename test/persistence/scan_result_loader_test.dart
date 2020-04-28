@@ -34,7 +34,7 @@ void main() {
       test('adds SPDX mapping', () async {
         await persistence.loadMapping(mappingFile);
 
-        expect(spdxMapping['key'], equals('Beerware'));
+        expect(spdxMapping['key'], contains('Beerware'));
       });
 
       test('throws for invalid SPDX tags', () {
