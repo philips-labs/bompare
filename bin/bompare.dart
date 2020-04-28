@@ -4,6 +4,7 @@ import 'package:args/command_runner.dart';
 import 'package:bompare/command/bom_command.dart';
 import 'package:bompare/command/licenses_command.dart';
 import 'package:bompare/persistence/parser/blackduck_result_parser.dart';
+import 'package:bompare/persistence/parser/jk1_result_parser.dart';
 import 'package:bompare/persistence/parser/reference_result_parser.dart';
 import 'package:bompare/persistence/parser/wss_inventory_result_parser.dart';
 import 'package:bompare/persistence/report_writer.dart';
@@ -16,6 +17,7 @@ void main(List<String> arguments) async {
   final spdxMapping = <String, String>{};
   final loader = ScanResultLoader({
     ScannerType.reference: ReferenceResultParser(),
+    ScannerType.jk1: Jk1ResultParser(spdxMapping),
     ScannerType.white_source: WhiteSourceInventoryResultParser(spdxMapping),
     ScannerType.black_duck: BlackDuckResultParser(),
   }, spdxMapping);

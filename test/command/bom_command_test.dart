@@ -36,6 +36,20 @@ void main() {
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
+    test('loads JK1 result files', () async {
+      when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
+
+      await runner.run([
+        BomCommand.command,
+        '--${AbstractCommand.option_jk1}',
+        filename
+      ]);
+
+      verify(service.loadResult(ScannerType.jk1,
+          argThat(predicate<File>((File f) => f.path == filename))));
+      verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
+    });
+
     test('loads WhiteSource result files', () async {
       when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
 
