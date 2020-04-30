@@ -18,7 +18,7 @@ abstract class BomService {
       {File licensesFile, bool diffOnly = false});
 }
 
-enum ScannerType { reference, jk1, black_duck, white_source }
+enum ScannerType { reference, jk1, tern, black_duck, white_source }
 
 /// Return value for bill-or-materials comparison.
 class BomResult {

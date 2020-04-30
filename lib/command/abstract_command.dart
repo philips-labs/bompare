@@ -8,6 +8,7 @@ import '../service/bom_service.dart';
 abstract class AbstractCommand extends Command {
   static const option_reference = 'reference';
   static const option_jk1 = 'jk1';
+  static const option_tern = 'tern';
   static const option_white_source = 'whitesource';
   static const option_black_duck = 'blackduck';
   static const option_output = 'out';
@@ -24,6 +25,8 @@ abstract class AbstractCommand extends Command {
           valueHelp: 'filename')
       ..addMultiOption(option_jk1,
           help: 'Scan result in JK1 (JSON) format', valueHelp: 'filename')
+      ..addMultiOption(option_tern,
+          help: 'Scan result in Tern (JSON) format', valueHelp: 'filename')
       ..addMultiOption(option_white_source,
           abbr: 'w',
           help: 'Scan result in WhiteSource "inventory" (JSON) format',
@@ -67,6 +70,7 @@ abstract class AbstractCommand extends Command {
     await Future.wait([
       _loadTypedResults(option_reference, ScannerType.reference),
       _loadTypedResults(option_jk1, ScannerType.jk1),
+      _loadTypedResults(option_tern, ScannerType.tern),
       _loadTypedResults(option_white_source, ScannerType.white_source),
       _loadTypedResults(option_black_duck, ScannerType.black_duck),
     ]);
