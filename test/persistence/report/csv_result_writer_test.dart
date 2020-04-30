@@ -46,7 +46,7 @@ void main() {
 
     test('writes licenses file', () async {
       final ids = {
-        ItemId('p', 'v')..addLicenses(['lic1', 'lic2'])
+        ItemId('p', 'v')..addLicenses(['lic1', '""'])
       };
       final scans = [ScanResult('A')..addItem(ids.first), ScanResult('B')];
       final writer = CsvResultWriter(file, scans);
@@ -57,7 +57,7 @@ void main() {
       expect(
           csv,
           equals('"package","version","A","B"\r\n'
-              '"p","v","lic1 OR lic2",""\r\n'));
+              '"p","v","lic1 OR """"",""\r\n'));
     });
   });
 }
