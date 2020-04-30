@@ -7,12 +7,18 @@ void main() {
     const version = 'version';
     const license = 'license';
 
-    test('createsInstance', () {
+    test('creates instance', () {
       final id = ItemId(package, version)..addLicenses([license]);
 
       expect(id.package, equals(package));
       expect(id.version, equals(version));
       expect(id.licenses, equals({license}));
+    });
+
+    test('creates instance with null version', () {
+      final id = ItemId(package, null);
+
+      expect(id.version, isEmpty);
     });
 
     test('implements equality', () {

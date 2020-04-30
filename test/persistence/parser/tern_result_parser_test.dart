@@ -15,7 +15,7 @@ void main() {
     final itemId1 = ItemId('image1_layer1_package1', 'v_1');
     final itemId2 = ItemId('image1_layer1_package2', 'v_2');
     final itemId3 = ItemId('image1_layer2_package', 'v_3');
-    final itemId4 = ItemId('image2_layer_package', 'v_4');
+    final itemId4 = ItemId('image2_layer_package', '');
 
     final parser = TernResultParser(SpdxMapper());
 

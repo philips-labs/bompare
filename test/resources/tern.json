@@ -7,7 +7,7 @@
             "packages": [
               {
                 "name": "image1_layer1_package1",
-                "version": "image1_layer1_package1-v_1",
+                "version": "v_1",
                 "pkg_license": "my_license"
               },
               {
@@ -21,7 +21,7 @@
             "packages": [
               {
                 "name": "image1_layer2_package",
-                "version": "image1_layer2_package-v_3",
+                "version": "v_3",
                 "pkg_license": "Apache-2.0"
               }
             ]
@@ -35,8 +35,7 @@
           {
             "packages": [
               {
-                "name": "image2_layer_package",
-                "version": "image2_layer_package-v_4"
+                "name": "image2_layer_package"
               }
             ]
           }

@@ -4,7 +4,7 @@ class ItemId implements Comparable<ItemId> {
   final String version;
   final licenses = <String>{};
 
-  ItemId(this.package, this.version);
+  ItemId(this.package, version) : version = version ?? '';
 
   void addLicenses(Iterable<String> values) {
     licenses.addAll(values);

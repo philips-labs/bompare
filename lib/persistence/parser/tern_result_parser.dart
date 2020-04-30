@@ -37,9 +37,11 @@ class TernResultParser implements ResultParser {
         layers.forEach((layer) {
           final packages = layer['packages'] as Iterable;
           packages.forEach((package) {
-            final name = package[field_name];
+            final name = package[field_name] as String;
             final string = package[field_version] as String;
-            final version = string.substring(name.length + 1);
+            final version = string?.startsWith(name) ?? false
+                ? string.substring(name.length + 1)
+                : string;
             final licenses = mapper[package[field_license]];
             final itemId = ItemId(name, version)..addLicenses(licenses);
             result.addItem(itemId);
