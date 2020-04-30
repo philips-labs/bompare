@@ -39,7 +39,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
           .forEach((itemId) => result.addItem(itemId));
 
       return Future.value(result);
-    } on FormatException catch (e) {
+    } on Exception catch (e) {
       return Future.error(PersistenceException(file, 'Unexpected format: $e'));
     }
   }

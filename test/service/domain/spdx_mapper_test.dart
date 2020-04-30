@@ -13,6 +13,10 @@ void main() {
       mapper = SpdxMapper();
     });
 
+    test('maps null to empty set', () {
+      expect(mapper[null], isEmpty);
+    });
+
     test('maps SPDX titles and identifiers case-insensitively', () {
       expect(mapper['MIT License'], equals({'MIT'}));
       expect(mapper[valid_license], equals({valid_license}));

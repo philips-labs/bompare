@@ -17,6 +17,8 @@ class SpdxMapper {
 
   /// Maps the [title] to one or more license identifiers.
   Set<String> operator [](String title) {
+    if (title == null) return {};
+
     final unbraced = title.replaceAll(_enclosingBraces, '');
 
     return _findOrNull(unbraced) ?? {'"$title"'};

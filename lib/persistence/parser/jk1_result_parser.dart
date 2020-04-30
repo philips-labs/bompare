@@ -38,8 +38,8 @@ class Jk1ResultParser implements ResultParser {
           .forEach((id) => result.addItem(id));
 
       return Future.value(result);
-    } on FormatException {
-      return Future.error(PersistenceException(file, 'Unexpected format'));
+    } on Exception catch (e) {
+      return Future.error(PersistenceException(file, 'Unexpected format: $e'));
     }
   }
 }
