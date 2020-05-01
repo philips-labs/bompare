@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:path/path.dart' as path;
 
 import '../../service/domain/item_id.dart';
 import '../../service/domain/scan_result.dart';
+import '../../service/domain/spdx_mapper.dart';
 import '../persistence_exception.dart';
 import '../result_parser.dart';
 
@@ -56,11 +56,12 @@ class WhiteSourceInventoryResultParser implements ResultParser {
     final version = obj[field_version] ?? '';
     final name = obj[field_name] as String;
     final group = obj[field_group_id] as String;
+    final artifact = obj[field_artifact_id] as String;
 
     switch (type) {
       case 'Java':
-        final artifact = obj[field_artifact_id] as String;
-        return ItemId('$group:$artifact', version);
+        final identifier = ((group != null) ? '$group:' : '') + artifact;
+        return ItemId(identifier, version);
       case 'javascript/Node.js':
       case 'JavaScript':
         return ItemId(group, version);
@@ -68,7 +69,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
       case 'Alpine':
       case 'Source Library':
       case 'Unknown Library':
-        return ItemId(name, version);
+        return ItemId(artifact ?? name, version);
       default:
         final id = ItemId(group, version);
         if (!assumed.contains(id)) {
