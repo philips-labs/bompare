@@ -22,6 +22,7 @@ It should compile and run on OSX/Linux/Windows, but has been developed on OSX.
 E.g.:
     - OSX (Mac) using brew: `brew tap dart-lang/dart` and then `brew install dart`
     - Windows using [Chocolatey](https://chocolatey.org): `choco install dart-sdk`
+    - With docker ` docker run -it --rm -v $(pwd):/work -w /work google/dart ./build.sh`
 2. Run `build.sh` to run all tests and build a native executable
 called `bompare`.
 

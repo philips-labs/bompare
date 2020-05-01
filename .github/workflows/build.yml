@@ -1,0 +1,22 @@
+name: Build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    container: google/dart:2.9-dev
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get dependencies
+        run: pub get
+      - name: Static analyse
+        run: dartanalyzer bin lib test
+      - name: Test
+        run: pub run test
+      - name: Build native runtime (linux)
+        run: dart2native bin/bompare.dart -o bompare
