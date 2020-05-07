@@ -14,6 +14,7 @@ It currently reads:
 - [x] [BlackDuck](https://www.synopsys.com/software-integrity/security-testing/software-composition-analysis.html) report export ZIP and directory format
 - [x] [JK1 Gradle license report](https://github.com/jk1/Gradle-License-Report) format
 - [x] [Tern](https://github.com/tern-tools/tern) format
+- [x] [Maven 3rd party license report](https://www.mojohaus.org/license-maven-plugin/add-third-party-mojo.html) format
 
 To allow license comparison, it automatically transforms official license titles 
 to SPDX identifiers, and allows customized translations using an external CSV file.

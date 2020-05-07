@@ -5,6 +5,7 @@ import 'package:bompare/command/bom_command.dart';
 import 'package:bompare/command/licenses_command.dart';
 import 'package:bompare/persistence/parser/blackduck_result_parser.dart';
 import 'package:bompare/persistence/parser/jk1_result_parser.dart';
+import 'package:bompare/persistence/parser/maven_result_parser.dart';
 import 'package:bompare/persistence/parser/reference_result_parser.dart';
 import 'package:bompare/persistence/parser/tern_result_parser.dart';
 import 'package:bompare/persistence/parser/wss_inventory_result_parser.dart';
@@ -20,6 +21,7 @@ void main(List<String> arguments) async {
   final loader = ScanResultLoader({
     ScannerType.reference: ReferenceResultParser(),
     ScannerType.jk1: Jk1ResultParser(spdxMapping),
+    ScannerType.maven: MavenResultParser(spdxMapping),
     ScannerType.tern: TernResultParser(spdxMapping),
     ScannerType.white_source: WhiteSourceInventoryResultParser(spdxMapping),
     ScannerType.black_duck: BlackDuckResultParser(spdxMapping),

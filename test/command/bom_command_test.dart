@@ -47,6 +47,17 @@ void main() {
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
+    test('loads Maven license result files', () async {
+      when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
+
+      await runner.run(
+          [BomCommand.command, '--${AbstractCommand.option_maven}', filename]);
+
+      verify(service.loadResult(ScannerType.maven,
+          argThat(predicate<File>((File f) => f.path == filename))));
+      verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
+    });
+
     test('loads Tern result files', () async {
       when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
 
