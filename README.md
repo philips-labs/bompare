@@ -23,7 +23,7 @@ The executable is a multi-platform command line executable with built-in usage h
 It should compile and run on OSX/Linux/Windows, but has been developed on OSX.
 
 ## Building the executable
-1. Install Dart 2.7 (or newer) SDK according to the [instructions](https://dart.dev/get-dart).
+1. Install Dart 2.8 (or newer) SDK according to the [instructions](https://dart.dev/get-dart).
 E.g.:
     - OSX (Mac) using brew: `brew tap dart-lang/dart` and then `brew install dart`
     - Windows using [Chocolatey](https://chocolatey.org): `choco install dart-sdk`
