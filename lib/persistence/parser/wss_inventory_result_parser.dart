@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math' as math;
 
 import 'package:path/path.dart' as path;
 
@@ -64,12 +65,18 @@ class WhiteSourceInventoryResultParser implements ResultParser {
         return ItemId(identifier, version);
       case 'javascript/Node.js':
       case 'JavaScript':
+      case 'Alpine':
         return ItemId(group, version);
       case 'ActionScript':
-      case 'Alpine':
       case 'Source Library':
       case 'Unknown Library':
         return ItemId(artifact ?? name, version);
+      case 'RPM':
+        final first = name.substring(0, name.lastIndexOf('-'));
+        final pos = first.lastIndexOf('-');
+        final v = first.substring(pos + 1);
+        return ItemId(first.substring(0, pos),
+            v.substring(math.max(v.indexOf(':') + 1, 0)));
       default:
         final id = ItemId(group, version);
         if (!assumed.contains(id)) {
