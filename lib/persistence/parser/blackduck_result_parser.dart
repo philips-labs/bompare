@@ -177,13 +177,34 @@ class _BlackDuckSourceCsvParser extends CsvParser {
       case 'npmjs':
         result.addItem(_itemIdFromColumns(columns, '/'));
         break;
+      case 'alpine':
+        final versionColumn = columns[_versionIndex];
+        final nameColumn = columns[_nameIndex];
+        final name =
+            nameColumn.substring(0, nameColumn.lastIndexOf(versionColumn) - 1);
+        final version = _stripLastPart(versionColumn, '/');
+        final itemId = ItemId(name, version);
+        _addLicenses(columns, itemId);
+        result.addItem(itemId);
+        break;
+      case 'centos':
+        final versionColumn = columns[_versionIndex];
+        final nameColumn = columns[_nameIndex];
+        final name = nameColumn.substring(0, nameColumn.indexOf('/'));
+        final version = versionColumn.substring(
+            versionColumn.indexOf(':') + 1, versionColumn.indexOf('-'));
+        final itemId = ItemId(name, version);
+        _addLicenses(columns, itemId);
+        result.addItem(itemId);
+        break;
       case 'long_tail':
         result.addItem(_itemIdFromColumns(columns, '#'));
         break;
       default:
         final id = _itemIdFromColumns(columns, '/');
         if (!assumed.contains(id)) {
-          print('Warning: Assumed $id for Black Duck type "$type"');
+          print(
+              'Warning: Assumed name=${id.package}, version=${id.version} for Black Duck type "$type"');
           assumed.add(id);
         }
         result.addItem(id);
@@ -195,10 +216,7 @@ class _BlackDuckSourceCsvParser extends CsvParser {
     final version = columns[_versionIndex];
     final itemId = ItemId(name, version);
 
-    final componentName = columns[_componentNameIndex];
-    final componentVersion = columns[_componentVersionIndex];
-    final component = ItemId(componentName, componentVersion);
-    itemId.addLicenses(licenseDictionary[component] ?? {});
+    _addLicenses(columns, itemId);
 
     return itemId;
   }
@@ -211,5 +229,12 @@ class _BlackDuckSourceCsvParser extends CsvParser {
       return name;
     }
     return name.substring(0, index);
+  }
+
+  void _addLicenses(List<String> columns, ItemId itemId) {
+    final componentName = columns[_componentNameIndex];
+    final componentVersion = columns[_componentVersionIndex];
+    final component = ItemId(componentName, componentVersion);
+    itemId.addLicenses(licenseDictionary[component] ?? {});
   }
 }

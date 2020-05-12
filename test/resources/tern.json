@@ -8,12 +8,12 @@
               {
                 "name": "image1_layer1_package1",
                 "version": "v_1",
-                "pkg_license": "my_license"
+                "pkg_license": "my_license MIT"
               },
               {
                 "name": "image1_layer1_package2",
                 "version": "image1_layer1_package2-v_2",
-                "pkg_license": "MIT"
+                "pkg_license": "GPL-2.0"
               }
             ]
           },
