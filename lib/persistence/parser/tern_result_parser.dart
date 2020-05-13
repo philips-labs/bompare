@@ -44,9 +44,7 @@ class TernResultParser implements ResultParser {
                 : string;
             final itemId = ItemId(name, version);
             final licenses = package[field_license] as String;
-            licenses
-                ?.split(' ')
-                ?.forEach((txt) => itemId.addLicenses(mapper[txt]));
+            itemId.addLicenses(mapper[licenses]);
             result.addItem(itemId);
           });
         });

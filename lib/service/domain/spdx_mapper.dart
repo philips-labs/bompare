@@ -13,6 +13,8 @@ class SpdxMapper {
       _mapping[title.toLowerCase()] = identifier;
       _mapping[identifier.toLowerCase()] = identifier;
     });
+
+    spdx.deprecated.forEach((key, value) => this[key] = value);
   }
 
   /// Maps the [title] to one or more license identifiers.

@@ -30,7 +30,9 @@ void main() {
 
       expect(result.items.lookup(itemId1).licenses,
           equals({'"my_license"', 'MIT'}));
-      expect(result.items.lookup(itemId2).licenses, equals({'GPL-2.0'}));
+      expect(result.items.lookup(itemId2).licenses, equals({'GPL-2.0-only'}));
+      expect(
+          result.items.lookup(itemId3).licenses, equals({'"Public Domain"'}));
       expect(result.items.lookup(itemId4).licenses, isEmpty);
     });
 

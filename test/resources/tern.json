@@ -8,7 +8,7 @@
               {
                 "name": "image1_layer1_package1",
                 "version": "v_1",
-                "pkg_license": "my_license MIT"
+                "pkg_license": "my_license or MIT"
               },
               {
                 "name": "image1_layer1_package2",
@@ -22,7 +22,7 @@
               {
                 "name": "image1_layer2_package",
                 "version": "v_3",
-                "pkg_license": "Apache-2.0"
+                "pkg_license": "Public Domain"
               }
             ]
           }

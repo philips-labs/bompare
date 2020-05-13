@@ -24,6 +24,10 @@ void main() {
       expect(mapper[valid_license.toLowerCase()], equals({valid_license}));
     });
 
+    test('maps obsolete SPDX identifiers to their replacement', () {
+      expect(mapper['GPL-3.0+'], equals({'GPL-3.0-or-later'}));
+    });
+
     test('quotes unregistered mappings', () {
       expect(mapper[unknown], equals({'"$unknown"'}));
     });
