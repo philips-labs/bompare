@@ -11,8 +11,10 @@ import 'scan_result.dart';
 class BomInteractor implements BomService {
   final ResultPersistence results;
   final ReportPersistence reports;
-
   final _scans = <ScanResult>[];
+
+  @override
+  bool verbose = false;
 
   BomInteractor(this.results, this.reports);
 
@@ -33,10 +35,14 @@ class BomInteractor implements BomService {
 
     final all = <ItemId>{};
     final common = _buildBom(_scans[0].items, all);
+    final ids = diffOnly ? all.difference(common) : all;
 
     if (bomFile != null) {
-      final ids = diffOnly ? all.difference(common) : all;
       await reports.writeBomComparison(bomFile, ids, _scans);
+    }
+
+    if (verbose) {
+      _printBomResults(ids);
     }
 
     return _bomResultPerScanResult(all, common);
@@ -70,9 +76,13 @@ class BomInteractor implements BomService {
     final bom = _commonBom();
     final common = _commonLicenses(bom);
 
+    final ids = diffOnly ? bom.difference(common) : bom;
     if (licensesFile != null) {
-      final ids = diffOnly ? bom.difference(common) : bom;
       await reports.writeLicenseComparison(licensesFile, ids, _scans);
+    }
+
+    if (verbose) {
+      _printLicenseResults(ids);
     }
 
     return LicenseResult(bom.length, common.length);
@@ -89,10 +99,38 @@ class BomInteractor implements BomService {
   Set<ItemId> _commonLicenses(Set<ItemId> bom) =>
       bom.where(_scannedLicensesMatch).toSet();
 
-  bool _scannedLicensesMatch(c) => !_scans.any((s) {
-        final scan = s.items.lookup(c);
-        final match = scan.licenses.containsAll(c.licenses) &&
-            c.licenses.containsAll(scan.licenses);
+  bool _scannedLicensesMatch(ItemId itemId) => !_scans.any((s) {
+        final scan = s[itemId];
+        final match = scan.licenses.containsAll(itemId.licenses) &&
+            itemId.licenses.containsAll(scan.licenses);
         return !match;
       });
+
+  void _printBomResults(Iterable<ItemId> ids) {
+    _printTablePerItemId(
+        ids, (scan, item) => (scan[item] != null) ? 'Yes' : 'No');
+  }
+
+  void _printLicenseResults(Iterable<ItemId> ids) {
+    _printTablePerItemId(ids, (scan, item) => scan[item].licenses.join(' OR '));
+  }
+
+  void _printTablePerItemId(Iterable<ItemId> items,
+      String Function(ScanResult scan, ItemId item) columnValue) {
+    const separator = ' | ';
+
+    final scans = _scans.map((s) => s.name).join(separator);
+    final headline = 'Package | Version | $scans';
+    print(headline);
+    print(headline.replaceAll(RegExp(r'[^|]'), '-'));
+
+    items.toList()
+      ..sort()
+      ..forEach((item) {
+        final columns = _scans.map((s) => columnValue(s, item)).join(separator);
+        print('${item.package} | ${item.version} | $columns');
+      });
+
+    print('');
+  }
 }

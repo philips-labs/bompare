@@ -28,12 +28,10 @@ void main() {
     test('converts licenses using mapper', () async {
       final result = await parser.parse(ternFile);
 
-      expect(result.items.lookup(itemId1).licenses,
-          equals({'"my_license"', 'MIT'}));
-      expect(result.items.lookup(itemId2).licenses, equals({'GPL-2.0-only'}));
-      expect(
-          result.items.lookup(itemId3).licenses, equals({'"Public Domain"'}));
-      expect(result.items.lookup(itemId4).licenses, isEmpty);
+      expect(result[itemId1].licenses, equals({'"my_license"', 'MIT'}));
+      expect(result[itemId2].licenses, equals({'GPL-2.0-only'}));
+      expect(result[itemId3].licenses, equals({'CC-PDDC'}));
+      expect(result[itemId4].licenses, isEmpty);
     });
 
     test('throws when file does not exist', () {

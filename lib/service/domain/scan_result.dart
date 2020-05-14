@@ -14,4 +14,8 @@ class ScanResult {
   void addItem(ItemId id) {
     items.add(id);
   }
+
+  /// Returns actual item of the scan for the provided [itemId], or null if
+  /// the scan does not include the item.
+  ItemId operator [](ItemId itemId) => items.lookup(itemId);
 }

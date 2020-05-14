@@ -47,6 +47,15 @@ void main() {
           equals({'"something and else"', 'MIT'}));
       expect(mapper['something or mit and else'],
           equals({'"something"', '"else"', 'MIT'}));
+      expect(mapper['mit or something and Aladdin'],
+          equals({'"something"', 'Aladdin', 'MIT'}));
+    });
+
+    test('handles postfix "or" properly', () {
+      expect(
+          mapper[
+              '(GNU General Public License v3.0 only OR GNU Lesser General Public License v3.0 or later)'],
+          equals({'GPL-3.0-only', 'LGPL-3.0-or-later'}));
     });
 
     test('ignores AND and OR that does not yield result', () {

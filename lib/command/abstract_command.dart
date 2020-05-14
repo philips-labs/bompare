@@ -14,6 +14,7 @@ abstract class AbstractCommand extends Command {
   static const option_black_duck = 'blackduck';
   static const option_output = 'out';
   static const option_diff_only = 'diffOnly';
+  static const option_verbose = 'verbose';
   static const option_spdx_mapping = 'spdx';
 
   final BomService service;
@@ -46,8 +47,8 @@ abstract class AbstractCommand extends Command {
           abbr: 'o',
           help: 'Write detail report to (CSV) file',
           valueHelp: 'filename')
-      ..addFlag(option_diff_only,
-          help: 'Only output diff lines in output file');
+      ..addFlag(option_diff_only, help: 'Only output diff lines in output file')
+      ..addFlag(option_verbose, abbr: 'v', help: 'Verbose output');
   }
 
   /// Returns the file indicated by the [option_output] parameter.
@@ -60,6 +61,8 @@ abstract class AbstractCommand extends Command {
 
   @override
   Future<void> run() async {
+    if (argResults[option_verbose]) service.verbose = true;
+
     await _loadScanResults();
 
     return execute();

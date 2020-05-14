@@ -5,19 +5,26 @@ import 'package:test/test.dart';
 void main() {
   group('$ScanResult', () {
     const name = 'name';
-    test('creates instance', () {
-      final result = ScanResult(name);
+    ScanResult result;
 
+    setUp(() {
+      result = ScanResult(name);
+    });
+
+    test('creates named instance', () {
       expect(result.name, equals(name));
     });
 
+    test('indicates non-contained items', () {
+      expect(result[ItemId('non', 'existing')], isNull);
+    });
+
     test('holds item identifiers', () {
-      final result = ScanResult(name);
       final id = ItemId('package', 'version');
 
       result.addItem(id);
 
-      expect(result.items, equals({id}));
+      expect(result[id], equals(id));
     });
   });
 }

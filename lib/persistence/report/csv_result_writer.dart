@@ -54,12 +54,12 @@ class CsvResultWriter {
   List<String> _toBomLine(ItemId id) => [
         id.package,
         id.version,
-        for (final s in scans) s.items.contains(id) ? 'yes' : '',
+        for (final s in scans) (s[id] != null) ? 'yes' : '',
       ];
 
   List<String> _toLicenseLine(ItemId id) {
     final licenses = scans.map((s) {
-      return s.items.lookup(id)?.licenses?.join(' OR ') ?? '';
+      return s[id]?.licenses?.join(' OR ') ?? '';
     }).toList();
 
     return <String>[

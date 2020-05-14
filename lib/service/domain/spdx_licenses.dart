@@ -451,4 +451,5 @@ final deprecated = <String, String>{
   'GPL-2.0-with-bison-exception': 'GPL-2.0-or-later',
   'GPL-2.0+': 'GPL-2.0-or-later',
   'GPL-3.0': 'GPL-3.0-only',
+  'Public Domain': 'CC-PDDC',
 };

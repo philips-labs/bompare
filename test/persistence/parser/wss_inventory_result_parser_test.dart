@@ -49,7 +49,7 @@ void main() {
     test('reads licenses using license mapping', () async {
       final result = await parser.parse(inventoryFile);
 
-      final id = result.items.lookup(ItemId('licenses', 'v'));
+      final id = result[ItemId('licenses', 'v')];
       expect(id.licenses, equals({'MIT', '"my_license"'}));
     });
 

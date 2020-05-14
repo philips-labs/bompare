@@ -37,7 +37,7 @@ void main() {
     test('parses licenses from directory with SPDX abbreviation', () async {
       final result = await parser.parse(directory);
 
-      final itemId = result.items.lookup(ItemId('license', 'v1'));
+      final itemId = result[ItemId('license', 'v1')];
       expect(itemId.licenses, equals({'MIT'}));
     });
 
@@ -50,7 +50,7 @@ void main() {
     test('parses licenses from ZIP file', () async {
       final result = await parser.parse(zipFile);
 
-      final itemId = result.items.lookup(ItemId('license', 'v1'));
+      final itemId = result[ItemId('license', 'v1')];
       expect(itemId.licenses, equals({'MIT'}));
     });
   });

@@ -23,30 +23,38 @@ class SpdxMapper {
 
     final unbraced = title.replaceAll(_enclosingBraces, '');
 
-    return _findOrNull(unbraced) ?? {'"$title"'};
+    return _find(unbraced);
   }
 
-  Set<String> _findOrNull(String title, {bool allowLiteral = true}) {
+  /// Returns the decomposed and decoded set of licenses in [title].
+  /// Splits on OR and AND, and tries to match the biggest possible fragment.
+  /// If [anyMatch] is true it also returns if any match is found. (This is
+  /// used for controlling recursion into split blocks.)
+  Set<String> _find(String title, {bool anyMatch = false}) {
     final key = title.toLowerCase();
-    if (_mapping.containsKey(key)) {
-      return {_mapping[key]};
-    }
+    if (_mapping.containsKey(key)) return {_mapping[key]};
 
-    var offset = 0;
-    var match = _andOrSeparator.firstMatch(key);
-    while (match != null) {
-      final prefix = key.substring(0, offset + match.start);
-      final remainder = key.substring(offset + match.end);
-      final right = _findOrNull(remainder, allowLiteral: false);
-      if (_mapping.containsKey(prefix) || (allowLiteral && right != null)) {
-        final result = right ?? {'"$remainder"'};
-        result.add(_mapping[prefix] ?? '"$prefix"');
-        return result;
+    final matches = _andOrSeparator.allMatches(key);
+    // Iterate from end to avoid accidental prefix-matches
+    for (final match in matches.toList().reversed) {
+      final leftKey = key.substring(0, match.start);
+      final leftResult = _find(leftKey, anyMatch: true);
+
+      final rightKey = key.substring(match.end);
+      final rightResult = _find(rightKey, anyMatch: true);
+
+      if (rightResult.isNotEmpty) {
+        if (anyMatch) return leftResult.union(rightResult);
+
+        final leftTitle = title.substring(0, match.start);
+        final rightTitle = title.substring(match.end);
+        return _find(leftTitle).union(_find(rightTitle));
+      } else if (_mapping.containsKey(leftKey)) {
+        // Left result is a last resort to avoid prefix-match
+        return leftResult.union({'"${title.substring(match.end)}"'});
       }
-      offset += match.end;
-      match = _andOrSeparator.firstMatch(key.substring(offset));
     }
-    return null;
+    return {if (!anyMatch) '"$title"'};
   }
 
   /// Adds a new mapping from [title] to an existing SPDX identifier.
