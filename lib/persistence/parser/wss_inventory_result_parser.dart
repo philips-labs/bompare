@@ -54,7 +54,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
 
   ItemId _decodeItemId(dynamic obj) {
     final type = obj[field_type];
-    final version = obj[field_version] ?? '';
+    final version = obj[field_version] as String ?? '';
     final name = obj[field_name] as String;
     final group = obj[field_group_id] as String;
     final artifact = obj[field_artifact_id] as String;
@@ -67,6 +67,11 @@ class WhiteSourceInventoryResultParser implements ResultParser {
       case 'JavaScript':
       case 'Alpine':
         return ItemId(group, version);
+      case 'Debian':
+        final n = (group.isNotEmpty)
+            ? group
+            : name.substring(0, name.indexOf(version) - 1);
+        return ItemId(n, version);
       case 'ActionScript':
       case 'Source Library':
       case 'Unknown Library':

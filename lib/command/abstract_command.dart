@@ -42,7 +42,7 @@ abstract class AbstractCommand extends Command {
           valueHelp: 'filename or directory')
       ..addOption(option_spdx_mapping,
           help: 'Convert license texts using SPDX mapping file',
-          valueHelp: 'CSV file: "license text"[,"SPDX identifier"]')
+          valueHelp: 'CSV file, formatted as: "license text","SPDX identifier"')
       ..addOption(option_output,
           abbr: 'o',
           help: 'Write detail report to (CSV) file',

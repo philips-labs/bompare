@@ -167,68 +167,66 @@ class _BlackDuckSourceCsvParser extends CsvParser {
   @override
   void dataRow(List<String> columns) {
     final type = columns[_originIndex];
+    final nameColumn = columns[_nameIndex];
+    final versionColumn = columns[_versionIndex];
+
+    var itemId;
     switch (type) {
-      case 'unknown':
-        break;
       case 'maven':
       case 'github':
-        result.addItem(_itemIdFromColumns(columns, ':'));
+        final name2 = _stripFromLast(nameColumn, ':');
+        itemId = ItemId(name2, versionColumn);
         break;
       case 'npmjs':
-        result.addItem(_itemIdFromColumns(columns, '/'));
+        final name2 = _stripFromLast(nameColumn, '/');
+        itemId = ItemId(name2, versionColumn);
         break;
       case 'alpine':
-        final versionColumn = columns[_versionIndex];
-        final nameColumn = columns[_nameIndex];
-        final name =
-            nameColumn.substring(0, nameColumn.lastIndexOf(versionColumn) - 1);
-        final version = _stripLastPart(versionColumn, '/');
-        final itemId = ItemId(name, version);
-        _addLicenses(columns, itemId);
-        result.addItem(itemId);
+        final name = _stripSeparatedPostFix(nameColumn, versionColumn);
+        final version = _stripFromLast(versionColumn, '/');
+        itemId = ItemId(name, version);
         break;
       case 'centos':
-        final versionColumn = columns[_versionIndex];
-        final nameColumn = columns[_nameIndex];
-        final name = nameColumn.substring(0, nameColumn.indexOf('/'));
-        final version = versionColumn.substring(
-            versionColumn.indexOf(':') + 1, versionColumn.indexOf('-'));
-        final itemId = ItemId(name, version);
-        _addLicenses(columns, itemId);
-        result.addItem(itemId);
+        final name = _stripFrom(nameColumn, '/');
+        final temp = versionColumn.substring(versionColumn.indexOf(':') + 1);
+        final version = _stripFrom(temp, '-');
+        itemId = ItemId(name, version);
+        break;
+      case 'debian':
+        final version = _stripFrom(versionColumn, '/');
+        final name = _stripSeparatedPostFix(nameColumn, version);
+        itemId = ItemId(name, version);
         break;
       case 'long_tail':
-        result.addItem(_itemIdFromColumns(columns, '#'));
+        final name = _stripFromLast(nameColumn, '#');
+        itemId = ItemId(name, versionColumn);
         break;
       default:
-        final id = _itemIdFromColumns(columns, '/');
-        if (!assumed.contains(id)) {
+        final name = _stripFromLast(nameColumn, '/');
+        itemId = ItemId(name, versionColumn);
+        if (!assumed.contains(itemId)) {
           print(
-              'Warning: Assumed name=${id.package}, version=${id.version} for Black Duck type "$type"');
-          assumed.add(id);
+              'Warning: Assumed name=${itemId.package}, version=${itemId.version} for Black Duck type "$type"');
+          assumed.add(itemId);
         }
-        result.addItem(id);
     }
-  }
-
-  ItemId _itemIdFromColumns(List<String> columns, String pattern) {
-    final name = _stripLastPart(columns[_nameIndex], pattern);
-    final version = columns[_versionIndex];
-    final itemId = ItemId(name, version);
-
     _addLicenses(columns, itemId);
-
-    return itemId;
+    result.addItem(itemId);
   }
 
-  String _stripLastPart(String name, Pattern pattern) {
-    final index = name.lastIndexOf(pattern);
-    if (index < 0) {
-      print('Warning: Could not strip version from Black Duck dependency $name '
-          'at last "$pattern"');
-      return name;
-    }
-    return name.substring(0, index);
+  String _stripFrom(String string, Pattern pattern) {
+    final index = string.indexOf(pattern);
+    return (index < 0) ? string : string.substring(0, index);
+  }
+
+  String _stripFromLast(String string, Pattern pattern) {
+    final index = string.lastIndexOf(pattern);
+    return (index < 0) ? string : string.substring(0, index);
+  }
+
+  String _stripSeparatedPostFix(String string, String postfix) {
+    final index = string.lastIndexOf(postfix);
+    return (index < 0) ? string : string.substring(0, index - 1);
   }
 
   void _addLicenses(List<String> columns, ItemId itemId) {
