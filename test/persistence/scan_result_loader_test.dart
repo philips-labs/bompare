@@ -5,8 +5,11 @@ import 'package:bompare/persistence/result_parser.dart';
 import 'package:bompare/persistence/scan_result_loader.dart';
 import 'package:bompare/service/bom_service.dart';
 import 'package:bompare/service/business_exception.dart';
+import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/scan_result.dart';
 import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:bompare/service/result_persistence.dart';
+import 'package:glob/glob.dart';
 import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
@@ -17,7 +20,7 @@ void main() {
   group('$ScanResultLoader', () {
     final testDirectory = path.join('test', 'resources');
     final mappingFile = File(path.join(testDirectory, 'mapping.csv'));
-    final file = File('some_file.json');
+    final wssGlob = Glob(path.join(testDirectory, 'wss_inventory.json'));
 
     SpdxMapper spdxMapping;
     ResultPersistence persistence;
@@ -50,15 +53,30 @@ void main() {
     group('scan result loading', () {
       test('throws for loading from unregistered scanner', () {
         expect(
-            () => persistence.load(ScannerType.reference, file),
+            () => persistence.load(ScannerType.reference, wssGlob),
             throwsA(predicate<PersistenceException>(
                 (e) => e.toString().contains('parser'))));
       });
 
-      test('loads scan result', () {
-        persistence.load(ScannerType.white_source, file);
+      test('loads scan result(s)', () async {
+        final file = wssGlob.listSync().first;
+        final itemId = ItemId('package', 'version');
+        when(parser.parse(argThat(predicate<File>((f) => f.path == file.path))))
+            .thenAnswer(
+                (_) => Future.value(ScanResult('Loaded')..addItem(itemId)));
 
-        verify(parser.parse(file));
+        final result =
+            await persistence.load(ScannerType.white_source, wssGlob);
+
+        expect(result.name, equals('wss_inventory'));
+        expect(result[itemId], isNotNull);
+      });
+
+      test('throws when no files match the provided glob', () {
+        expect(
+            () => persistence.load(ScannerType.white_source, Glob('unknown')),
+            throwsA(predicate<PersistenceException>(
+                (e) => e.toString().contains('not match'))));
       });
     });
   });

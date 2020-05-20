@@ -4,6 +4,7 @@ import 'package:args/command_runner.dart';
 import 'package:bompare/command/abstract_command.dart';
 import 'package:bompare/command/bom_command.dart';
 import 'package:bompare/service/bom_service.dart';
+import 'package:glob/glob.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -11,7 +12,8 @@ class BomServiceMock extends Mock implements BomService {}
 
 void main() {
   group('$BomCommand', () {
-    const filename = 'filename';
+    const glob = 'glob pattern';
+//    const filename = 'filename';
 
     BomService service;
     CommandRunner runner;
@@ -25,47 +27,44 @@ void main() {
     test('loads reference result files', () async {
       when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
 
-      await runner.run([
-        BomCommand.command,
-        '--${AbstractCommand.option_reference}',
-        filename
-      ]);
+      await runner.run(
+          [BomCommand.command, '--${AbstractCommand.option_reference}', glob]);
 
       verify(service.loadResult(ScannerType.reference,
-          argThat(predicate<File>((File f) => f.path == filename))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
     test('loads JK1 result files', () async {
       when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
 
-      await runner.run(
-          [BomCommand.command, '--${AbstractCommand.option_jk1}', filename]);
+      await runner
+          .run([BomCommand.command, '--${AbstractCommand.option_jk1}', glob]);
 
-      verify(service.loadResult(ScannerType.jk1,
-          argThat(predicate<File>((File f) => f.path == filename))));
+      verify(service.loadResult(
+          ScannerType.jk1, argThat(predicate<Glob>((g) => g.pattern == glob))));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
     test('loads Maven license result files', () async {
       when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
 
-      await runner.run(
-          [BomCommand.command, '--${AbstractCommand.option_maven}', filename]);
+      await runner
+          .run([BomCommand.command, '--${AbstractCommand.option_maven}', glob]);
 
       verify(service.loadResult(ScannerType.maven,
-          argThat(predicate<File>((File f) => f.path == filename))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
     test('loads Tern result files', () async {
       when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
 
-      await runner.run(
-          [BomCommand.command, '--${AbstractCommand.option_tern}', filename]);
+      await runner
+          .run([BomCommand.command, '--${AbstractCommand.option_tern}', glob]);
 
       verify(service.loadResult(ScannerType.tern,
-          argThat(predicate<File>((File f) => f.path == filename))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
@@ -75,25 +74,22 @@ void main() {
       await runner.run([
         BomCommand.command,
         '--${AbstractCommand.option_white_source}',
-        filename
+        glob
       ]);
 
       verify(service.loadResult(ScannerType.white_source,
-          argThat(predicate<File>((File f) => f.path == filename))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
     test('loads Black Duck result files', () async {
       when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
 
-      await runner.run([
-        BomCommand.command,
-        '--${AbstractCommand.option_black_duck}',
-        filename
-      ]);
+      await runner.run(
+          [BomCommand.command, '--${AbstractCommand.option_black_duck}', glob]);
 
       verify(service.loadResult(ScannerType.black_duck,
-          argThat(predicate<File>((File f) => f.path == filename))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
@@ -105,7 +101,7 @@ void main() {
       await runner.run([
         BomCommand.command,
         '--${AbstractCommand.option_reference}',
-        filename,
+        glob,
         '--${AbstractCommand.option_output}',
         csvFile
       ]);
@@ -125,7 +121,7 @@ void main() {
       await runner.run([
         BomCommand.command,
         '--${AbstractCommand.option_reference}',
-        filename,
+        glob,
         '--${AbstractCommand.option_output}',
         csvFile,
         '--${AbstractCommand.option_diff_only}'

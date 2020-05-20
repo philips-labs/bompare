@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:bompare/service/domain/item_id.dart';
-import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:path/path.dart' as path;
 
+import '../../service/domain/item_id.dart';
 import '../../service/domain/scan_result.dart';
+import '../../service/domain/spdx_mapper.dart';
 import '../persistence_exception.dart';
 import '../result_parser.dart';
 

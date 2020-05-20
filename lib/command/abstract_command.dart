@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:glob/glob.dart';
 
 import '../service/bom_service.dart';
 
@@ -16,6 +17,7 @@ abstract class AbstractCommand extends Command {
   static const option_diff_only = 'diffOnly';
   static const option_verbose = 'verbose';
   static const option_spdx_mapping = 'spdx';
+  static const glob_help = 'file glob pattern';
 
   final BomService service;
 
@@ -26,23 +28,24 @@ abstract class AbstractCommand extends Command {
           help: 'Scan result in "reference" (JSON) format',
           valueHelp: 'filename')
       ..addMultiOption(option_jk1,
-          help: 'Scan result in JK1 (JSON) format', valueHelp: 'filename')
+          help: 'Scan result in JK1 (JSON) format', valueHelp: glob_help)
       ..addMultiOption(option_maven,
           help: 'Scan result in Maven license (txt) format',
           valueHelp: 'filename')
       ..addMultiOption(option_tern,
-          help: 'Scan result in Tern (JSON) format', valueHelp: 'filename')
+          help: 'Scan result in Tern (JSON) format', valueHelp: glob_help)
       ..addMultiOption(option_white_source,
           abbr: 'w',
           help: 'Scan result in WhiteSource "inventory" (JSON) format',
-          valueHelp: 'filename')
+          valueHelp: glob_help)
       ..addMultiOption(option_black_duck,
           abbr: 'b',
           help: 'Scan result in Black Duck "report" (ZIP/directory) format',
-          valueHelp: 'filename or directory')
+          valueHelp: 'filename or directory glob pattern')
       ..addOption(option_spdx_mapping,
-          help: 'Convert license texts using SPDX mapping file',
-          valueHelp: 'CSV file, formatted as: "license text","SPDX identifier"')
+          help: 'Convert license texts using SPDX mapping CSV file, '
+              'formatted as: "<license text>","<SPDX identifier>"',
+          valueHelp: 'filename')
       ..addOption(option_output,
           abbr: 'o',
           help: 'Write detail report to (CSV) file',
@@ -85,8 +88,8 @@ abstract class AbstractCommand extends Command {
   }
 
   Future<void> _loadTypedResults(String option, ScannerType type) =>
-      Future.forEach(argResults[option],
-          (filename) => service.loadResult(type, File(filename)));
+      Future.forEach(
+          argResults[option], (glob) => service.loadResult(type, Glob(glob)));
 
   Future<void> execute();
 }

@@ -6,6 +6,7 @@ import 'package:bompare/service/domain/item_id.dart';
 import 'package:bompare/service/domain/scan_result.dart';
 import 'package:bompare/service/report_persistence.dart';
 import 'package:bompare/service/result_persistence.dart';
+import 'package:glob/glob.dart';
 import 'package:mockito/mockito.dart';
 import 'package:test/test.dart';
 
@@ -16,7 +17,8 @@ class ReportPersistenceMock extends Mock implements ReportPersistence {}
 void main() {
   group('$BomInteractor', () {
     const name = 'scan_result';
-    final file = File('scan_result.json');
+    final glob = Glob('scan_result.json');
+    final spdxFile = File('spdx.csv');
 
     ResultPersistence results;
     ReportPersistence reports;
@@ -30,9 +32,9 @@ void main() {
 
     group('SPDX mapping', () {
       test('loads SPDX mapping file', () {
-        service.loadSpdxMapping(file);
+        service.loadSpdxMapping(spdxFile);
 
-        verify(results.loadMapping(file));
+        verify(results.loadMapping(spdxFile));
       });
     });
 
@@ -43,10 +45,10 @@ void main() {
 
       test('loads scan result from single scanner', () async {
         final result = ScanResult(name)..addItem(ItemId('a', '1'));
-        when(results.load(ScannerType.black_duck, file))
+        when(results.load(ScannerType.black_duck, glob))
             .thenAnswer((_) => Future.value(result));
 
-        await service.loadResult(ScannerType.black_duck, file);
+        await service.loadResult(ScannerType.black_duck, glob);
         final summary = await service.compareBom();
 
         expect(summary, hasLength(1));
@@ -61,17 +63,17 @@ void main() {
         final result1 = ScanResult('A')
           ..addItem(commonItem)
           ..addItem(ItemId('a', '1'));
-        when(results.load(ScannerType.reference, file))
+        when(results.load(ScannerType.reference, glob))
             .thenAnswer((_) => Future.value(result1));
         final result2 = ScanResult('B')
           ..addItem(commonItem)
           ..addItem(ItemId('b', '2'))
           ..addItem(ItemId('c', '3'));
-        when(results.load(ScannerType.black_duck, file))
+        when(results.load(ScannerType.black_duck, glob))
             .thenAnswer((_) => Future.value(result2));
 
-        await service.loadResult(ScannerType.reference, file);
-        await service.loadResult(ScannerType.black_duck, file);
+        await service.loadResult(ScannerType.reference, glob);
+        await service.loadResult(ScannerType.black_duck, glob);
         final summary = await service.compareBom();
 
         expect(summary, hasLength(2));
@@ -89,10 +91,10 @@ void main() {
         final bomFile = File('bom.csv');
         final id = ItemId('a', '1');
         final result = ScanResult('A')..addItem(id);
-        when(results.load(ScannerType.reference, file))
+        when(results.load(ScannerType.reference, glob))
             .thenAnswer((_) => Future.value(result));
 
-        await service.loadResult(ScannerType.reference, file);
+        await service.loadResult(ScannerType.reference, glob);
         await service.compareBom(bomFile: bomFile);
 
         verify(reports.writeBomComparison(bomFile, [id], [result]));
@@ -104,13 +106,13 @@ void main() {
         final id2 = ItemId('b', '2');
         final result1 = ScanResult('A')..addItem(id1);
         final result2 = ScanResult('B')..addItem(id1)..addItem(id2);
-        when(results.load(ScannerType.reference, file))
+        when(results.load(ScannerType.reference, glob))
             .thenAnswer((_) => Future.value(result1));
-        when(results.load(ScannerType.black_duck, file))
+        when(results.load(ScannerType.black_duck, glob))
             .thenAnswer((_) => Future.value(result2));
 
-        await service.loadResult(ScannerType.reference, file);
-        await service.loadResult(ScannerType.black_duck, file);
+        await service.loadResult(ScannerType.reference, glob);
+        await service.loadResult(ScannerType.black_duck, glob);
         await service.compareBom(bomFile: bomFile, diffOnly: true);
 
         verify(reports.writeBomComparison(bomFile, [id2], [result1, result2]));
@@ -132,10 +134,10 @@ void main() {
         final result = ScanResult(name)
           ..addItem(ItemId('with', '1')..addLicenses([license]))
           ..addItem(ItemId('without', '1'));
-        when(results.load(ScannerType.black_duck, file))
+        when(results.load(ScannerType.black_duck, glob))
             .thenAnswer((_) => Future.value(result));
 
-        await service.loadResult(ScannerType.black_duck, file);
+        await service.loadResult(ScannerType.black_duck, glob);
         final summary = await service.compareLicenses();
 
         expect(summary.bom, equals(2));
@@ -151,16 +153,16 @@ void main() {
           ..addItem(equalItem)
           ..addItem(ItemId(common, common)..addLicenses([license]))
           ..addItem(ItemId('other', '666'));
-        when(results.load(ScannerType.reference, file))
+        when(results.load(ScannerType.reference, glob))
             .thenAnswer((_) => Future.value(result1));
         final result2 = ScanResult('B')
           ..addItem(equalItem)
           ..addItem(ItemId(common, common)..addLicenses([otherLicense]));
-        when(results.load(ScannerType.black_duck, file))
+        when(results.load(ScannerType.black_duck, glob))
             .thenAnswer((_) => Future.value(result2));
 
-        await service.loadResult(ScannerType.reference, file);
-        await service.loadResult(ScannerType.black_duck, file);
+        await service.loadResult(ScannerType.reference, glob);
+        await service.loadResult(ScannerType.black_duck, glob);
         final summary = await service.compareLicenses();
 
         expect(summary.bom, equals(2));
@@ -171,10 +173,10 @@ void main() {
         final licensesFile = File('licenses.csv');
         final id = ItemId('a', '1');
         final result = ScanResult('A')..addItem(id);
-        when(results.load(ScannerType.reference, file))
+        when(results.load(ScannerType.reference, glob))
             .thenAnswer((_) => Future.value(result));
 
-        await service.loadResult(ScannerType.reference, file);
+        await service.loadResult(ScannerType.reference, glob);
         await service.compareLicenses(licensesFile: licensesFile);
 
         verify(reports.writeLicenseComparison(licensesFile, [id], [result]));

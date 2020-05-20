@@ -10,6 +10,14 @@ class ScanResult {
 
   ScanResult(this.name);
 
+  /// Combines the [other] result with this one.
+  void merge(ScanResult other) {
+    other.items.forEach((itemId) {
+      items.add(itemId);
+      this[itemId].addLicenses(itemId.licenses);
+    });
+  }
+
   /// Registers a bill-of-material item.
   void addItem(ItemId id) {
     items.add(id);

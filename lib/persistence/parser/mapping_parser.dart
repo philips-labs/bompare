@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:bompare/persistence/parser/csv_parser.dart';
-import 'package:bompare/persistence/persistence_exception.dart';
-import 'package:bompare/service/domain/spdx_mapper.dart';
+import '../../service/domain/spdx_mapper.dart';
+import '../parser/csv_parser.dart';
+import '../persistence_exception.dart';
 
 /// Parser for SPDX mapping CSV file.
 /// Expects a comma-separated CSV file without header, providing a source

@@ -1,6 +1,8 @@
 import 'dart:core';
 import 'dart:io';
 
+import 'package:glob/glob.dart';
+
 import '../bom_service.dart';
 import '../report_persistence.dart';
 import '../result_persistence.dart';
@@ -24,8 +26,8 @@ class BomInteractor implements BomService {
   }
 
   @override
-  Future<void> loadResult(ScannerType type, File file) async {
-    _scans.add(await results.load(type, file));
+  Future<void> loadResult(ScannerType type, Glob glob) async {
+    _scans.add(await results.load(type, glob));
   }
 
   @override

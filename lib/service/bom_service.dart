@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:glob/glob.dart';
+
 /// Bill-of-material service layer interface.
 abstract class BomService {
   /// Prints output on console if enabled.
@@ -8,8 +10,8 @@ abstract class BomService {
   /// Loads a license mapping for normalization of license names to SPDX.
   Future<void> loadSpdxMapping(File file);
 
-  /// Loads a scanner result of [type] from [file].
-  Future<void> loadResult(ScannerType type, File file);
+  /// Loads a scanner result of [type] from [glob].
+  Future<void> loadResult(ScannerType type, Glob glob);
 
   /// Returns bill-of-material summary, and optionally writes the content
   /// to [bomFile] as a full index or [diffOnly].
