@@ -1,6 +1,7 @@
 import '../service/bom_service.dart';
 import 'abstract_command.dart';
 
+/// Licenses comparison command.
 class LicensesCommand extends AbstractCommand {
   static const command = 'licenses';
 

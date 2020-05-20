@@ -54,6 +54,9 @@ abstract class AbstractCommand extends Command {
       ..addFlag(option_verbose, abbr: 'v', help: 'Verbose output');
   }
 
+  @override
+  bool get takesArguments => false;
+
   /// Returns the file indicated by the [option_output] parameter.
   File get file => (argResults[AbstractCommand.option_output] != null)
       ? File(argResults[AbstractCommand.option_output])

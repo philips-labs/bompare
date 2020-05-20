@@ -37,7 +37,7 @@ class ScanResultLoader implements ResultPersistence {
     });
 
     if (!found) {
-      throw PersistenceException(glob, 'Glob did not match any file');
+      throw PersistenceException(glob, 'Pattern did not match any file');
     }
 
     return result;
