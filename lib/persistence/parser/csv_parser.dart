@@ -54,7 +54,7 @@ abstract class CsvParser {
   }
 
   /// Notifies the [columns] in the header of the CSV.
-  void headerRow(List<String> columns);
+  void headerRow(List<String> columns) {}
 
   /// Notifies a single row of [columns] in the CSV.
   void dataRow(List<String> columns);

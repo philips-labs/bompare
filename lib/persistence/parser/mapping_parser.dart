@@ -34,9 +34,4 @@ class _MappingCsvParser extends CsvParser {
     final license = (columns.length > 1) ? columns[1] : columns[0];
     mapper[columns[0].trim()] = license.trim();
   }
-
-  @override
-  void headerRow(List<String> columns) {
-    throw AssertionError('No headers supported in this format');
-  }
 }

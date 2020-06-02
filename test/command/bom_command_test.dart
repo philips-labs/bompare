@@ -13,15 +13,20 @@ class BomServiceMock extends Mock implements BomService {}
 void main() {
   group('$BomCommand', () {
     const glob = 'glob pattern';
-//    const filename = 'filename';
 
     BomService service;
     CommandRunner runner;
+    BomCommand command;
 
     setUp(() {
       service = BomServiceMock();
-      runner = CommandRunner('dummy', 'description')
-        ..addCommand(BomCommand(service));
+      command = BomCommand(service);
+      runner = CommandRunner('dummy', 'description')..addCommand(command);
+    });
+
+    test('provides description', () {
+      expect(command.description,
+          predicate<String>((s) => s.contains('BOM differences')));
     });
 
     test('loads reference result files', () async {
@@ -116,7 +121,7 @@ void main() {
       const csvFile = 'file.csv';
       when(service.compareBom(
               bomFile: anyNamed('bomFile'), diffOnly: anyNamed('diffOnly')))
-          .thenAnswer((_) => Future.value(<BomResult>[]));
+          .thenAnswer((_) => Future.value(<BomResult>[BomResult('name', 42)]));
 
       await runner.run([
         BomCommand.command,

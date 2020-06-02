@@ -22,17 +22,13 @@ class MavenResultParser implements ResultParser {
       throw PersistenceException(file, 'Maven licence (.txt) file not found');
     }
 
-    try {
-      final stream =
-          file.openRead().transform(utf8.decoder).transform(LineSplitter());
-      final result = ScanResult(path.basenameWithoutExtension(file.path));
+    final stream =
+        file.openRead().transform(utf8.decoder).transform(LineSplitter());
+    final result = ScanResult(path.basenameWithoutExtension(file.path));
 
-      await stream.forEach((line) => _parseLine(line, result));
+    await stream.forEach((line) => _parseLine(line, result));
 
-      return result;
-    } on Exception catch (e) {
-      return Future.error(PersistenceException(file, 'Unexpected format: $e'));
-    }
+    return result;
   }
 
   void _parseLine(String line, ScanResult result) {

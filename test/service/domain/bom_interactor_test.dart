@@ -28,6 +28,7 @@ void main() {
       results = ResultPersistenceMock();
       reports = ReportPersistenceMock();
       service = BomInteractor(results, reports);
+      service.verbose = true;
     });
 
     group('SPDX mapping', () {
@@ -180,6 +181,26 @@ void main() {
         await service.compareLicenses(licensesFile: licensesFile);
 
         verify(reports.writeLicenseComparison(licensesFile, [id], [result]));
+      });
+
+      test('writes licenses diff report', () async {
+        final licensesFile = File('licenses.csv');
+        final id1 = ItemId('a', '1')..addLicenses({'MIT'});
+        final result1 = ScanResult('A')..addItem(id1);
+        when(results.load(ScannerType.reference, glob))
+            .thenAnswer((_) => Future.value(result1));
+        final id2 = ItemId('a', '1')..addLicenses({'Apache-2.0'});
+        final result2 = ScanResult('B')..addItem(id2);
+        when(results.load(ScannerType.white_source, glob))
+            .thenAnswer((_) => Future.value(result2));
+
+        await service.loadResult(ScannerType.reference, glob);
+        await service.loadResult(ScannerType.white_source, glob);
+        await service.compareLicenses(
+            licensesFile: licensesFile, diffOnly: true);
+
+        verify(reports
+            .writeLicenseComparison(licensesFile, [id1], [result1, result2]));
       });
     });
   });

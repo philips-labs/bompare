@@ -16,11 +16,17 @@ void main() {
 
     BomService service;
     CommandRunner runner;
+    LicensesCommand command;
 
     setUp(() {
       service = BomServiceMock();
-      runner = CommandRunner('dummy', 'description')
-        ..addCommand(LicensesCommand(service));
+      command = LicensesCommand(service);
+      runner = CommandRunner('dummy', 'description')..addCommand(command);
+    });
+
+    test('provides description', () {
+      expect(command.description,
+          predicate<String>((s) => s.contains('license differences')));
     });
 
     test('analyses licenses from scan results', () async {

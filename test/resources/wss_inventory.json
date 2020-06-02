@@ -1,30 +1,90 @@
 {
   "libraries": [
     {
-      "keyUuid": "b74a9c51-34aa-4c13-bcfe-53abd58a813",
       "type": "javascript/Node.js",
+      "version": "1.0",
+      "groupId": "javascript/Node.js"
+    },
+    {
+      "type": "JavaScript",
+      "version": "2.0",
+      "groupId": "JavaScript"
+    },
+    {
+      "type": "Java",
+      "artifactId": "jar",
+      "version": "12",
+      "groupId": "Java1"
+    },
+    {
+      "type": "Java",
+      "artifactId": "Java2",
+      "version": "13"
+    },
+    {
+      "type": "Alpine",
+      "version": "3.1.2-r0",
+      "groupId": "Alpine"
+    },
+    {
+      "type": "Debian",
+      "version": "1.5.71",
+      "groupId": "Debian1"
+    },
+    {
+      "type": "Debian",
+      "name": "Debian2_2.2.3_amd64.deb",
+      "version": "2.2.3",
+      "groupId": ""
+    },
+    {
+      "type": "ActionScript",
+      "artifactId": "ActionScript1",
+      "version": "1.2"
+    },
+    {
+      "type": "ActionScript",
+      "name": "ActionScript2",
+      "version": "3.1"
+    },
+    {
+      "type": "Source Library",
+      "artifactId": "Source Library1",
+      "version": "7.0"
+    },
+    {
+      "type": "Source Library",
+      "name": "Source Library2",
+      "version": "8.0"
+    },
+    {
+      "type": "Unknown Library",
+      "artifactId": "Unknown Library1",
+      "version": "Needs review"
+    },
+    {
+      "type": "Unknown Library",
+      "name": "Unknown Library2",
+      "version": "Needs review"
+    },
+    {
+      "type": "RPM",
+      "name": "RPM-1:1.12.8-9.el8.x86_64.rpm"
+    },
+    {
+      "type": "(not defined)",
+      "version": "1.2.3",
+      "groupId": "(not defined)"
+    },
+    {
+      "keyUuid": "b74b9d51-33aa-4c13-bcfe-53abd58a813",
+      "type": "javaScript",
       "directDependency": false,
       "matchType": "Filename Match",
       "name": "wrong-answer",
       "artifactId": "js_package-1.0.tgz",
-      "version": "1.0",
-      "groupId": "js_package",
-      "licenses": [
-        {
-          "name": "Apache 2.0",
-          "references": []
-        }
-      ]
-    },
-    {
-      "keyUuid": "d6439bfd-34aa-4c13-bcfe-029acc55a79d",
-      "type": "Java",
-      "directDependency": false,
-      "matchType": "Filename Match",
-      "name": "java_package-2.0.tgz",
-      "artifactId": "java_package",
       "version": "2.0",
-      "groupId": "group",
+      "groupId": "javascript",
       "licenses": [
         {
           "name": "Apache 2.0",

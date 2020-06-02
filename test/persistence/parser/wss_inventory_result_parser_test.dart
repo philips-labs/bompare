@@ -22,16 +22,26 @@ void main() {
       mapper['key'] = 'MIT';
     });
 
-    test('parses JavaScript items from file', () async {
+    test('parses different types of items from file', () async {
       final result = await parser.parse(inventoryFile);
 
-      expect(result.items, contains(ItemId('js_package', '1.0')));
-    });
-
-    test('parses Java items from file', () async {
-      final result = await parser.parse(inventoryFile);
-
-      expect(result.items, contains(ItemId('group:java_package', '2.0')));
+      expect(result.items, contains(ItemId('javascript/Node.js', '1.0')));
+      expect(result.items, contains(ItemId('JavaScript', '2.0')));
+      expect(result.items, contains(ItemId('Java1:jar', '12')));
+      expect(result.items, contains(ItemId('Java2', '13')));
+      expect(result.items, contains(ItemId('Alpine', '3.1.2-r0')));
+      expect(result.items, contains(ItemId('Debian1', '1.5.71')));
+      expect(result.items, contains(ItemId('Debian2', '2.2.3')));
+      expect(result.items, contains(ItemId('ActionScript1', '1.2')));
+      expect(result.items, contains(ItemId('ActionScript2', '3.1')));
+      expect(result.items, contains(ItemId('Source Library1', '7.0')));
+      expect(result.items, contains(ItemId('Source Library2', '8.0')));
+      expect(
+          result.items, contains(ItemId('Unknown Library1', 'Needs review')));
+      expect(
+          result.items, contains(ItemId('Unknown Library2', 'Needs review')));
+      expect(result.items, contains(ItemId('RPM', '1.12.8')));
+      expect(result.items, contains(ItemId('(not defined)', '1.2.3')));
     });
 
     test('handles missing version field', () async {

@@ -53,5 +53,11 @@ void main() {
             equals(1));
       });
     });
+
+    test('describes as package and version', () {
+      final itemId = ItemId(package, version);
+
+      expect(itemId.toString(), equals('$package-$version'));
+    });
   });
 }
