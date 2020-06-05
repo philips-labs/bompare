@@ -1,3 +1,4 @@
 Used by,Component id,Version id,Component name,Component version name,Channel versions,License ids,License names,License families,Match type,Producer match type,Usage,In use,Operational Risk,Component policy status,Overridden By,Created At,Origin name,Origin id,Review Status,Reviewed by,Reviewed at,Project path,Source/Type,Snippet Review status
-,comp,version,component name,component version name,channel,license ids,license names,PERMISSIVE,Transitive Dependency,,DYNAMICALLY_LINKED,true,HIGH,Not In Violation,,created,origin name,origin id,NOT_REVIEWED,,,project path,KB_COMPONENT,
-,"escaped comma,trap",version,component_name,version_name,channel,license ids,"MIT License",PERMISSIVE,Transitive Dependency,,DYNAMICALLY_LINKED,true,HIGH,Not In Violation,,created,origin name,origin id,NOT_REVIEWED,,,project path,KB_COMPONENT,
+,,,comp_name,comp_version,,,MIT,,,,,
+,,,"comma,trap",comma_version,,,"(Apache-2.0)",,,,
+,,,component,component_version,,,,,,,

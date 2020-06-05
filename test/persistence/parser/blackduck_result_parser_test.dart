@@ -22,16 +22,11 @@ void main() {
               (e) => e.toString().contains('not found'))));
     });
 
-    test('parses JavaScript packages from directory', () async {
+    test('skips separators inside quoted texts', () async {
       final result = await parser.parse(directory);
 
-      expect(result.items, contains(ItemId('package/js', 'v1')));
-    });
-
-    test('parses Java packages from directory', () async {
-      final result = await parser.parse(directory);
-
-      expect(result.items, contains(ItemId('package:java', 'v2')));
+      final itemId = result[ItemId('comma', 'v0')];
+      expect(itemId.licenses, equals({'Apache-2.0'}));
     });
 
     test('parses licenses from directory with SPDX abbreviation', () async {
@@ -41,17 +36,26 @@ void main() {
       expect(itemId.licenses, equals({'MIT'}));
     });
 
-    test('parses packages from ZIP file', () async {
-      final result = await parser.parse(zipFile);
-
-      expect(result.items, contains(ItemId('package/js', 'v1')));
-    });
-
-    test('parses licenses from ZIP file', () async {
+    test('parses packages with license from ZIP file', () async {
       final result = await parser.parse(zipFile);
 
       final itemId = result[ItemId('license', 'v1')];
+      expect(itemId, isNotNull);
       expect(itemId.licenses, equals({'MIT'}));
+    });
+
+    test('parses different types of matches', () async {
+      final result = await parser.parse(directory);
+
+      expect(result.items, contains(ItemId('default', 'v?')));
+      expect(result.items, contains(ItemId('component', 'component_version')));
+      expect(result.items, contains(ItemId('package:java', 'v2')));
+      expect(result.items, contains(ItemId('github:repo', 'v3')));
+      expect(result.items, contains(ItemId('package/js', 'v4')));
+      expect(result.items, contains(ItemId('alpine', 'v5')));
+      expect(result.items, contains(ItemId('centos', 'v6')));
+      expect(result.items, contains(ItemId('debian', 'v7')));
+      expect(result.items, contains(ItemId('long_tail', 'v8')));
     });
   });
 }
