@@ -172,6 +172,11 @@ class _BlackDuckSourceCsvParser extends CsvParser {
 
     var itemId;
     switch (type) {
+      case '': // Signature scan result
+        final component = columns[_componentNameIndex];
+        final componentVersion = columns[_componentVersionIndex];
+        itemId = ItemId(component, componentVersion);
+        break;
       case 'maven':
       case 'github':
         final name2 = _stripFromLast(nameColumn, ':');
