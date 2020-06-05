@@ -1,4 +1,5 @@
-# Bompare, a tool compare a Software Bill-of-Materials
+![Coverage](coverage_badge.svg)
+# Bompare, a tool to compare a Software Bill-of-Materials
 
 ## Usage
 The `bompare` tool can be used to compare generated bill-of-materials files
