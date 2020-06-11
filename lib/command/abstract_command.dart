@@ -8,6 +8,7 @@ import '../service/bom_service.dart';
 /// Base command to act upon provided scan result files.
 abstract class AbstractCommand extends Command {
   static const option_reference = 'reference';
+  static const option_npm_license_checker = 'npm';
   static const option_jk1 = 'jk1';
   static const option_maven = 'maven';
   static const option_tern = 'tern';
@@ -26,6 +27,9 @@ abstract class AbstractCommand extends Command {
       ..addMultiOption(option_reference,
           abbr: 'r',
           help: 'Scan result in "reference" (JSON) format',
+          valueHelp: 'filename')
+      ..addMultiOption(option_npm_license_checker,
+          help: 'Scan result in NPM license-checker (CSV) format',
           valueHelp: 'filename')
       ..addMultiOption(option_jk1,
           help: 'Scan result in JK1 (JSON) format', valueHelp: glob_help)
@@ -82,6 +86,8 @@ abstract class AbstractCommand extends Command {
 
     await Future.wait([
       _loadTypedResults(option_reference, ScannerType.reference),
+      _loadTypedResults(
+          option_npm_license_checker, ScannerType.npm_license_checker),
       _loadTypedResults(option_jk1, ScannerType.jk1),
       _loadTypedResults(option_maven, ScannerType.maven),
       _loadTypedResults(option_tern, ScannerType.tern),

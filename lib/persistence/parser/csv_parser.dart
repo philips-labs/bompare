@@ -58,4 +58,13 @@ abstract class CsvParser {
 
   /// Notifies a single row of [columns] in the CSV.
   void dataRow(List<String> columns);
+
+  /// Returns index of [name] in [columns] or else throws a FormatException.
+  int columnIndexOf(String name, List<String> columns) {
+    final pos = columns.indexOf(name);
+    if (pos < 0) {
+      throw FormatException('Header does not defined column "$name"');
+    }
+    return pos;
+  }
 }

@@ -126,9 +126,9 @@ class _BlackDuckComponentsCsvParser extends CsvParser {
 
   @override
   void headerRow(List<String> columns) {
-    _componentNameIndex = columns.indexOf('Component name');
-    _componentVersionIndex = columns.indexOf('Component version name');
-    _licensesIndex = columns.indexOf('License names');
+    _componentNameIndex = columnIndexOf('Component name', columns);
+    _componentVersionIndex = columnIndexOf('Component version name', columns);
+    _licensesIndex = columnIndexOf('License names', columns);
   }
 
   @override
@@ -157,11 +157,11 @@ class _BlackDuckSourceCsvParser extends CsvParser {
 
   @override
   void headerRow(List<String> columns) {
-    _versionIndex = columns.indexOf('Component origin version name');
-    _originIndex = columns.indexOf('Origin name');
-    _nameIndex = columns.indexOf('Origin name id');
-    _componentNameIndex = columns.indexOf('Component name');
-    _componentVersionIndex = columns.indexOf('Component version name');
+    _versionIndex = columnIndexOf('Component origin version name', columns);
+    _originIndex = columnIndexOf('Origin name', columns);
+    _nameIndex = columnIndexOf('Origin name id', columns);
+    _componentNameIndex = columnIndexOf('Component name', columns);
+    _componentVersionIndex = columnIndexOf('Component version name', columns);
   }
 
   @override

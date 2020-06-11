@@ -5,6 +5,7 @@ import 'package:bompare/command/bom_command.dart';
 import 'package:bompare/command/licenses_command.dart';
 import 'package:bompare/persistence/parser/blackduck_result_parser.dart';
 import 'package:bompare/persistence/parser/jk1_result_parser.dart';
+import 'package:bompare/persistence/parser/license_checker_result_parser.dart';
 import 'package:bompare/persistence/parser/maven_result_parser.dart';
 import 'package:bompare/persistence/parser/reference_result_parser.dart';
 import 'package:bompare/persistence/parser/tern_result_parser.dart';
@@ -20,6 +21,7 @@ void main(List<String> arguments) async {
   final spdxMapping = SpdxMapper();
   final loader = ScanResultLoader({
     ScannerType.reference: ReferenceResultParser(),
+    ScannerType.npm_license_checker: LicenseCheckerResultParser(spdxMapping),
     ScannerType.jk1: Jk1ResultParser(spdxMapping),
     ScannerType.maven: MavenResultParser(spdxMapping),
     ScannerType.tern: TernResultParser(spdxMapping),
