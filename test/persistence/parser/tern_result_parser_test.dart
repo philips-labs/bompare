@@ -30,7 +30,7 @@ void main() {
 
       expect(result[itemId1].licenses, equals({'"my_license"', 'MIT'}));
       expect(result[itemId2].licenses, equals({'GPL-2.0-only'}));
-      expect(result[itemId3].licenses, equals({'CC-PDDC'}));
+      expect(result[itemId3].licenses, equals({'GPL-2.0-or-later'}));
       expect(result[itemId4].licenses, isEmpty);
     });
 

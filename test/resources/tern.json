@@ -22,7 +22,7 @@
               {
                 "name": "image1_layer2_package",
                 "version": "v_3",
-                "pkg_license": "Public Domain"
+                "pkg_license": "GPL-2.0+"
               }
             ]
           }
