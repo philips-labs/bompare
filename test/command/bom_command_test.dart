@@ -73,6 +73,17 @@ void main() {
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
+    test('loads SPDX tag-value result files', () async {
+      when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
+
+      await runner
+          .run([BomCommand.command, '--${AbstractCommand.option_spdx}', glob]);
+
+      verify(service.loadResult(ScannerType.spdx,
+          argThat(predicate<Glob>((g) => g.pattern == glob))));
+      verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
+    });
+
     test('loads WhiteSource result files', () async {
       when(service.compareBom()).thenAnswer((_) => Future.value(<BomResult>[]));
 

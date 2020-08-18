@@ -29,6 +29,7 @@ enum ScannerType {
   jk1,
   maven,
   tern,
+  spdx,
   black_duck,
   white_source
 }

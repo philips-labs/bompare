@@ -13,6 +13,7 @@ It currently reads:
 - [x] (Internal) reference format (BOM only)
 - [x] [WhiteSource](https://www.whitesourcesoftware.com) inventory JSON export format
 - [x] [BlackDuck](https://www.synopsys.com/software-integrity/security-testing/software-composition-analysis.html) report export ZIP and directory format
+- [x] [SPDX](https://spdx.github.io/spdx-spec) tag-value format with [purl](https://github.com/package-url/purl-spec) package references
 - [x] [JK1 Gradle license report](https://github.com/jk1/Gradle-License-Report) JSON format
 - [x] [Tern](https://github.com/tern-tools/tern) JSON format
 - [x] [Maven 3rd party license report](https://www.mojohaus.org/license-maven-plugin/add-third-party-mojo.html) TXT format

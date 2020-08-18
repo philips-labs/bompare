@@ -8,6 +8,7 @@ import 'package:bompare/persistence/parser/jk1_result_parser.dart';
 import 'package:bompare/persistence/parser/license_checker_result_parser.dart';
 import 'package:bompare/persistence/parser/maven_result_parser.dart';
 import 'package:bompare/persistence/parser/reference_result_parser.dart';
+import 'package:bompare/persistence/parser/spdx_result_parser.dart';
 import 'package:bompare/persistence/parser/tern_result_parser.dart';
 import 'package:bompare/persistence/parser/wss_inventory_result_parser.dart';
 import 'package:bompare/persistence/report_writer.dart';
@@ -25,6 +26,7 @@ void main(List<String> arguments) async {
     ScannerType.jk1: Jk1ResultParser(spdxMapping),
     ScannerType.maven: MavenResultParser(spdxMapping),
     ScannerType.tern: TernResultParser(spdxMapping),
+    ScannerType.spdx: SpdxResultParser(spdxMapping),
     ScannerType.white_source: WhiteSourceInventoryResultParser(spdxMapping),
     ScannerType.black_duck: BlackDuckResultParser(spdxMapping),
   }, spdxMapping);

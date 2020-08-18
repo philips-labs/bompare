@@ -11,6 +11,7 @@ import '../persistence_exception.dart';
 import '../result_parser.dart';
 import 'csv_parser.dart';
 
+/// Decoder for Black Duck export files.
 class BlackDuckResultParser implements ResultParser {
   static const source_file_prefix = 'source_';
   static const components_file_prefix = 'components_';

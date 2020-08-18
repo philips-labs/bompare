@@ -12,6 +12,7 @@ abstract class AbstractCommand extends Command {
   static const option_jk1 = 'jk1';
   static const option_maven = 'maven';
   static const option_tern = 'tern';
+  static const option_spdx = 'spdx-tag-value';
   static const option_white_source = 'whitesource';
   static const option_black_duck = 'blackduck';
   static const option_output = 'out';
@@ -38,6 +39,10 @@ abstract class AbstractCommand extends Command {
           valueHelp: 'filename')
       ..addMultiOption(option_tern,
           help: 'Scan result in Tern (JSON) format', valueHelp: glob_help)
+      ..addMultiOption(option_spdx,
+          abbr: 'x',
+          help: 'Scan result in SPDX (tag-value) format',
+          valueHelp: glob_help)
       ..addMultiOption(option_white_source,
           abbr: 'w',
           help: 'Scan result in WhiteSource "inventory" (JSON) format',
@@ -91,6 +96,7 @@ abstract class AbstractCommand extends Command {
       _loadTypedResults(option_jk1, ScannerType.jk1),
       _loadTypedResults(option_maven, ScannerType.maven),
       _loadTypedResults(option_tern, ScannerType.tern),
+      _loadTypedResults(option_spdx, ScannerType.spdx),
       _loadTypedResults(option_white_source, ScannerType.white_source),
       _loadTypedResults(option_black_duck, ScannerType.black_duck),
     ]);

@@ -1,0 +1,34 @@
+SPDXVersion: SPDX-2.2
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: Sample bill-of-materials
+## (No external document references)
+
+## Creation information
+Creator: Organization: Bompare project
+LicenseListVersion: 3.8
+
+## Start of package with license
+PackageName: With license
+PackageLicenseConcluded: MIT OR Unknown
+PackageLicenseDeclared: Apache-2.0
+ExternalRef: PACKAGE-MANAGER purl pkg:maven/group/artifact@1.0
+
+## Start of package without asserted license
+PackageName: License not asserted
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: Apache-2.0
+ExternalRef: PACKAGE-MANAGER purl pkg:npm/unasserted_license@2.0
+
+## Start of package with confusing text block
+PackageName: With text block
+ExternalRef: PACKAGE-MANAGER purl pkg:maven/text@3.0
+PackageCopyrightText: <text>Ignore these lines
+ExternalRef: PACKAGE-MANAGER purl pkg:not/a/real/reference/line@666
+This line should also be skipped</text>
+
+## Start of package last Package
+PackageName: Last package
+SPDXID: SPDXRef-9
+PackageLicenseConcluded: MIT
+ExternalRef: PACKAGE-MANAGER purl pkg:maven/group/last@99.0
+

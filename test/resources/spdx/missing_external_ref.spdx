@@ -1,0 +1,14 @@
+SPDXVersion: SPDX-2.2
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: File without external purl reference
+## (No external document references)
+
+## Creation information
+Creator: Organization: Bompare project
+LicenseListVersion: 3.8
+
+## Start of package without a reference
+PackageName: Without reference
+ExternalRef: PACKAGE-MANAGER other pkg:npm/name@1.0
+ExternalRef: SECURITY purl pkg:npm/name@1.0
+
