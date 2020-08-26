@@ -18,7 +18,7 @@ class Purl {
     if (path.isEmpty) {
       throw FormatException('Missing type part in "$_spec');
     }
-    return path;
+    return Uri.decodeComponent(path);
   }
 
   /// Returns name with optional namespace (or empty string).
@@ -27,11 +27,11 @@ class Purl {
     if (path.length < 2) {
       throw FormatException('Missing name part in "$_spec"');
     }
-    return path.sublist(1).join('/');
+    return path.sublist(1).map(Uri.decodeComponent).join('/');
   }
 
   /// Returns version or empty string.
-  String get version => _version();
+  String get version => Uri.decodeComponent(_version());
 
   List<String> _path() {
     final startPos = _spec.indexOf(':') + 1;

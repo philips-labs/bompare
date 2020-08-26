@@ -56,5 +56,16 @@ void main() {
       expect(purl.name, equals('name'));
       expect(purl.version, isEmpty);
     });
+
+    test('decodes URL encoded values', () {
+      final expected = ' %?@#/';
+      final encoded = Uri.encodeComponent(expected);
+
+      final purl = Purl('pkg:$encoded/$encoded/$encoded@$encoded');
+
+      expect(purl.type, equals(expected));
+      expect(purl.name, equals('$expected/$expected'));
+      expect(purl.version, equals(expected));
+    });
   });
 }
