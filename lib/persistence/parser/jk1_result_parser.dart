@@ -31,11 +31,12 @@ class Jk1ResultParser implements ResultParser {
       final result = ScanResult(path.basenameWithoutExtension(file.path));
       final str = file.readAsStringSync();
 
-      (jsonDecode(str)['dependencies'] as Iterable)
-          .map((obj) =>
-              ItemId(obj[field_module_name], obj[field_module_version])
-                ..addLicenses(mapper[obj[field_module_license]]))
-          .forEach((id) => result.addItem(id));
+      (jsonDecode(str)['dependencies'] as Iterable).map((obj) {
+        final package = (obj[field_module_name] as String).replaceAll(':', '/');
+        final version = obj[field_module_version];
+        var license = obj[field_module_license];
+        return ItemId(package, version)..addLicenses(mapper[license]);
+      }).forEach((id) => result.addItem(id));
 
       return Future.value(result);
     } on Exception catch (e) {

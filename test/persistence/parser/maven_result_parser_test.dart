@@ -12,7 +12,7 @@ void main() {
   group('$MavenResultParser', () {
     final resourcePath = path.join('test', 'resources');
     final licenseFile = File(path.join(resourcePath, 'maven_license.txt'));
-    final itemId = ItemId('group:artifact', 'version');
+    final itemId = ItemId('group/artifact', 'version');
 
     final ResultParser parser = MavenResultParser(SpdxMapper());
 

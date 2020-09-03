@@ -61,7 +61,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
 
     switch (type) {
       case 'Java':
-        final identifier = ((group != null) ? '$group:' : '') + artifact;
+        final identifier = ((group != null) ? '$group/' : '') + artifact;
         return ItemId(identifier, version);
       case 'javascript/Node.js':
       case 'JavaScript':

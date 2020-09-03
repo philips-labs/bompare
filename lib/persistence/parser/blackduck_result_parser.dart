@@ -180,7 +180,7 @@ class _BlackDuckSourceCsvParser extends CsvParser {
         break;
       case 'maven':
       case 'github':
-        final name2 = _stripFromLast(nameColumn, ':');
+        final name2 = _stripFromLast(nameColumn, ':').replaceAll(':', '/');
         itemId = ItemId(name2, versionColumn);
         break;
       case 'npmjs':

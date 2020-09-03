@@ -27,7 +27,7 @@ void main() {
 
       expect(result.items, contains(ItemId('javascript/Node.js', '1.0')));
       expect(result.items, contains(ItemId('JavaScript', '2.0')));
-      expect(result.items, contains(ItemId('Java1:jar', '12')));
+      expect(result.items, contains(ItemId('Java1/jar', '12')));
       expect(result.items, contains(ItemId('Java2', '13')));
       expect(result.items, contains(ItemId('Alpine', '3.1.2-r0')));
       expect(result.items, contains(ItemId('Debian1', '1.5.71')));

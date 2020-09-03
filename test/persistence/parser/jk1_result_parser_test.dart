@@ -12,8 +12,8 @@ void main() {
     final resourcePath = path.join('test', 'resources');
     final jk1File = File(path.join(resourcePath, 'jk1.json'));
     final lorumFile = File(path.join(resourcePath, 'testfile.txt'));
-    final itemId1 = ItemId('component_1', 'v_1');
-    final itemId2 = ItemId('component_2', 'v_2');
+    final itemId1 = ItemId('group/artifact_1', 'v_1');
+    final itemId2 = ItemId('group/artifact_2', 'v_2');
 
     final parser = Jk1ResultParser(SpdxMapper());
 

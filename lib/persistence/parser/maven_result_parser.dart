@@ -50,7 +50,7 @@ class MavenResultParser implements ResultParser {
   ItemId _itemFromPackage(String text, Iterable<String> licenses) {
     final name = text.substring(0, text.indexOf(' - '));
     final pos = name.lastIndexOf(':');
-    final package = name.substring(0, pos);
+    final package = name.substring(0, pos).replaceAll(':', '/');
     final version = name.substring(pos + 1);
 
     final itemId = ItemId(package, version);

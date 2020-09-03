@@ -1,14 +1,14 @@
 {
   "dependencies": [
     {
-      "moduleName": "component_1",
+      "moduleName": "group:artifact_1",
       "moduleUrl": "http://example.com",
       "moduleVersion": "v_1",
       "moduleLicense": "my_license",
       "moduleLicenseUrl": "http://example.com/LICENSE"
     },
     {
-      "moduleName": "component_2",
+      "moduleName": "group:artifact_2",
       "moduleUrl": "http://example.com",
       "moduleVersion": "v_2",
       "moduleLicense": "MIT",
