@@ -6,6 +6,7 @@ Component id,Version id,Origin id,Component name,Component version name,Componen
 ,,,comp_name,comp_version,v2,,,,,,,,,maven,package:java:vx,
 ,,,comp_name,comp_version,v3,match,content,,,,,,,github,github:repo:vx,
 ,,,comp_name,comp_version,v4,,,,,,,,,npmjs,package/js/vx,
+,,,comp_name,comp_version,v9,,,,,,,,,nuget,package/.Net/vx,
 ,,,comp_name,comp_version,v5/123,,,,,,,,,alpine,alpine-v5/123,
 ,,,comp_name,comp_version,drop:v6-postfix,,,,,,,,,centos,centos/irrelevant/parts,
 ,,,comp_name,comp_version,v7/postfix,,,,,,,,,debian,debian-v7/postfix/parts,

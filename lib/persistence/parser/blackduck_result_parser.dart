@@ -184,6 +184,7 @@ class _BlackDuckSourceCsvParser extends CsvParser {
         itemId = ItemId(name2, versionColumn);
         break;
       case 'npmjs':
+      case 'nuget':
         final name2 = _stripFromLast(nameColumn, '/');
         itemId = ItemId(name2, versionColumn);
         break;

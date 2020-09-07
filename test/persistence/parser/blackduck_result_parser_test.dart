@@ -52,6 +52,7 @@ void main() {
       expect(result.items, contains(ItemId('package/java', 'v2')));
       expect(result.items, contains(ItemId('github/repo', 'v3')));
       expect(result.items, contains(ItemId('package/js', 'v4')));
+      expect(result.items, contains(ItemId('package/.Net', 'v9')));
       expect(result.items, contains(ItemId('alpine', 'v5')));
       expect(result.items, contains(ItemId('centos', 'v6')));
       expect(result.items, contains(ItemId('debian', 'v7')));
