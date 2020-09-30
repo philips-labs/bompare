@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2020, Koninklijke Philips N.V., https://www.philips.com
+ * SPDX-License-Identifier: MIT
+ */
+
 import 'item_id.dart';
 
 /// Tool-independent summary of BOM scan results.

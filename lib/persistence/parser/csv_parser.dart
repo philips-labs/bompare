@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2020, Koninklijke Philips N.V., https://www.philips.com
+ * SPDX-License-Identifier: MIT
+ */
+
 /// Base CSV parser for scanning the rows of columns.
 abstract class CsvParser {
   static final _columnQuotes = RegExp(r'(^")|("$)');

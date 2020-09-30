@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2020, Koninklijke Philips N.V., https://www.philips.com
+ * SPDX-License-Identifier: MIT
+ */
+
 /// Copied from SPDX license identifier table v3 of April 22, 2020.
 final dictionary = <String, String>{
   '3dfx glide license': 'Glide',

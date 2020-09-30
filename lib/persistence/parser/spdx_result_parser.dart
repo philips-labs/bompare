@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2020-2020, Koninklijke Philips N.V., https://www.philips.com
+ * SPDX-License-Identifier: MIT
+ */
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -12,7 +17,6 @@ import 'purl.dart';
 
 /// Parser for SPDX tag-value files.
 /// See https://spdx.github.io/spdx-spec
-/// Takes item identifier from purl external ref, see https://github.com/package-url/purl-spec
 /// Assumes "concluded license" as the (SPDX) license.
 class SpdxResultParser implements ResultParser {
   final SpdxMapper mapper;
