@@ -1,0 +1,8 @@
+document:
+  title: "Bompare, the Bill-of-Materials comparer"
+  organization: "Philips Research"
+  comment: "Experimental tool to compare SBOM data from various sources"
+projects:
+  - id: "Pub:bompare:bompare:"
+    excluded:
+      - "dev_dependencies"
