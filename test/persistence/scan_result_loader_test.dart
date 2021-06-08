@@ -10,6 +10,7 @@ import 'package:bompare/service/domain/scan_result.dart';
 import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:bompare/service/result_persistence.dart';
 import 'package:glob/glob.dart';
+import 'package:glob/list_local_fs.dart';
 import 'package:mockito/mockito.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
