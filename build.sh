@@ -2,15 +2,16 @@
 set -e
 
 # Update or download libraries
-pub get
+dart pub get
 
 # Analyse code
-libs="bin lib test"
-dartanalyzer $libs
-dartfmt -w $libs
+dart analyze "bin"
+dart analyze "lib"
+dart analyze "test"
+dart format "bin" "lib" "test"
 
 # Calculate coverage by unit tests
-pub run test_coverage
+dart run test test/ --coverage coverage
 if hash genhtml >/dev/null; then
   genhtml -o coverage coverage/lcov.info
   echo "Coverage report is found in /coverage/index.html"
@@ -19,4 +20,4 @@ else
 fi
 
 # Build command line executable
-dart2native bin/bompare.dart -o bompare
+dart compile exe bin/bompare.dart -o bompare
