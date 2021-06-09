@@ -37,12 +37,12 @@ class BomInteractor implements BomService {
 
   @override
   Future<List<BomResult>> compareBom(
-      {File bomFile, bool diffOnly = false}) async {
+      {File? bomFile, bool? diffOnly = false}) async {
     if (_scans.isEmpty) return <BomResult>[];
 
-    final all = <ItemId>{};
+    final all = <ItemId?>{};
     final common = _buildBom(_scans[0].items, all);
-    final ids = diffOnly ? all.difference(common) : all;
+    final ids = diffOnly! ? all.difference(common) : all;
 
     if (bomFile != null) {
       await reports.writeBomComparison(bomFile, ids, _scans);
@@ -55,7 +55,7 @@ class BomInteractor implements BomService {
     return _bomResultPerScanResult(all, common);
   }
 
-  Set<ItemId> _buildBom(Set<ItemId> common, Set<ItemId> all) {
+  Set<ItemId?> _buildBom(Set<ItemId?> common, Set<ItemId?> all) {
     _scans.forEach((r) {
       common = common.intersection(r.items);
       all.addAll(r.items);
@@ -64,7 +64,7 @@ class BomInteractor implements BomService {
   }
 
   List<BomResult> _bomResultPerScanResult(
-          Set<ItemId> all, Set<ItemId> common) =>
+          Set<ItemId?> all, Set<ItemId?> common) =>
       _scans
           .map((r) => BomResult(
                 r.name,
@@ -77,13 +77,13 @@ class BomInteractor implements BomService {
 
   @override
   Future<LicenseResult> compareLicenses(
-      {File licensesFile, bool diffOnly = false}) async {
+      {File? licensesFile, bool? diffOnly = false}) async {
     if (_scans.isEmpty) return LicenseResult(0, 0);
 
     final bom = _commonBom();
     final common = _commonLicenses(bom);
 
-    final ids = diffOnly ? bom.difference(common) : bom;
+    final ids = diffOnly! ? bom.difference(common) : bom;
     if (licensesFile != null) {
       await reports.writeLicenseComparison(licensesFile, ids, _scans);
     }
@@ -95,7 +95,7 @@ class BomInteractor implements BomService {
     return LicenseResult(bom.length, common.length);
   }
 
-  Set<ItemId> _commonBom() {
+  Set<ItemId?> _commonBom() {
     var bom = _scans[0].items;
     _scans.forEach((s) {
       bom = bom.intersection(s.items);
@@ -103,27 +103,28 @@ class BomInteractor implements BomService {
     return bom;
   }
 
-  Set<ItemId> _commonLicenses(Set<ItemId> bom) =>
+  Set<ItemId?> _commonLicenses(Set<ItemId?> bom) =>
       bom.where(_scannedLicensesMatch).toSet();
 
-  bool _scannedLicensesMatch(ItemId itemId) => !_scans.any((s) {
-        final scan = s[itemId];
-        final match = scan.licenses.containsAll(itemId.licenses) &&
+  bool _scannedLicensesMatch(ItemId? itemId) => !_scans.any((s) {
+        final scan = s[itemId]!;
+        final match = scan.licenses.containsAll(itemId!.licenses) &&
             itemId.licenses.containsAll(scan.licenses);
         return !match;
       });
 
-  void _printBomResults(Iterable<ItemId> ids) {
+  void _printBomResults(Iterable<ItemId?> ids) {
     _printTablePerItemId(
         ids, (scan, item) => (scan[item] != null) ? 'Yes' : 'No');
   }
 
-  void _printLicenseResults(Iterable<ItemId> ids) {
-    _printTablePerItemId(ids, (scan, item) => scan[item].licenses.join(' OR '));
+  void _printLicenseResults(Iterable<ItemId?> ids) {
+    _printTablePerItemId(
+        ids, (scan, item) => scan[item]!.licenses.join(' OR '));
   }
 
-  void _printTablePerItemId(Iterable<ItemId> items,
-      String Function(ScanResult scan, ItemId item) columnValue) {
+  void _printTablePerItemId(Iterable<ItemId?> items,
+      String Function(ScanResult scan, ItemId? item) columnValue) {
     const separator = ' | ';
 
     final scans = _scans.map((s) => s.name).join(separator);
@@ -135,7 +136,7 @@ class BomInteractor implements BomService {
       ..sort()
       ..forEach((item) {
         final columns = _scans.map((s) => columnValue(s, item)).join(separator);
-        print('${item.package} | ${item.version} | $columns');
+        print('${item!.package} | ${item.version} | $columns');
       });
 
     print('');

@@ -25,7 +25,7 @@ void main() {
     test('converts licenses using mapper', () async {
       final result = await parser.parse(licenseFile);
 
-      final licenses = result[itemId].licenses;
+      final licenses = result[itemId]!.licenses;
       expect(licenses, equals({'"my_license"', 'MIT'}));
     });
 

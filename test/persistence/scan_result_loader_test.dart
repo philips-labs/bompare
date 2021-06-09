@@ -23,9 +23,9 @@ void main() {
     final mappingFile = File(path.join(testDirectory, 'mapping.csv'));
     final wssGlob = Glob(path.join(testDirectory, 'wss_inventory.json'));
 
-    SpdxMapper spdxMapping;
-    ResultPersistence persistence;
-    ResultParser parser;
+    late SpdxMapper spdxMapping;
+    late ResultPersistence persistence;
+    late ResultParser parser;
 
     setUp(() {
       parser = ResultParserMock();
@@ -62,7 +62,8 @@ void main() {
       test('loads scan result(s)', () async {
         final file = wssGlob.listSync().first;
         final itemId = ItemId('package', 'version');
-        when(parser.parse(argThat(predicate<File>((f) => f.path == file.path))))
+        when(parser
+                .parse(argThat(predicate<File>((f) => f.path == file.path))!))
             .thenAnswer(
                 (_) => Future.value(ScanResult('Loaded')..addItem(itemId)));
 

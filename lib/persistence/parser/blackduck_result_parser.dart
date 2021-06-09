@@ -47,23 +47,23 @@ class BlackDuckResultParser implements ResultParser {
     final licenses = _LicenseDictionary();
 
     await _applyToArchive(archive, components_file_prefix,
-        (Stream<List<int>> stream) => _parseLicenseStream(stream, licenses));
+        (Stream<List<int>?> stream) => _parseLicenseStream(stream, licenses));
     await _applyToArchive(
         archive,
         source_file_prefix,
-        (Stream<List<int>> stream) =>
+        (Stream<List<int>?> stream) =>
             _parseSourceStream(stream, result, licenses));
 
     return result;
   }
 
   Future<void> _applyToArchive(Archive archive, String prefix,
-      void Function(Stream<List<int>> stream) apply) async {
+      void Function(Stream<List<int>?> stream) apply) async {
     final sourceFiles = archive
         .where((f) => f.isFile)
         .where((f) => path.basename(f.name).startsWith(prefix));
-    return Future.forEach(sourceFiles, (f) {
-      final data = f.content as List<int>;
+    return Future.forEach(sourceFiles, (dynamic f) {
+      final data = f.content as List<int>?;
       return apply(Stream.value(data));
     });
   }
@@ -73,49 +73,50 @@ class BlackDuckResultParser implements ResultParser {
     final licenses = _LicenseDictionary();
 
     await _applyToDirectory(directory, components_file_prefix,
-        (Stream<List<int>> stream) => _parseLicenseStream(stream, licenses));
+        (Stream<List<int>>? stream) => _parseLicenseStream(stream!, licenses));
     await _applyToDirectory(
         directory,
         source_file_prefix,
-        (Stream<List<int>> stream) =>
-            _parseSourceStream(stream, result, licenses));
+        (Stream<List<int>>? stream) =>
+            _parseSourceStream(stream!, result, licenses));
 
     return result;
   }
 
   Future<void> _applyToDirectory(Directory directory, String prefix,
-      void Function(Stream<List<int>> stream) apply) async {
+      void Function(Stream<List<int>>? stream) apply) async {
     final sourceFiles = directory
         .listSync()
         .whereType<File>()
         .where((f) => path.basename(f.path).startsWith(prefix));
-    return await Future.forEach(sourceFiles, (f) => apply(f.openRead()));
+    return await Future.forEach(
+        sourceFiles, (dynamic f) => apply(f.openRead()));
   }
 
   Future<void> _parseLicenseStream(
-          Stream<List<int>> stream, _LicenseDictionary dictionary) =>
+          Stream<List<int>?> stream, _LicenseDictionary dictionary) =>
       _BlackDuckComponentsCsvParser(dictionary, mapper)
           .parse(_toLineStream(stream));
 
-  Future<void> _parseSourceStream(Stream<List<int>> stream, ScanResult result,
+  Future<void> _parseSourceStream(Stream<List<int>?> stream, ScanResult result,
           _LicenseDictionary licenses) =>
       _BlackDuckSourceCsvParser(result, licenses).parse(_toLineStream(stream));
 
-  Stream<String> _toLineStream(Stream<List<int>> stream) =>
+  Stream<String> _toLineStream(Stream<List<int>?> stream) =>
       stream.transform(utf8.decoder).transform(LineSplitter());
 }
 
 /// Dictionary to lookup licenses per [ItemId].
 class _LicenseDictionary {
-  final _dict = <ItemId, Set<String>>{};
+  final Map<ItemId, Set<String?>> _dict = <ItemId, Set<String>>{};
 
-  void addLicenses(ItemId id, Iterable<String> values) {
+  void addLicenses(ItemId id, Iterable<String?> values) {
     final licenses = _dict[id] ?? <String>{};
     licenses.addAll(values);
     _dict[id] = licenses;
   }
 
-  Set<String> operator [](ItemId id) => _dict[id];
+  Set<String?>? operator [](ItemId id) => _dict[id];
 }
 
 /// Extracts license info per component from the Black Duck components CSV file.

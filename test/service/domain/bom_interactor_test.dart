@@ -20,9 +20,9 @@ void main() {
     final glob = Glob('scan_result.json');
     final spdxFile = File('spdx.csv');
 
-    ResultPersistence results;
-    ReportPersistence reports;
-    BomService service;
+    late ResultPersistence results;
+    late ReportPersistence reports;
+    late BomService service;
 
     setUp(() {
       results = ResultPersistenceMock();

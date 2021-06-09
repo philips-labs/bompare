@@ -49,9 +49,9 @@ class _LineParser {
   final SpdxMapper mapper;
   final ScanResult _result;
 
-  String _packageName;
-  String _license;
-  ItemId _itemId;
+  String? _packageName;
+  String? _license;
+  ItemId? _itemId;
   var _isInTextValue = false;
 
   _LineParser(String name, this.mapper) : _result = ScanResult(name);
@@ -126,7 +126,7 @@ class _LineParser {
     }
 
     if (_license != null) {
-      _itemId.addLicenses(mapper[_license]);
+      _itemId!.addLicenses(mapper[_license!]);
       _license = null;
     }
 

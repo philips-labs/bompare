@@ -14,9 +14,9 @@ void main() {
   group('$LicensesCommand', () {
     const glob = 'glob pattern';
 
-    BomService service;
-    CommandRunner runner;
-    LicensesCommand command;
+    late BomService service;
+    late CommandRunner runner;
+    late LicensesCommand command;
 
     setUp(() {
       service = BomServiceMock();
@@ -40,7 +40,7 @@ void main() {
       ]);
 
       verify(service.loadResult(ScannerType.black_duck,
-          argThat(predicate<Glob>((g) => g.pattern == glob))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))!));
       verify(service.compareLicenses());
     });
 
@@ -56,7 +56,7 @@ void main() {
       ]);
 
       verify(service.loadSpdxMapping(
-          argThat(predicate<File>((f) => f.path == spdxFile))));
+          argThat(predicate<File>((f) => f.path == spdxFile))!));
     });
 
     test('outputs licenses CSV to provided file name', () async {

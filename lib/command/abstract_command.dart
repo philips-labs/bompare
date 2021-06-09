@@ -72,16 +72,16 @@ abstract class AbstractCommand extends Command {
   bool get takesArguments => false;
 
   /// Returns the file indicated by the [option_output] parameter.
-  File get file => (argResults[AbstractCommand.option_output] != null)
-      ? File(argResults[AbstractCommand.option_output])
+  File? get file => (argResults![AbstractCommand.option_output] != null)
+      ? File(argResults![AbstractCommand.option_output])
       : null;
 
   /// Returns the state of the [option_diff_only] parameter.
-  bool get diffOnly => argResults[AbstractCommand.option_diff_only];
+  bool? get diffOnly => argResults![AbstractCommand.option_diff_only];
 
   @override
   Future<void> run() async {
-    if (argResults[option_verbose]) service.verbose = true;
+    if (argResults![option_verbose]) service.verbose = true;
 
     await _loadScanResults();
 
@@ -89,7 +89,7 @@ abstract class AbstractCommand extends Command {
   }
 
   Future<void> _loadScanResults() async {
-    final spdxMapping = argResults[option_spdx_mapping];
+    final spdxMapping = argResults![option_spdx_mapping];
     if (spdxMapping != null) {
       await service.loadSpdxMapping(File(spdxMapping));
     }
@@ -108,8 +108,8 @@ abstract class AbstractCommand extends Command {
   }
 
   Future<void> _loadTypedResults(String option, ScannerType type) =>
-      Future.forEach(
-          argResults[option], (glob) => service.loadResult(type, Glob(glob)));
+      Future.forEach(argResults![option],
+          (dynamic glob) => service.loadResult(type, Glob(glob)));
 
   Future<void> execute();
 }

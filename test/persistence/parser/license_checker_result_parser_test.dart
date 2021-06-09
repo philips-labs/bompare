@@ -26,7 +26,7 @@ void main() {
     test('maps SPDX license identifiers', () async {
       final result = await parser.parse(resultFile);
 
-      expect(result[ItemId('package', 'v1')].licenses,
+      expect(result[ItemId('package', 'v1')]!.licenses,
           containsAll({'MIT', '"Unknown"'}));
     });
 

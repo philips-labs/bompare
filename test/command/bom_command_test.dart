@@ -14,9 +14,9 @@ void main() {
   group('$BomCommand', () {
     const glob = 'glob pattern';
 
-    BomService service;
-    CommandRunner runner;
-    BomCommand command;
+    late BomService service;
+    late CommandRunner runner;
+    late BomCommand command;
 
     setUp(() {
       service = BomServiceMock();
@@ -36,7 +36,7 @@ void main() {
           [BomCommand.command, '--${AbstractCommand.option_reference}', glob]);
 
       verify(service.loadResult(ScannerType.reference,
-          argThat(predicate<Glob>((g) => g.pattern == glob))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))!));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
@@ -46,8 +46,8 @@ void main() {
       await runner
           .run([BomCommand.command, '--${AbstractCommand.option_jk1}', glob]);
 
-      verify(service.loadResult(
-          ScannerType.jk1, argThat(predicate<Glob>((g) => g.pattern == glob))));
+      verify(service.loadResult(ScannerType.jk1,
+          argThat(predicate<Glob>((g) => g.pattern == glob))!));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
@@ -58,7 +58,7 @@ void main() {
           .run([BomCommand.command, '--${AbstractCommand.option_maven}', glob]);
 
       verify(service.loadResult(ScannerType.maven,
-          argThat(predicate<Glob>((g) => g.pattern == glob))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))!));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
@@ -69,7 +69,7 @@ void main() {
           .run([BomCommand.command, '--${AbstractCommand.option_tern}', glob]);
 
       verify(service.loadResult(ScannerType.tern,
-          argThat(predicate<Glob>((g) => g.pattern == glob))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))!));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
@@ -80,7 +80,7 @@ void main() {
           .run([BomCommand.command, '--${AbstractCommand.option_spdx}', glob]);
 
       verify(service.loadResult(ScannerType.spdx,
-          argThat(predicate<Glob>((g) => g.pattern == glob))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))!));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
@@ -94,7 +94,7 @@ void main() {
       ]);
 
       verify(service.loadResult(ScannerType.white_source,
-          argThat(predicate<Glob>((g) => g.pattern == glob))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))!));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 
@@ -105,7 +105,7 @@ void main() {
           [BomCommand.command, '--${AbstractCommand.option_black_duck}', glob]);
 
       verify(service.loadResult(ScannerType.black_duck,
-          argThat(predicate<Glob>((g) => g.pattern == glob))));
+          argThat(predicate<Glob>((g) => g.pattern == glob))!));
       verify(service.compareBom(bomFile: argThat(isNull, named: 'bomFile')));
     });
 

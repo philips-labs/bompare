@@ -40,26 +40,26 @@ class MavenResultParser implements ResultParser {
     final matches = brackets.allMatches(line).toList();
     if (matches.isEmpty) return;
 
-    final licenseTexts = <String>[];
+    final licenseTexts = <String?>[];
     for (var i = 0; i < matches.length; i++) {
       final string = matches[i].group(1);
 
       if (i < matches.length - 1) {
         licenseTexts.add(string);
       } else {
-        result.addItem(_itemFromPackage(string, licenseTexts));
+        result.addItem(_itemFromPackage(string!, licenseTexts));
       }
     }
   }
 
-  ItemId _itemFromPackage(String text, Iterable<String> licenses) {
+  ItemId _itemFromPackage(String text, Iterable<String?> licenses) {
     final name = text.substring(0, text.indexOf(' - '));
     final pos = name.lastIndexOf(':');
     final package = name.substring(0, pos).replaceAll(':', '/');
     final version = name.substring(pos + 1);
 
     final itemId = ItemId(package, version);
-    licenses.forEach((l) => itemId.addLicenses(spdxMapper[l]));
+    licenses.forEach((l) => itemId.addLicenses(spdxMapper[l!]));
     return itemId;
   }
 }

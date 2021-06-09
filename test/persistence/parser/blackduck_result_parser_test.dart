@@ -25,21 +25,21 @@ void main() {
     test('skips separators inside quoted texts', () async {
       final result = await parser.parse(directory);
 
-      final itemId = result[ItemId('comma', 'v0')];
+      final itemId = result[ItemId('comma', 'v0')]!;
       expect(itemId.licenses, equals({'Apache-2.0'}));
     });
 
     test('parses licenses from directory with SPDX abbreviation', () async {
       final result = await parser.parse(directory);
 
-      final itemId = result[ItemId('license', 'v1')];
+      final itemId = result[ItemId('license', 'v1')]!;
       expect(itemId.licenses, equals({'MIT'}));
     });
 
     test('parses packages with license from ZIP file', () async {
       final result = await parser.parse(zipFile);
 
-      final itemId = result[ItemId('license', 'v1')];
+      final itemId = result[ItemId('license', 'v1')]!;
       expect(itemId, isNotNull);
       expect(itemId.licenses, equals({'MIT'}));
     });

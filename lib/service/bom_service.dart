@@ -20,12 +20,12 @@ abstract class BomService {
 
   /// Returns bill-of-material summary, and optionally writes the content
   /// to [bomFile] as a full index or [diffOnly].
-  Future<List<BomResult>> compareBom({File bomFile, bool diffOnly = false});
+  Future<List<BomResult>> compareBom({File? bomFile, bool? diffOnly = false});
 
   /// Returns licenses summary, and optionally writes the content
   /// to [licensesFile] as a full index or [diffOnly].
   Future<LicenseResult> compareLicenses(
-      {File licensesFile, bool diffOnly = false});
+      {File? licensesFile, bool? diffOnly = false});
 }
 
 enum ScannerType {

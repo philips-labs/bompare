@@ -26,8 +26,8 @@ void main() {
     test('converts licenses using mapper', () async {
       final result = await parser.parse(jk1File);
 
-      expect(result[itemId1].licenses, equals({'"my_license"'}));
-      expect(result[itemId2].licenses, equals({'MIT'}));
+      expect(result[itemId1]!.licenses, equals({'"my_license"'}));
+      expect(result[itemId2]!.licenses, equals({'MIT'}));
     });
 
     test('throws when file does not exist', () {

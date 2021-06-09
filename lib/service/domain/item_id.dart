@@ -5,13 +5,13 @@
 
 /// Bill-of-material item identifier.
 class ItemId implements Comparable<ItemId> {
-  final String package;
+  final String? package;
   final String version;
-  final licenses = <String>{};
+  final licenses = <String?>{};
 
   ItemId(this.package, version) : version = version ?? '';
 
-  void addLicenses(Iterable<String> values) {
+  void addLicenses(Iterable<String?> values) {
     licenses.addAll(values);
   }
 
@@ -28,7 +28,7 @@ class ItemId implements Comparable<ItemId> {
 
   @override
   int compareTo(ItemId other) {
-    final diff = package.compareTo(other.package);
+    final diff = package!.compareTo(other.package!);
     if (diff != 0) return diff;
 
     return version.compareTo(other.version);

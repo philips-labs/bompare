@@ -11,7 +11,7 @@ class ScanResult {
   final String name;
 
   /// Returns the bill-of-material.
-  final items = <ItemId>{};
+  final items = <ItemId?>{};
 
   ScanResult(this.name);
 
@@ -19,16 +19,16 @@ class ScanResult {
   void merge(ScanResult other) {
     other.items.forEach((itemId) {
       items.add(itemId);
-      this[itemId].addLicenses(itemId.licenses);
+      this[itemId]!.addLicenses(itemId!.licenses);
     });
   }
 
   /// Registers a bill-of-material item.
-  void addItem(ItemId id) {
+  void addItem(ItemId? id) {
     items.add(id);
   }
 
   /// Returns actual item of the scan for the provided [itemId], or null if
   /// the scan does not include the item.
-  ItemId operator [](ItemId itemId) => items.lookup(itemId);
+  ItemId? operator [](ItemId? itemId) => items.lookup(itemId);
 }

@@ -9,7 +9,7 @@ import 'package:test/test.dart';
 
 void main() {
   group('$CsvResultWriter', () {
-    File file;
+    late File file;
 
     setUp(() {
       file = File(path.join(Directory.systemTemp.path, 'temp.csv'));
