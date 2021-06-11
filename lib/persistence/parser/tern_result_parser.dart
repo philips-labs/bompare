@@ -49,7 +49,7 @@ class TernResultParser implements ResultParser {
                 : string;
             final itemId = ItemId(name, version);
             final licenses = package[field_license] as String?;
-            itemId.addLicenses(mapper[licenses!]);
+            itemId.addLicenses(mapper[licenses]);
             result.addItem(itemId);
           });
         });
