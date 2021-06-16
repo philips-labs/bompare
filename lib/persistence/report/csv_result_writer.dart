@@ -36,18 +36,19 @@ class CsvResultWriter {
       _writeCsvFile(_bomHeadline(), ids, _toLicenseLine);
 
   Future<void> _writeCsvFile(List<String> headLine, Set<ItemId?> ids,
-      List<String?> Function(ItemId? id) formatter) async {
+      List<String> Function(ItemId? id) formatter) async {
     final list = ids.toList()..sort((l, r) => l!.compareTo(r!));
 
     IOSink sink;
     try {
       sink = file.openWrite();
-      await sink.addStream(Stream.value(headLine)
+      await sink.addStream(Stream<List<String>>.value(headLine)
           .transform<String>(csvTransformer)
           .transform(utf8.encoder));
-      await sink.addStream(Stream.fromIterable(list.map(formatter))
-          .transform<String>(csvTransformer)
-          .transform(utf8.encoder));
+      await sink.addStream(
+          Stream<List<String>>.fromIterable(list.map(formatter))
+              .transform<String>(csvTransformer)
+              .transform(utf8.encoder));
     } on FileSystemException {
       throw PersistenceException(file, 'can not write to file');
     }
@@ -56,19 +57,19 @@ class CsvResultWriter {
   List<String> _bomHeadline() =>
       ['package', 'version', for (final s in scans) s.name];
 
-  List<String?> _toBomLine(ItemId? id) => [
-        id!.package,
+  List<String> _toBomLine(ItemId? id) => [
+        id!.package ?? '',
         id.version,
         for (final s in scans) (s[id] != null) ? 'yes' : '',
       ];
 
-  List<String?> _toLicenseLine(ItemId? id) {
+  List<String> _toLicenseLine(ItemId? id) {
     final licenses = scans.map((s) {
       return s[id]?.licenses.join(' OR ') ?? '';
     }).toList();
 
-    return <String?>[
-      id!.package,
+    return <String>[
+      id!.package ?? '',
       id.version,
       for (final lic in licenses) lic,
     ];
