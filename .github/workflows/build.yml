@@ -20,6 +20,6 @@ jobs:
           dart analyze "lib"
           dart analyze "test"
       - name: Test
-        run: dart run test
+        run: dart run test test/
       - name: Build native runtime (linux)
         run: dart compile exe bin/bompare.dart -o bompare
