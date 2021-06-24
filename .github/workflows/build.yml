@@ -8,15 +8,18 @@ jobs:
   build:
     name: Build and Test
     runs-on: ubuntu-latest
-    container: google/dart:2.9-dev
+    container: google/dart:2.12.0
 
     steps:
       - uses: actions/checkout@v2
       - name: Get dependencies
-        run: pub get
+        run: dart pub get
       - name: Static analyse
-        run: dartanalyzer bin lib test
+        run: |
+          dart analyze "bin"
+          dart analyze "lib"
+          dart analyze "test"
       - name: Test
-        run: pub run test
+        run: dart run test
       - name: Build native runtime (linux)
-        run: dart2native bin/bompare.dart -o bompare
+        run: dart compile exe bin/bompare.dart -o bompare
