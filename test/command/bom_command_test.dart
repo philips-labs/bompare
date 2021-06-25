@@ -43,7 +43,6 @@ void main() {
 
       verify(() => service.loadResult(ScannerType.reference,
           any(that: predicate<Glob>((g) => g.pattern == glob)))).called(1);
-
       verify(() =>
               service.compareBom(bomFile: any(that: isNull, named: 'bomFile')))
           .called(1);
@@ -55,7 +54,6 @@ void main() {
 
       verify(() => service.loadResult(ScannerType.jk1,
           any(that: predicate<Glob>((g) => g.pattern == glob)))).called(1);
-
       verify(() =>
               service.compareBom(bomFile: any(that: isNull, named: 'bomFile')))
           .called(1);
@@ -67,7 +65,6 @@ void main() {
 
       verify(() => service.loadResult(ScannerType.maven,
           any(that: predicate<Glob>((g) => g.pattern == glob)))).called(1);
-
       verify(() =>
               service.compareBom(bomFile: any(that: isNull, named: 'bomFile')))
           .called(1);
@@ -79,7 +76,6 @@ void main() {
 
       verify(() => service.loadResult(ScannerType.tern,
           any(that: predicate<Glob>((g) => g.pattern == glob)))).called(1);
-
       verify(() =>
               service.compareBom(bomFile: any(that: isNull, named: 'bomFile')))
           .called(1);
@@ -91,7 +87,6 @@ void main() {
 
       verify(() => service.loadResult(ScannerType.spdx,
           any(that: predicate<Glob>((g) => g.pattern == glob)))).called(1);
-
       verify(() =>
               service.compareBom(bomFile: any(that: isNull, named: 'bomFile')))
           .called(1);
@@ -106,7 +101,6 @@ void main() {
 
       verify(() => service.loadResult(ScannerType.white_source,
           any(that: predicate<Glob>((g) => g.pattern == glob)))).called(1);
-
       verify(() =>
               service.compareBom(bomFile: any(that: isNull, named: 'bomFile')))
           .called(1);
@@ -118,7 +112,6 @@ void main() {
 
       verify(() => service.loadResult(ScannerType.black_duck,
           any(that: predicate<Glob>((g) => g.pattern == glob)))).called(1);
-
       verify(() =>
               service.compareBom(bomFile: any(that: isNull, named: 'bomFile')))
           .called(1);
@@ -139,7 +132,7 @@ void main() {
 
       verify(() => service.compareBom(
           bomFile: any(
-              that: predicate<File>((File f) => f.path == csvFile),
+              that: predicate<File>((f) => f.path == csvFile),
               named: 'bomFile'),
           diffOnly: any(that: isFalse, named: 'diffOnly'))).called(1);
     });
@@ -161,7 +154,7 @@ void main() {
 
       verify(() => service.compareBom(
           bomFile: any(
-              that: predicate<File>((File f) => f.path == csvFile),
+              that: predicate<File>((f) => f.path == csvFile),
               named: 'bomFile'),
           diffOnly: any(that: isTrue, named: 'diffOnly'))).called(1);
     });

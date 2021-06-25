@@ -77,7 +77,7 @@ abstract class AbstractCommand extends Command {
       : null;
 
   /// Returns the state of the [option_diff_only] parameter.
-  bool? get diffOnly => argResults![AbstractCommand.option_diff_only];
+  bool get diffOnly => argResults![AbstractCommand.option_diff_only] ?? false;
 
   @override
   Future<void> run() async {
@@ -109,7 +109,7 @@ abstract class AbstractCommand extends Command {
 
   Future<void> _loadTypedResults(String option, ScannerType type) =>
       Future.forEach(argResults![option],
-          (dynamic glob) => service.loadResult(type, Glob(glob)));
+          (String glob) => service.loadResult(type, Glob(glob)));
 
   Future<void> execute();
 }

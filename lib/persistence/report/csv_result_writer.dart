@@ -28,16 +28,16 @@ class CsvResultWriter {
   CsvResultWriter(this.file, this.scans);
 
   /// Writes a bill-of-materials based on the provided [ids].
-  Future<void> writeBomComparison(Set<ItemId?> ids) =>
+  Future<void> writeBomComparison(Iterable<ItemId> ids) =>
       _writeCsvFile(_bomHeadline(), ids, _toBomLine);
 
   /// Writes a licenses overview based on the provided [ids].
-  Future<void> writeLicensesComparison(Set<ItemId?> ids) =>
+  Future<void> writeLicensesComparison(Iterable<ItemId> ids) =>
       _writeCsvFile(_bomHeadline(), ids, _toLicenseLine);
 
-  Future<void> _writeCsvFile(List<String> headLine, Set<ItemId?> ids,
-      List<String> Function(ItemId? id) formatter) async {
-    final list = ids.toList()..sort((l, r) => l!.compareTo(r!));
+  Future<void> _writeCsvFile(List<String> headLine, Iterable<ItemId> ids,
+      List<String> Function(ItemId id) formatter) async {
+    final list = ids.toList()..sort((l, r) => l.compareTo(r));
 
     IOSink sink;
     try {
@@ -57,19 +57,19 @@ class CsvResultWriter {
   List<String> _bomHeadline() =>
       ['package', 'version', for (final s in scans) s.name];
 
-  List<String> _toBomLine(ItemId? id) => [
-        id!.package ?? '',
+  List<String> _toBomLine(ItemId id) => [
+        id.package,
         id.version,
         for (final s in scans) (s[id] != null) ? 'yes' : '',
       ];
 
-  List<String> _toLicenseLine(ItemId? id) {
+  List<String> _toLicenseLine(ItemId id) {
     final licenses = scans.map((s) {
       return s[id]?.licenses.join(' OR ') ?? '';
     }).toList();
 
     return <String>[
-      id!.package ?? '',
+      id.package,
       id.version,
       for (final lic in licenses) lic,
     ];

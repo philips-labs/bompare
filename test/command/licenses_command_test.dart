@@ -78,7 +78,7 @@ void main() {
 
       verify(() => service.compareLicenses(
           licensesFile: any(
-              that: predicate<File>((File f) => f.path == csvFile),
+              that: predicate<File>((f) => f.path == csvFile),
               named: 'licensesFile'),
           diffOnly: any(that: isFalse, named: 'diffOnly')));
     });
@@ -95,7 +95,7 @@ void main() {
 
       verify(() => service.compareLicenses(
           licensesFile: any(
-              that: predicate<File>((File f) => f.path == csvFile),
+              that: predicate<File>((f) => f.path == csvFile),
               named: 'licensesFile'),
           diffOnly: any(that: isTrue, named: 'diffOnly')));
     });

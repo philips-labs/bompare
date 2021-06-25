@@ -126,11 +126,11 @@ class _LineParser {
     }
 
     if (_license != null) {
-      _itemId!.addLicenses(mapper[_license!]);
+      _itemId!.addLicenses(mapper[_license]);
       _license = null;
     }
 
-    _result.addItem(_itemId);
+    _result.addItem(_itemId!);
     _itemId = null;
     _packageName = null;
   }

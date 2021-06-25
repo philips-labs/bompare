@@ -62,10 +62,8 @@ class BlackDuckResultParser implements ResultParser {
     final sourceFiles = archive
         .where((f) => f.isFile)
         .where((f) => path.basename(f.name).startsWith(prefix));
-    return Future.forEach(sourceFiles, (dynamic f) {
-      final data = f.content as List<int>?;
-      return apply(Stream.value(data!));
-    });
+    return Future.forEach<ArchiveFile>(
+        sourceFiles, (f) => apply(Stream.value(f.content as List<int>)));
   }
 
   Future<ScanResult> _processDirectory(Directory directory) async {
@@ -73,24 +71,23 @@ class BlackDuckResultParser implements ResultParser {
     final licenses = _LicenseDictionary();
 
     await _applyToDirectory(directory, components_file_prefix,
-        (Stream<List<int>>? stream) => _parseLicenseStream(stream!, licenses));
+        (Stream<List<int>> stream) => _parseLicenseStream(stream, licenses));
     await _applyToDirectory(
         directory,
         source_file_prefix,
-        (Stream<List<int>>? stream) =>
-            _parseSourceStream(stream!, result, licenses));
+        (Stream<List<int>> stream) =>
+            _parseSourceStream(stream, result, licenses));
 
     return result;
   }
 
   Future<void> _applyToDirectory(Directory directory, String prefix,
-      void Function(Stream<List<int>>? stream) apply) async {
+      void Function(Stream<List<int>> stream) apply) async {
     final sourceFiles = directory
         .listSync()
         .whereType<File>()
         .where((f) => path.basename(f.path).startsWith(prefix));
-    return await Future.forEach(
-        sourceFiles, (dynamic f) => apply(f.openRead()));
+    return await Future.forEach<File>(sourceFiles, (f) => apply(f.openRead()));
   }
 
   Future<void> _parseLicenseStream(
@@ -108,15 +105,15 @@ class BlackDuckResultParser implements ResultParser {
 
 /// Dictionary to lookup licenses per [ItemId].
 class _LicenseDictionary {
-  final Map<ItemId, Set<String?>> _dict = <ItemId, Set<String?>>{};
+  final _dict = <ItemId, Set<String>>{};
 
-  void addLicenses(ItemId id, Iterable<String?> values) {
-    final licenses = _dict[id] ?? <String?>{};
+  void addLicenses(ItemId id, Iterable<String> values) {
+    final licenses = _dict[id] ?? {};
     licenses.addAll(values);
     _dict[id] = licenses;
   }
 
-  Set<String?>? operator [](ItemId id) => _dict[id];
+  Set<String>? operator [](ItemId id) => _dict[id];
 }
 
 /// Extracts license info per component from the Black Duck components CSV file.

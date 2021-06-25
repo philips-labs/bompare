@@ -48,8 +48,8 @@ class _LicenseFileParser extends CsvParser {
   final ScanResult result;
   final SpdxMapper mapper;
 
-  late int _module_column;
-  late int _license_column;
+  late final int _module_column;
+  late final int _license_column;
 
   _LicenseFileParser(this.result, this.mapper);
 

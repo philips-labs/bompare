@@ -35,7 +35,7 @@ class ScanResultLoader implements ResultPersistence {
     final result = ScanResult(path.basenameWithoutExtension(glob.pattern));
     var found = false;
 
-    await Future.forEach(glob.listSync(), (dynamic file) async {
+    await Future.forEach<FileSystemEntity>(glob.listSync(), (file) async {
       if (file is File) {
         result.merge(await parser.parse(file));
         found = true;

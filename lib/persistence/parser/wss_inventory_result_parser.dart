@@ -58,7 +58,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   }
 
   ItemId _decodeItemId(dynamic obj) {
-    final type = obj[field_type];
+    final type = obj[field_type] as String? ?? '?';
     final version = obj[field_version] as String? ?? '';
     final name = obj[field_name] as String?;
     final group = obj[field_group_id] as String?;
@@ -66,29 +66,30 @@ class WhiteSourceInventoryResultParser implements ResultParser {
 
     switch (type) {
       case 'Java':
-        final identifier = ((group != null) ? '$group/' : '') + artifact!;
+        final identifier =
+            (group?.isNotEmpty ?? false ? '$group/' : '') + (artifact ?? '?');
         return ItemId(identifier, version);
       case 'javascript/Node.js':
       case 'JavaScript':
       case 'Alpine':
-        return ItemId(group, version);
+        return ItemId(group ?? '?', version);
       case 'Debian':
-        final String? n = (group!.isNotEmpty)
-            ? group
-            : name!.substring(0, name.indexOf(version) - 1);
+        final n = (group?.isNotEmpty ?? false)
+            ? group!
+            : name?.substring(0, name.indexOf(version) - 1) ?? '?';
         return ItemId(n, version);
       case 'ActionScript':
       case 'Source Library':
       case 'Unknown Library':
-        return ItemId(artifact ?? name, version);
+        return ItemId(artifact ?? name ?? '?', version);
       case 'RPM':
-        final first = name!.substring(0, name.lastIndexOf('-'));
+        final first = name?.substring(0, name.lastIndexOf('-')) ?? '';
         final pos = first.lastIndexOf('-');
         final v = first.substring(pos + 1);
         return ItemId(first.substring(0, pos),
             v.substring(math.max(v.indexOf(':') + 1, 0)));
       default:
-        final id = ItemId(group, version);
+        final id = ItemId(group ?? '?', version);
         if (!assumed.contains(id)) {
           print('Warning: Assumed $id for WhiteSource type "$type"');
           assumed.add(id);
@@ -100,8 +101,8 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   void _decodeLicenses(ItemId itemId, dynamic obj) {
     final licenses = obj['licenses'] as Iterable? ?? [];
     licenses.forEach((lic) {
-      final name = lic['name'] as String?;
-      itemId.addLicenses(mapper[name!]);
+      final name = lic['name'] ?? '';
+      itemId.addLicenses(mapper[name]);
     });
   }
 }
