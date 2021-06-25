@@ -21,8 +21,7 @@ class BomCommand extends AbstractCommand {
 
   @override
   Future<void> execute() async {
-    final results =
-        await service.compareBom(bomFile: file, diffOnly: diffOnly ?? false);
+    final results = await service.compareBom(bomFile: file, diffOnly: diffOnly);
     results.forEach((result) {
       print('BOM according to "${result.name}": '
           '${result.detected} detected, '

@@ -11,7 +11,7 @@ dart analyze "test"
 dart format "bin" "lib" "test"
 
 # Calculate coverage by unit tests
-dart run test test/ --coverage coverage
+dart run test test --coverage coverage
 
 if hash format_coverage >/dev/null && hash genhtml >/dev/null; then
   format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.packages --report-on=lib
