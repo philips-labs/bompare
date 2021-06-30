@@ -127,7 +127,7 @@ class _LineParser {
 
     if (_itemId == null) {
       print(
-          'Warning: Skipping package "$_packageName" because defines no Package URL');
+          'Warning: Skipping package "$_packageName" because it defines no Package URL');
       return;
     }
 
