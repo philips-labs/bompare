@@ -16,7 +16,7 @@ class CsvResultWriter {
   static StreamTransformer<List<String>, String> csvTransformer =
       StreamTransformer.fromHandlers(handleData: (line, sink) {
     sink.add(line
-        .map((str) => str?.replaceAll('"', r'""') ?? '')
+        .map((str) => str.replaceAll('"', r'""'))
         .map((str) => '"$str"')
         .join(','));
     sink.add('\r\n');
@@ -28,26 +28,27 @@ class CsvResultWriter {
   CsvResultWriter(this.file, this.scans);
 
   /// Writes a bill-of-materials based on the provided [ids].
-  Future<void> writeBomComparison(Set<ItemId> ids) =>
+  Future<void> writeBomComparison(Iterable<ItemId> ids) =>
       _writeCsvFile(_bomHeadline(), ids, _toBomLine);
 
   /// Writes a licenses overview based on the provided [ids].
-  Future<void> writeLicensesComparison(Set<ItemId> ids) =>
+  Future<void> writeLicensesComparison(Iterable<ItemId> ids) =>
       _writeCsvFile(_bomHeadline(), ids, _toLicenseLine);
 
-  Future<void> _writeCsvFile(List<String> headLine, Set<ItemId> ids,
+  Future<void> _writeCsvFile(List<String> headLine, Iterable<ItemId> ids,
       List<String> Function(ItemId id) formatter) async {
     final list = ids.toList()..sort((l, r) => l.compareTo(r));
 
     IOSink sink;
     try {
       sink = file.openWrite();
-      await sink.addStream(Stream.value(headLine)
+      await sink.addStream(Stream<List<String>>.value(headLine)
           .transform<String>(csvTransformer)
           .transform(utf8.encoder));
-      await sink.addStream(Stream.fromIterable(list.map(formatter))
-          .transform<String>(csvTransformer)
-          .transform(utf8.encoder));
+      await sink.addStream(
+          Stream<List<String>>.fromIterable(list.map(formatter))
+              .transform<String>(csvTransformer)
+              .transform(utf8.encoder));
     } on FileSystemException {
       throw PersistenceException(file, 'can not write to file');
     }
@@ -64,7 +65,7 @@ class CsvResultWriter {
 
   List<String> _toLicenseLine(ItemId id) {
     final licenses = scans.map((s) {
-      return s[id]?.licenses?.join(' OR ') ?? '';
+      return s[id]?.licenses.join(' OR ') ?? '';
     }).toList();
 
     return <String>[

@@ -11,8 +11,8 @@ void main() {
     final directory = path.join('test', 'resources');
     final file = File(path.join(directory, 'mapping.csv'));
 
-    SpdxMapper mapper;
-    MappingParser parser;
+    late SpdxMapper mapper;
+    late MappingParser parser;
 
     setUp(() {
       mapper = SpdxMapper();

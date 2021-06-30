@@ -10,7 +10,8 @@ import 'package:bompare/service/domain/scan_result.dart';
 import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:bompare/service/result_persistence.dart';
 import 'package:glob/glob.dart';
-import 'package:mockito/mockito.dart';
+import 'package:glob/list_local_fs.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
@@ -22,15 +23,17 @@ void main() {
     final mappingFile = File(path.join(testDirectory, 'mapping.csv'));
     final wssGlob = Glob(path.join(testDirectory, 'wss_inventory.json'));
 
-    SpdxMapper spdxMapping;
-    ResultPersistence persistence;
-    ResultParser parser;
+    late SpdxMapper spdxMapping;
+    late ResultPersistence persistence;
+    late ResultParser parser;
 
     setUp(() {
       parser = ResultParserMock();
       spdxMapping = SpdxMapper();
       persistence =
           ScanResultLoader({ScannerType.white_source: parser}, spdxMapping);
+
+      registerFallbackValue(File(''));
     });
 
     group('SPDX mapping', () {
@@ -61,7 +64,8 @@ void main() {
       test('loads scan result(s)', () async {
         final file = wssGlob.listSync().first;
         final itemId = ItemId('package', 'version');
-        when(parser.parse(argThat(predicate<File>((f) => f.path == file.path))))
+        when(() => parser
+                .parse(any(that: predicate<File>((f) => f.path == file.path))))
             .thenAnswer(
                 (_) => Future.value(ScanResult('Loaded')..addItem(itemId)));
 

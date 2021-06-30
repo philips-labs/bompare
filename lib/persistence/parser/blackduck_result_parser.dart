@@ -62,10 +62,8 @@ class BlackDuckResultParser implements ResultParser {
     final sourceFiles = archive
         .where((f) => f.isFile)
         .where((f) => path.basename(f.name).startsWith(prefix));
-    return Future.forEach(sourceFiles, (f) {
-      final data = f.content as List<int>;
-      return apply(Stream.value(data));
-    });
+    return Future.forEach<ArchiveFile>(
+        sourceFiles, (f) => apply(Stream.value(f.content as List<int>)));
   }
 
   Future<ScanResult> _processDirectory(Directory directory) async {
@@ -89,7 +87,7 @@ class BlackDuckResultParser implements ResultParser {
         .listSync()
         .whereType<File>()
         .where((f) => path.basename(f.path).startsWith(prefix));
-    return await Future.forEach(sourceFiles, (f) => apply(f.openRead()));
+    return await Future.forEach<File>(sourceFiles, (f) => apply(f.openRead()));
   }
 
   Future<void> _parseLicenseStream(
@@ -110,12 +108,12 @@ class _LicenseDictionary {
   final _dict = <ItemId, Set<String>>{};
 
   void addLicenses(ItemId id, Iterable<String> values) {
-    final licenses = _dict[id] ?? <String>{};
+    final licenses = _dict[id] ?? {};
     licenses.addAll(values);
     _dict[id] = licenses;
   }
 
-  Set<String> operator [](ItemId id) => _dict[id];
+  Set<String>? operator [](ItemId id) => _dict[id];
 }
 
 /// Extracts license info per component from the Black Duck components CSV file.

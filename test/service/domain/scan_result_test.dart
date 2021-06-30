@@ -7,7 +7,7 @@ void main() {
     const name = 'name';
     const package = 'package';
     const version = 'version';
-    ScanResult result;
+    late ScanResult result;
 
     setUp(() {
       result = ScanResult(name);
@@ -50,7 +50,7 @@ void main() {
         result.addItem(itemId);
         result.merge(other);
 
-        expect(result[itemId].licenses, containsAll(['one', 'two']));
+        expect(result[itemId]!.licenses, containsAll(['one', 'two']));
       });
     });
   });

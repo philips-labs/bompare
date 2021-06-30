@@ -23,7 +23,7 @@ class SpdxMapper {
   }
 
   /// Maps the [title] to one or more license identifiers.
-  Set<String> operator [](String title) {
+  Set<String> operator [](String? title) {
     if (title == null) return {};
 
     final unbraced = title.replaceAll(_enclosingBraces, '');
@@ -37,7 +37,7 @@ class SpdxMapper {
   /// used for controlling recursion into split blocks.)
   Set<String> _find(String title, {bool anyMatch = false}) {
     final key = title.toLowerCase();
-    if (_mapping.containsKey(key)) return {_mapping[key]};
+    if (_mapping.containsKey(key)) return {_mapping[key]!};
 
     final matches = _andOrSeparator.allMatches(key);
     // Iterate from end to avoid accidental prefix-matches

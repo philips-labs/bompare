@@ -7,7 +7,7 @@ void main() {
     const unknown = 'Not a known license';
     const valid_license = 'MIT';
 
-    SpdxMapper mapper;
+    late SpdxMapper mapper;
 
     setUp(() {
       mapper = SpdxMapper();

@@ -42,7 +42,7 @@ class MavenResultParser implements ResultParser {
 
     final licenseTexts = <String>[];
     for (var i = 0; i < matches.length; i++) {
-      final string = matches[i].group(1);
+      final string = matches[i].group(1)!;
 
       if (i < matches.length - 1) {
         licenseTexts.add(string);

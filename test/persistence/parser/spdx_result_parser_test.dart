@@ -34,14 +34,14 @@ void main() {
     test('parses plain package', () async {
       final result = await parser.parse(file);
 
-      expect(result[ItemId('group/artifact', '1.0')].licenses,
+      expect(result[ItemId('group/artifact', '1.0')]!.licenses,
           containsAll(['MIT', '"Unknown"']));
     });
 
     test('parses package unasserted license', () async {
       final result = await parser.parse(file);
 
-      expect(result[ItemId('unasserted_license', '2.0')].licenses, isEmpty);
+      expect(result[ItemId('unasserted_license', '2.0')]!.licenses, isEmpty);
     });
 
     test('parses text blocks', () async {

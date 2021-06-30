@@ -7,7 +7,7 @@ import 'package:bompare/service/domain/scan_result.dart';
 import 'package:bompare/service/report_persistence.dart';
 import 'package:bompare/service/result_persistence.dart';
 import 'package:glob/glob.dart';
-import 'package:mockito/mockito.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 
 class ResultPersistenceMock extends Mock implements ResultPersistence {}
@@ -20,22 +20,30 @@ void main() {
     final glob = Glob('scan_result.json');
     final spdxFile = File('spdx.csv');
 
-    ResultPersistence results;
-    ReportPersistence reports;
-    BomService service;
+    late ResultPersistence results;
+    late ReportPersistence reports;
+    late BomService service;
 
     setUp(() {
       results = ResultPersistenceMock();
       reports = ReportPersistenceMock();
       service = BomInteractor(results, reports);
       service.verbose = true;
+
+      registerFallbackValue(File(''));
+
+      when(() => results.loadMapping(any())).thenAnswer((_) async {});
+      when(() => reports.writeBomComparison(any(), any(), any()))
+          .thenAnswer((_) async {});
+      when(() => reports.writeLicenseComparison(any(), any(), any()))
+          .thenAnswer((_) async {});
     });
 
     group('SPDX mapping', () {
       test('loads SPDX mapping file', () {
         service.loadSpdxMapping(spdxFile);
 
-        verify(results.loadMapping(spdxFile));
+        verify(() => results.loadMapping(spdxFile)).called(1);
       });
     });
 
@@ -46,7 +54,7 @@ void main() {
 
       test('loads scan result from single scanner', () async {
         final result = ScanResult(name)..addItem(ItemId('a', '1'));
-        when(results.load(ScannerType.black_duck, glob))
+        when(() => results.load(ScannerType.black_duck, glob))
             .thenAnswer((_) => Future.value(result));
 
         await service.loadResult(ScannerType.black_duck, glob);
@@ -64,13 +72,13 @@ void main() {
         final result1 = ScanResult('A')
           ..addItem(commonItem)
           ..addItem(ItemId('a', '1'));
-        when(results.load(ScannerType.reference, glob))
+        when(() => results.load(ScannerType.reference, glob))
             .thenAnswer((_) => Future.value(result1));
         final result2 = ScanResult('B')
           ..addItem(commonItem)
           ..addItem(ItemId('b', '2'))
           ..addItem(ItemId('c', '3'));
-        when(results.load(ScannerType.black_duck, glob))
+        when(() => results.load(ScannerType.black_duck, glob))
             .thenAnswer((_) => Future.value(result2));
 
         await service.loadResult(ScannerType.reference, glob);
@@ -92,13 +100,14 @@ void main() {
         final bomFile = File('bom.csv');
         final id = ItemId('a', '1');
         final result = ScanResult('A')..addItem(id);
-        when(results.load(ScannerType.reference, glob))
+        when(() => results.load(ScannerType.reference, glob))
             .thenAnswer((_) => Future.value(result));
 
         await service.loadResult(ScannerType.reference, glob);
         await service.compareBom(bomFile: bomFile);
 
-        verify(reports.writeBomComparison(bomFile, [id], [result]));
+        verify(() => reports.writeBomComparison(bomFile, [id], [result]))
+            .called(1);
       });
 
       test('writes diff BOM report', () async {
@@ -107,16 +116,18 @@ void main() {
         final id2 = ItemId('b', '2');
         final result1 = ScanResult('A')..addItem(id1);
         final result2 = ScanResult('B')..addItem(id1)..addItem(id2);
-        when(results.load(ScannerType.reference, glob))
+        when(() => results.load(ScannerType.reference, glob))
             .thenAnswer((_) => Future.value(result1));
-        when(results.load(ScannerType.black_duck, glob))
+        when(() => results.load(ScannerType.black_duck, glob))
             .thenAnswer((_) => Future.value(result2));
 
         await service.loadResult(ScannerType.reference, glob);
         await service.loadResult(ScannerType.black_duck, glob);
         await service.compareBom(bomFile: bomFile, diffOnly: true);
 
-        verify(reports.writeBomComparison(bomFile, [id2], [result1, result2]));
+        verify(() =>
+                reports.writeBomComparison(bomFile, [id2], [result1, result2]))
+            .called(1);
       });
     });
 
@@ -135,7 +146,7 @@ void main() {
         final result = ScanResult(name)
           ..addItem(ItemId('with', '1')..addLicenses([license]))
           ..addItem(ItemId('without', '1'));
-        when(results.load(ScannerType.black_duck, glob))
+        when(() => results.load(ScannerType.black_duck, glob))
             .thenAnswer((_) => Future.value(result));
 
         await service.loadResult(ScannerType.black_duck, glob);
@@ -154,12 +165,12 @@ void main() {
           ..addItem(equalItem)
           ..addItem(ItemId(common, common)..addLicenses([license]))
           ..addItem(ItemId('other', '666'));
-        when(results.load(ScannerType.reference, glob))
+        when(() => results.load(ScannerType.reference, glob))
             .thenAnswer((_) => Future.value(result1));
         final result2 = ScanResult('B')
           ..addItem(equalItem)
           ..addItem(ItemId(common, common)..addLicenses([otherLicense]));
-        when(results.load(ScannerType.black_duck, glob))
+        when(() => results.load(ScannerType.black_duck, glob))
             .thenAnswer((_) => Future.value(result2));
 
         await service.loadResult(ScannerType.reference, glob);
@@ -174,24 +185,26 @@ void main() {
         final licensesFile = File('licenses.csv');
         final id = ItemId('a', '1');
         final result = ScanResult('A')..addItem(id);
-        when(results.load(ScannerType.reference, glob))
+        when(() => results.load(ScannerType.reference, glob))
             .thenAnswer((_) => Future.value(result));
 
         await service.loadResult(ScannerType.reference, glob);
         await service.compareLicenses(licensesFile: licensesFile);
 
-        verify(reports.writeLicenseComparison(licensesFile, [id], [result]));
+        verify(() =>
+                reports.writeLicenseComparison(licensesFile, [id], [result]))
+            .called(1);
       });
 
       test('writes licenses diff report', () async {
         final licensesFile = File('licenses.csv');
         final id1 = ItemId('a', '1')..addLicenses({'MIT'});
         final result1 = ScanResult('A')..addItem(id1);
-        when(results.load(ScannerType.reference, glob))
+        when(() => results.load(ScannerType.reference, glob))
             .thenAnswer((_) => Future.value(result1));
         final id2 = ItemId('a', '1')..addLicenses({'Apache-2.0'});
         final result2 = ScanResult('B')..addItem(id2);
-        when(results.load(ScannerType.white_source, glob))
+        when(() => results.load(ScannerType.white_source, glob))
             .thenAnswer((_) => Future.value(result2));
 
         await service.loadResult(ScannerType.reference, glob);
@@ -199,8 +212,8 @@ void main() {
         await service.compareLicenses(
             licensesFile: licensesFile, diffOnly: true);
 
-        verify(reports
-            .writeLicenseComparison(licensesFile, [id1], [result1, result2]));
+        verify(() => reports.writeLicenseComparison(
+            licensesFile, [id1], [result1, result2])).called(1);
       });
     });
   });

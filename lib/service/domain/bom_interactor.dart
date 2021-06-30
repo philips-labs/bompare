@@ -37,7 +37,7 @@ class BomInteractor implements BomService {
 
   @override
   Future<List<BomResult>> compareBom(
-      {File bomFile, bool diffOnly = false}) async {
+      {File? bomFile, bool diffOnly = false}) async {
     if (_scans.isEmpty) return <BomResult>[];
 
     final all = <ItemId>{};
@@ -77,7 +77,7 @@ class BomInteractor implements BomService {
 
   @override
   Future<LicenseResult> compareLicenses(
-      {File licensesFile, bool diffOnly = false}) async {
+      {File? licensesFile, bool diffOnly = false}) async {
     if (_scans.isEmpty) return LicenseResult(0, 0);
 
     final bom = _commonBom();
@@ -107,7 +107,7 @@ class BomInteractor implements BomService {
       bom.where(_scannedLicensesMatch).toSet();
 
   bool _scannedLicensesMatch(ItemId itemId) => !_scans.any((s) {
-        final scan = s[itemId];
+        final scan = s[itemId]!;
         final match = scan.licenses.containsAll(itemId.licenses) &&
             itemId.licenses.containsAll(scan.licenses);
         return !match;
@@ -119,7 +119,8 @@ class BomInteractor implements BomService {
   }
 
   void _printLicenseResults(Iterable<ItemId> ids) {
-    _printTablePerItemId(ids, (scan, item) => scan[item].licenses.join(' OR '));
+    _printTablePerItemId(
+        ids, (scan, item) => scan[item]!.licenses.join(' OR '));
   }
 
   void _printTablePerItemId(Iterable<ItemId> items,

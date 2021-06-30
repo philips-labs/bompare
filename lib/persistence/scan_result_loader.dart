@@ -6,6 +6,7 @@
 import 'dart:io';
 
 import 'package:glob/glob.dart';
+import 'package:glob/list_local_fs.dart';
 import 'package:path/path.dart' as path;
 
 import '../service/bom_service.dart';
@@ -34,7 +35,7 @@ class ScanResultLoader implements ResultPersistence {
     final result = ScanResult(path.basenameWithoutExtension(glob.pattern));
     var found = false;
 
-    await Future.forEach(glob.listSync(), (file) async {
+    await Future.forEach<FileSystemEntity>(glob.listSync(), (file) async {
       if (file is File) {
         result.merge(await parser.parse(file));
         found = true;
@@ -51,7 +52,7 @@ class ScanResultLoader implements ResultPersistence {
   ResultParser _resultParserFor(ScannerType type, Glob glob) {
     final parser = parsers[type];
     if (parser == null) {
-      throw PersistenceException(glob, 'No parser registered for ${type}');
+      throw PersistenceException(glob, 'No parser registered for $type');
     }
     return parser;
   }

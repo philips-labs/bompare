@@ -19,7 +19,7 @@ class ScanResult {
   void merge(ScanResult other) {
     other.items.forEach((itemId) {
       items.add(itemId);
-      this[itemId].addLicenses(itemId.licenses);
+      this[itemId]?.addLicenses(itemId.licenses);
     });
   }
 
@@ -30,5 +30,5 @@ class ScanResult {
 
   /// Returns actual item of the scan for the provided [itemId], or null if
   /// the scan does not include the item.
-  ItemId operator [](ItemId itemId) => items.lookup(itemId);
+  ItemId? operator [](ItemId itemId) => items.lookup(itemId);
 }
