@@ -16,8 +16,14 @@ ExternalRef: PACKAGE-MANAGER purl pkg:maven/group/artifact@1.0
 ## Start of package without asserted license
 PackageName: License not asserted
 PackageLicenseConcluded: NOASSERTION
-PackageLicenseDeclared: Apache-2.0
+PackageLicenseDeclared: NOASSERTION
 ExternalRef: PACKAGE-MANAGER purl pkg:npm/unasserted_license@2.0
+
+## Start of package with only declared license
+PackageName: License only declared
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseDeclared: Apache-2.0
+ExternalRef: PACKAGE-MANAGER purl pkg:npm/declared_license@3.0
 
 ## Start of package with confusing text block
 PackageName: With text block

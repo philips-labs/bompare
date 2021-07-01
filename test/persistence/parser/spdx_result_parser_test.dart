@@ -38,10 +38,26 @@ void main() {
           containsAll(['MIT', '"Unknown"']));
     });
 
-    test('parses package unasserted license', () async {
-      final result = await parser.parse(file);
+    group('license declaration', () {
+      test('prefers concluded license', () async {
+        final result = await parser.parse(file);
 
-      expect(result[ItemId('unasserted_license', '2.0')]!.licenses, isEmpty);
+        expect(result[ItemId('group/artifact', '1.0')]!.licenses,
+            containsAll(['MIT', '"Unknown"']));
+      });
+
+      test('parses package without asserted license', () async {
+        final result = await parser.parse(file);
+
+        expect(result[ItemId('unasserted_license', '2.0')]!.licenses, isEmpty);
+      });
+
+      test('assumes declared license', () async {
+        final result = await parser.parse(file);
+
+        expect(result[ItemId('declared_license', '3.0')]!.licenses,
+            contains('Apache-2.0'));
+      });
     });
 
     test('parses text blocks', () async {
@@ -50,11 +66,10 @@ void main() {
       expect(result[ItemId('text', '3.0')], isNotNull);
     });
 
-    test('throws for missing package url', () async {
-      expect(
-          () => parser.parse(missingRefFile),
-          throwsA(predicate<PersistenceException>(
-              (e) => e.toString().contains('purl reference'))));
+    test('skips when missing package url', () async {
+      final result = await parser.parse(missingRefFile);
+
+      expect(result.items.length, 0);
     });
   });
 }

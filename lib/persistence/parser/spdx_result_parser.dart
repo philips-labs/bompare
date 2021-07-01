@@ -20,6 +20,7 @@ import 'purl.dart';
 /// Assumes "concluded license" as the (SPDX) license.
 class SpdxResultParser implements ResultParser {
   final SpdxMapper mapper;
+
   SpdxResultParser(this.mapper);
 
   @override
@@ -104,6 +105,10 @@ class _LineParser {
           _license = value;
         }
         break;
+      case 'PackageLicenseDeclared':
+        if (value != 'NOASSERTION' && _license == null) {
+          _license = value;
+        }
     }
   }
 
@@ -121,8 +126,9 @@ class _LineParser {
     if (_packageName == null) return;
 
     if (_itemId == null) {
-      throw FormatException(
-          'Missing external PACKAGE-MANAGER purl reference in package "$_packageName"');
+      print(
+          'Warning: Skipping package "$_packageName" because it defines no Package URL');
+      return;
     }
 
     if (_license != null) {
