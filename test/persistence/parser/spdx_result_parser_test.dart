@@ -58,6 +58,13 @@ void main() {
         expect(result[ItemId('declared_license', '3.0')]!.licenses,
             contains('Apache-2.0'));
       });
+
+      test('recursively expands custom license', () async {
+        final result = await parser.parse(file);
+
+        expect(result[ItemId('custom_license', '4.0')]!.licenses,
+            contains('"Custom WITH Exception"'));
+      });
     });
 
     test('parses text blocks', () async {

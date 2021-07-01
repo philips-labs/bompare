@@ -8,17 +8,29 @@ void main() {
     const license = 'license';
 
     test('creates instance', () {
-      final id = ItemId(package, version)..addLicenses([license]);
+      final id = ItemId(package, version);
 
       expect(id.package, equals(package));
       expect(id.version, equals(version));
-      expect(id.licenses, equals({license}));
+      expect(id.licenses, isEmpty);
     });
 
     test('creates instance with null version', () {
       final id = ItemId(package, null);
 
       expect(id.version, isEmpty);
+    });
+
+    test('adds licenses', () {
+      final id = ItemId(package, version)..addLicenses([license]);
+
+      expect(id.licenses, contains(license));
+    });
+
+    test('skips empty license', () {
+      final id = ItemId(package, version)..addLicenses(['']);
+
+      expect(id.licenses, isEmpty);
     });
 
     test('implements equality', () {

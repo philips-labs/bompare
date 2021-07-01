@@ -12,7 +12,7 @@ class ItemId implements Comparable<ItemId> {
   ItemId(this.package, version) : version = version ?? '';
 
   void addLicenses(Iterable<String> values) {
-    licenses.addAll(values);
+    licenses.addAll(values.where((lic) => lic.isNotEmpty));
   }
 
   @override
