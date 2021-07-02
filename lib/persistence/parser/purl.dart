@@ -11,10 +11,26 @@ import 'dart:math';
 class Purl {
   final String _spec;
 
+  /// Creates instance from a valid Package URL.
   Purl(String specification) : _spec = specification {
     if (!specification.startsWith('pkg:')) {
       throw FormatException('PURL must have scheme "pkg"');
     }
+  }
+
+  /// Creates instance from parts.
+  factory Purl.of({
+    required String type,
+    String? namespace,
+    required String name,
+    required String version,
+  }) {
+    namespace = (namespace != null) ? Uri.encodeComponent(namespace) : null;
+    name = Uri.encodeComponent(name);
+    version = Uri.encodeComponent(version);
+    final spec =
+        'pkg:$type/${namespace != null ? '$namespace/' : ''}$name@$version';
+    return Purl(spec);
   }
 
   /// Returns package manager type (or empty string).
@@ -56,4 +72,17 @@ class Purl {
       .map((ch) => _spec.indexOf(ch))
       .where((value) => value >= 0)
       .fold(_spec.length, min);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Purl && runtimeType == other.runtimeType && _spec == other._spec;
+
+  @override
+  int get hashCode => _spec.hashCode;
+
+  @override
+  String toString() {
+    return _spec;
+  }
 }
