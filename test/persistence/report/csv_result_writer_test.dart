@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/report/csv_result_writer.dart';
-import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/bom_item.dart';
 import 'package:bompare/service/domain/scan_result.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
@@ -25,13 +25,13 @@ void main() {
           CsvResultWriter(File(path.join('does', 'not', 'exist.csv')), []);
 
       expect(
-          () => writer.writeBomComparison({ItemId('a', 'b')}),
+          () => writer.writeBomComparison({BomItem('a', 'b')}),
           throwsA(predicate<PersistenceException>(
               (e) => e.toString().contains('write'))));
     });
 
     test('writes bill-of-materials file', () async {
-      final ids = {ItemId('p', 'v')};
+      final ids = {BomItem('p', 'v')};
       final scans = [ScanResult('A')..addItem(ids.first), ScanResult('B')];
       final writer = CsvResultWriter(file, scans);
 
@@ -46,7 +46,7 @@ void main() {
 
     test('writes licenses file', () async {
       final ids = {
-        ItemId('p', 'v')..addLicenses(['lic1', '""'])
+        BomItem('p', 'v')..addLicenses(['lic1', '""'])
       };
       final scans = [ScanResult('A')..addItem(ids.first), ScanResult('B')];
       final writer = CsvResultWriter(file, scans);

@@ -7,7 +7,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import '../../service/domain/item_id.dart';
+import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
 import '../persistence_exception.dart';
 
@@ -28,15 +28,15 @@ class CsvResultWriter {
   CsvResultWriter(this.file, this.scans);
 
   /// Writes a bill-of-materials based on the provided [ids].
-  Future<void> writeBomComparison(Iterable<ItemId> ids) =>
+  Future<void> writeBomComparison(Iterable<BomItem> ids) =>
       _writeCsvFile(_bomHeadline(), ids, _toBomLine);
 
   /// Writes a licenses overview based on the provided [ids].
-  Future<void> writeLicensesComparison(Iterable<ItemId> ids) =>
+  Future<void> writeLicensesComparison(Iterable<BomItem> ids) =>
       _writeCsvFile(_bomHeadline(), ids, _toLicenseLine);
 
-  Future<void> _writeCsvFile(List<String> headLine, Iterable<ItemId> ids,
-      List<String> Function(ItemId id) formatter) async {
+  Future<void> _writeCsvFile(List<String> headLine, Iterable<BomItem> ids,
+      List<String> Function(BomItem id) formatter) async {
     final list = ids.toList()..sort((l, r) => l.compareTo(r));
 
     IOSink sink;
@@ -57,13 +57,13 @@ class CsvResultWriter {
   List<String> _bomHeadline() =>
       ['package', 'version', for (final s in scans) s.name];
 
-  List<String> _toBomLine(ItemId id) => [
+  List<String> _toBomLine(BomItem id) => [
         id.package,
         id.version,
         for (final s in scans) (s[id] != null) ? 'yes' : '',
       ];
 
-  List<String> _toLicenseLine(ItemId id) {
+  List<String> _toLicenseLine(BomItem id) {
     final licenses = scans.map((s) {
       return s[id]?.licenses.join(' OR ') ?? '';
     }).toList();

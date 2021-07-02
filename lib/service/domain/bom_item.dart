@@ -4,12 +4,12 @@
  */
 
 /// Bill-of-material item identifier.
-class ItemId implements Comparable<ItemId> {
+class BomItem implements Comparable<BomItem> {
   final String package;
   final String version;
   final licenses = <String>{};
 
-  ItemId(this.package, version) : version = version ?? '';
+  BomItem(this.package, version) : version = version ?? '';
 
   void addLicenses(Iterable<String> values) {
     licenses.addAll(values.where((lic) => lic.isNotEmpty));
@@ -18,7 +18,7 @@ class ItemId implements Comparable<ItemId> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is ItemId &&
+      other is BomItem &&
           runtimeType == other.runtimeType &&
           package == other.package &&
           version == other.version;
@@ -27,7 +27,7 @@ class ItemId implements Comparable<ItemId> {
   int get hashCode => package.hashCode ^ version.hashCode;
 
   @override
-  int compareTo(ItemId other) {
+  int compareTo(BomItem other) {
     final diff = package.compareTo(other.package);
     if (diff != 0) return diff;
 

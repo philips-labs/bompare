@@ -11,7 +11,7 @@ import 'package:glob/glob.dart';
 import '../bom_service.dart';
 import '../report_persistence.dart';
 import '../result_persistence.dart';
-import 'item_id.dart';
+import 'bom_item.dart';
 import 'scan_result.dart';
 
 /// Use case implementations for a bill-of-material.
@@ -40,7 +40,7 @@ class BomInteractor implements BomService {
       {File? bomFile, bool diffOnly = false}) async {
     if (_scans.isEmpty) return <BomResult>[];
 
-    final all = <ItemId>{};
+    final all = <BomItem>{};
     final common = _buildBom(_scans[0].items, all);
     final ids = diffOnly ? all.difference(common) : all;
 
@@ -55,7 +55,7 @@ class BomInteractor implements BomService {
     return _bomResultPerScanResult(all, common);
   }
 
-  Set<ItemId> _buildBom(Set<ItemId> common, Set<ItemId> all) {
+  Set<BomItem> _buildBom(Set<BomItem> common, Set<BomItem> all) {
     _scans.forEach((r) {
       common = common.intersection(r.items);
       all.addAll(r.items);
@@ -64,7 +64,7 @@ class BomInteractor implements BomService {
   }
 
   List<BomResult> _bomResultPerScanResult(
-          Set<ItemId> all, Set<ItemId> common) =>
+          Set<BomItem> all, Set<BomItem> common) =>
       _scans
           .map((r) => BomResult(
                 r.name,
@@ -95,7 +95,7 @@ class BomInteractor implements BomService {
     return LicenseResult(bom.length, common.length);
   }
 
-  Set<ItemId> _commonBom() {
+  Set<BomItem> _commonBom() {
     var bom = _scans[0].items;
     _scans.forEach((s) {
       bom = bom.intersection(s.items);
@@ -103,28 +103,28 @@ class BomInteractor implements BomService {
     return bom;
   }
 
-  Set<ItemId> _commonLicenses(Set<ItemId> bom) =>
+  Set<BomItem> _commonLicenses(Set<BomItem> bom) =>
       bom.where(_scannedLicensesMatch).toSet();
 
-  bool _scannedLicensesMatch(ItemId itemId) => !_scans.any((s) {
+  bool _scannedLicensesMatch(BomItem itemId) => !_scans.any((s) {
         final scan = s[itemId]!;
         final match = scan.licenses.containsAll(itemId.licenses) &&
             itemId.licenses.containsAll(scan.licenses);
         return !match;
       });
 
-  void _printBomResults(Iterable<ItemId> ids) {
+  void _printBomResults(Iterable<BomItem> ids) {
     _printTablePerItemId(
         ids, (scan, item) => (scan[item] != null) ? 'Yes' : 'No');
   }
 
-  void _printLicenseResults(Iterable<ItemId> ids) {
+  void _printLicenseResults(Iterable<BomItem> ids) {
     _printTablePerItemId(
         ids, (scan, item) => scan[item]!.licenses.join(' OR '));
   }
 
-  void _printTablePerItemId(Iterable<ItemId> items,
-      String Function(ScanResult scan, ItemId item) columnValue) {
+  void _printTablePerItemId(Iterable<BomItem> items,
+      String Function(ScanResult scan, BomItem item) columnValue) {
     const separator = ' | ';
 
     final scans = _scans.map((s) => s.name).join(separator);

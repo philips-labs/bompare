@@ -5,7 +5,7 @@ import 'package:bompare/persistence/result_parser.dart';
 import 'package:bompare/persistence/scan_result_loader.dart';
 import 'package:bompare/service/bom_service.dart';
 import 'package:bompare/service/business_exception.dart';
-import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/bom_item.dart';
 import 'package:bompare/service/domain/scan_result.dart';
 import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:bompare/service/result_persistence.dart';
@@ -63,7 +63,7 @@ void main() {
 
       test('loads scan result(s)', () async {
         final file = wssGlob.listSync().first;
-        final itemId = ItemId('package', 'version');
+        final itemId = BomItem('package', 'version');
         when(() => parser
                 .parse(any(that: predicate<File>((f) => f.path == file.path))))
             .thenAnswer(

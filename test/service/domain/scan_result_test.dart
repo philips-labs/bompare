@@ -1,4 +1,4 @@
-import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/bom_item.dart';
 import 'package:bompare/service/domain/scan_result.dart';
 import 'package:test/test.dart';
 
@@ -18,11 +18,11 @@ void main() {
     });
 
     test('indicates non-contained items', () {
-      expect(result[ItemId('non', 'existing')], isNull);
+      expect(result[BomItem('non', 'existing')], isNull);
     });
 
     test('holds item identifiers', () {
-      final id = ItemId(package, version);
+      final id = BomItem(package, version);
 
       result.addItem(id);
 
@@ -31,8 +31,8 @@ void main() {
 
     group('merging results', () {
       test('merges independent items', () {
-        final otherId = ItemId('other_package', 'v2.0');
-        final itemId = ItemId(package, version);
+        final otherId = BomItem('other_package', 'v2.0');
+        final itemId = BomItem(package, version);
         final other = ScanResult('other')..addItem(otherId);
 
         result.addItem(itemId);
@@ -43,8 +43,8 @@ void main() {
       });
 
       test('merges licenses of existing items', () {
-        final sameId = ItemId(package, version)..addLicenses(['one']);
-        final itemId = ItemId(package, version)..addLicenses(['two']);
+        final sameId = BomItem(package, version)..addLicenses(['one']);
+        final itemId = BomItem(package, version)..addLicenses(['two']);
         final other = ScanResult('other')..addItem(sameId);
 
         result.addItem(itemId);

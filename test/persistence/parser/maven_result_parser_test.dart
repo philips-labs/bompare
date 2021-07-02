@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:bompare/persistence/parser/maven_result_parser.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/result_parser.dart';
-import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/bom_item.dart';
 import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
@@ -12,7 +12,7 @@ void main() {
   group('$MavenResultParser', () {
     final resourcePath = path.join('test', 'resources');
     final licenseFile = File(path.join(resourcePath, 'maven_license.txt'));
-    final itemId = ItemId('group/artifact', 'version');
+    final itemId = BomItem('group/artifact', 'version');
 
     final ResultParser parser = MavenResultParser(SpdxMapper());
 

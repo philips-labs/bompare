@@ -8,7 +8,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
-import '../../service/domain/item_id.dart';
+import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
 import '../../service/domain/spdx_mapper.dart';
 import '../persistence_exception.dart';
@@ -60,7 +60,7 @@ class _LicenseFileParser extends CsvParser {
     final version = module.substring(pos + 1);
     final name = module.substring(0, pos);
     final licenses = mapper[columns[_license_column]];
-    final item = ItemId(name, version)..addLicenses(licenses);
+    final item = BomItem(name, version)..addLicenses(licenses);
     result.addItem(item);
   }
 

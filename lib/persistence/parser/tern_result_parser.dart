@@ -8,7 +8,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
-import '../../service/domain/item_id.dart';
+import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
 import '../../service/domain/spdx_mapper.dart';
 import '../persistence_exception.dart';
@@ -47,7 +47,7 @@ class TernResultParser implements ResultParser {
             final version = string?.startsWith(name) ?? false
                 ? string!.substring(name.length + 1)
                 : string;
-            final itemId = ItemId(name, version);
+            final itemId = BomItem(name, version);
             final licenses = package[field_license] as String?;
             itemId.addLicenses(mapper[licenses]);
             result.addItem(itemId);

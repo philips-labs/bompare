@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:bompare/persistence/parser/reference_result_parser.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/result_parser.dart';
-import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/bom_item.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
@@ -21,8 +21,8 @@ void main() {
       expect(
           result.items,
           containsAll([
-            ItemId('component_1', 'v_1'),
-            ItemId('component_2', 'v_2'),
+            BomItem('component_1', 'v_1'),
+            BomItem('component_2', 'v_2'),
           ]));
     });
 

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:bompare/persistence/parser/jk1_result_parser.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
-import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/bom_item.dart';
 import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
@@ -12,8 +12,8 @@ void main() {
     final resourcePath = path.join('test', 'resources');
     final jk1File = File(path.join(resourcePath, 'jk1.json'));
     final lorumFile = File(path.join(resourcePath, 'testfile.txt'));
-    final itemId1 = ItemId('group/artifact_1', 'v_1');
-    final itemId2 = ItemId('group/artifact_2', 'v_2');
+    final itemId1 = BomItem('group/artifact_1', 'v_1');
+    final itemId2 = BomItem('group/artifact_2', 'v_2');
 
     final parser = Jk1ResultParser(SpdxMapper());
 

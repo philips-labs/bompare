@@ -9,7 +9,7 @@ import 'dart:math' as math;
 
 import 'package:path/path.dart' as path;
 
-import '../../service/domain/item_id.dart';
+import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
 import '../../service/domain/spdx_mapper.dart';
 import '../persistence_exception.dart';
@@ -24,7 +24,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   static const field_type = 'type';
 
   final SpdxMapper mapper;
-  final assumed = <ItemId>{};
+  final assumed = <BomItem>{};
 
   WhiteSourceInventoryResultParser(this.mapper);
 
@@ -50,14 +50,14 @@ class WhiteSourceInventoryResultParser implements ResultParser {
     }
   }
 
-  ItemId _decodeItem(dynamic obj) {
+  BomItem _decodeItem(dynamic obj) {
     final itemId = _decodeItemId(obj);
 
     _decodeLicenses(itemId, obj);
     return itemId;
   }
 
-  ItemId _decodeItemId(dynamic obj) {
+  BomItem _decodeItemId(dynamic obj) {
     final type = obj[field_type] as String? ?? '?';
     final version = obj[field_version] as String? ?? '';
     final name = obj[field_name] as String?;
@@ -68,28 +68,28 @@ class WhiteSourceInventoryResultParser implements ResultParser {
       case 'Java':
         final identifier =
             (group?.isNotEmpty ?? false ? '$group/' : '') + (artifact ?? '?');
-        return ItemId(identifier, version);
+        return BomItem(identifier, version);
       case 'javascript/Node.js':
       case 'JavaScript':
       case 'Alpine':
-        return ItemId(group ?? '?', version);
+        return BomItem(group ?? '?', version);
       case 'Debian':
         final n = (group?.isNotEmpty ?? false)
             ? group!
             : name?.substring(0, name.indexOf(version) - 1) ?? '?';
-        return ItemId(n, version);
+        return BomItem(n, version);
       case 'ActionScript':
       case 'Source Library':
       case 'Unknown Library':
-        return ItemId(artifact ?? name ?? '?', version);
+        return BomItem(artifact ?? name ?? '?', version);
       case 'RPM':
         final first = name?.substring(0, name.lastIndexOf('-')) ?? '';
         final pos = first.lastIndexOf('-');
         final v = first.substring(pos + 1);
-        return ItemId(first.substring(0, pos),
+        return BomItem(first.substring(0, pos),
             v.substring(math.max(v.indexOf(':') + 1, 0)));
       default:
-        final id = ItemId(group ?? '?', version);
+        final id = BomItem(group ?? '?', version);
         if (!assumed.contains(id)) {
           print('Warning: Assumed $id for WhiteSource type "$type"');
           assumed.add(id);
@@ -98,7 +98,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
     }
   }
 
-  void _decodeLicenses(ItemId itemId, dynamic obj) {
+  void _decodeLicenses(BomItem itemId, dynamic obj) {
     final licenses = obj['licenses'] as Iterable? ?? [];
     licenses.forEach((lic) {
       final name = lic['name'] ?? '';

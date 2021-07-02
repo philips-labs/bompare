@@ -8,7 +8,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
-import '../../service/domain/item_id.dart';
+import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
 import '../persistence_exception.dart';
 import '../result_parser.dart';
@@ -31,7 +31,7 @@ class ReferenceResultParser implements ResultParser {
       final str = file.readAsStringSync();
 
       (jsonDecode(str) as Iterable)
-          .map((obj) => ItemId(obj[field_name], obj[field_version]))
+          .map((obj) => BomItem(obj[field_name], obj[field_version]))
           .forEach((id) => result.addItem(id));
 
       return Future.value(result);
