@@ -17,6 +17,10 @@ void main() {
       expect(mapper[null], isEmpty);
     });
 
+    test('maps empty string to empty set', () {
+      expect(mapper[''], isEmpty);
+    });
+
     test('maps SPDX titles and identifiers case-insensitively', () {
       expect(mapper['MIT License'], equals({'MIT'}));
       expect(mapper[valid_license], equals({valid_license}));
