@@ -1,12 +1,11 @@
 import 'package:bompare/service/domain/bom_item.dart';
 import 'package:bompare/service/domain/scan_result.dart';
+import 'package:bompare/service/purl.dart';
 import 'package:test/test.dart';
 
 void main() {
   group('$ScanResult', () {
     const name = 'name';
-    const package = 'package';
-    const version = 'version';
     late ScanResult result;
 
     setUp(() {
@@ -18,39 +17,41 @@ void main() {
     });
 
     test('indicates non-contained items', () {
-      expect(result[BomItem('non', 'existing')], isNull);
+      expect(result[BomItem(Purl('pkg:type/non@existing'))], isNull);
     });
 
     test('holds item identifiers', () {
-      final id = BomItem(package, version);
+      final item = BomItem(Purl('pkg:type/name@version'));
 
-      result.addItem(id);
+      result.addItem(item);
 
-      expect(result[id], equals(id));
+      expect(result[item], equals(item));
     });
 
     group('merging results', () {
       test('merges independent items', () {
-        final otherId = BomItem('other_package', 'v2.0');
-        final itemId = BomItem(package, version);
-        final other = ScanResult('other')..addItem(otherId);
+        final item = BomItem(Purl('pkg:type/name@version'));
+        final otherItem = BomItem(Purl('pkg:type/other@version'));
+        final otherResult = ScanResult('other')..addItem(otherItem);
 
-        result.addItem(itemId);
-        result.merge(other);
+        result.addItem(item);
+        result.merge(otherResult);
 
-        expect(result[itemId], equals(itemId));
-        expect(result[otherId], equals(otherId));
+        expect(result[item], equals(item));
+        expect(result[otherItem], equals(otherItem));
       });
 
       test('merges licenses of existing items', () {
-        final sameId = BomItem(package, version)..addLicenses(['one']);
-        final itemId = BomItem(package, version)..addLicenses(['two']);
-        final other = ScanResult('other')..addItem(sameId);
+        final sameItem = BomItem(Purl('pkg:type/same@version'))
+          ..addLicenses(['one']);
+        final item = BomItem(Purl('pkg:type/same@version'))
+          ..addLicenses(['two']);
+        final otherResult = ScanResult('other')..addItem(sameItem);
 
-        result.addItem(itemId);
-        result.merge(other);
+        result.addItem(item);
+        result.merge(otherResult);
 
-        expect(result[itemId]!.licenses, containsAll(['one', 'two']));
+        expect(result[item]!.licenses, containsAll(['one', 'two']));
       });
     });
   });

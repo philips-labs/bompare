@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020-2020, Koninklijke Philips N.V., https://www.philips.com
+ * Copyright (c) 2020-2021, Koninklijke Philips N.V., https://www.philips.com
  * SPDX-License-Identifier: MIT
  */
 
@@ -8,7 +8,10 @@ import 'dart:math';
 /// Decodes name and version from a Package URL (purl) description.
 /// See https://github.com/package-url/purl-spec
 /// A purl consists of: scheme:type/namespace/name@version?qualifiers#subpath
-class Purl {
+class Purl implements Comparable<Purl> {
+  /// Assumed type when no type is provided as parameter to [Purl.of].
+  static String defaultType = 'generic';
+
   final String _spec;
 
   /// Creates instance from a valid Package URL.
@@ -19,17 +22,23 @@ class Purl {
   }
 
   /// Creates instance from parts.
+  /// If no [type] is provided, the current value of [defaultType] is assumed.
+  /// The [namespace] can alternatively provided in the [name] using '/' as a separator.
   factory Purl.of({
-    required String type,
+    String? type,
     String? namespace,
     required String name,
     required String version,
   }) {
-    namespace = (namespace != null) ? Uri.encodeComponent(namespace) : null;
-    name = Uri.encodeComponent(name);
-    version = Uri.encodeComponent(version);
+    type ??= defaultType;
+    final pos = name.indexOf('/');
+    if (pos >= 0) {
+      namespace = name.substring(0, pos);
+      name = name.substring(pos + 1);
+    }
     final spec =
-        'pkg:$type/${namespace != null ? '$namespace/' : ''}$name@$version';
+        'pkg:$type/${namespace != null ? '${Uri.encodeComponent(namespace)}/' : ''}'
+        '${Uri.encodeComponent(name)}@${Uri.encodeComponent(version)}';
     return Purl(spec);
   }
 
@@ -80,6 +89,15 @@ class Purl {
 
   @override
   int get hashCode => _spec.hashCode;
+
+  @override
+  int compareTo(Purl other) {
+    final cmpName = name.compareTo(other.name);
+    if (cmpName != 0) return cmpName;
+    final cmpVersion = version.compareTo(other.version);
+    if (cmpVersion != 0) return cmpVersion;
+    return type.compareTo(other.type);
+  }
 
   @override
   String toString() {

@@ -4,6 +4,7 @@ import 'package:bompare/persistence/parser/tern_result_parser.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/service/domain/bom_item.dart';
 import 'package:bompare/service/domain/spdx_mapper.dart';
+import 'package:bompare/service/purl.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
@@ -12,10 +13,13 @@ void main() {
     final resourcePath = path.join('test', 'resources');
     final ternFile = File(path.join(resourcePath, 'tern.json'));
     final lorumFile = File(path.join(resourcePath, 'testfile.txt'));
-    final itemId1 = BomItem('image1_layer1_package1', 'v_1');
-    final itemId2 = BomItem('image1_layer1_package2', 'v_2');
-    final itemId3 = BomItem('image1_layer2_package', 'v_3');
-    final itemId4 = BomItem('image2_layer_package', '');
+    final itemId1 =
+        BomItem(Purl.of(name: 'image1_layer1_package1', version: 'v_1'));
+    final itemId2 =
+        BomItem(Purl.of(name: 'image1_layer1_package2', version: 'v_2'));
+    final itemId3 =
+        BomItem(Purl.of(name: 'image1_layer2_package', version: 'v_3'));
+    final itemId4 = BomItem(Purl.of(name: 'image2_layer_package', version: ''));
 
     final parser = TernResultParser(SpdxMapper());
 

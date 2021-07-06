@@ -6,6 +6,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bompare/service/purl.dart';
 import 'package:path/path.dart' as path;
 
 import '../../service/domain/bom_item.dart';
@@ -58,8 +59,9 @@ class MavenResultParser implements ResultParser {
     final package = name.substring(0, pos).replaceAll(':', '/');
     final version = name.substring(pos + 1);
 
-    final itemId = BomItem(package, version);
-    licenses.forEach((l) => itemId.addLicenses(spdxMapper[l]));
-    return itemId;
+    final item =
+        BomItem(Purl.of(type: 'maven', name: package, version: version));
+    licenses.forEach((l) => item.addLicenses(spdxMapper[l]));
+    return item;
   }
 }

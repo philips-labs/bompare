@@ -3,13 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
+import '../purl.dart';
+
 /// Bill-of-material item identifier.
 class BomItem implements Comparable<BomItem> {
-  final String package;
-  final String version;
+  final Purl purl;
   final licenses = <String>{};
 
-  BomItem(this.package, version) : version = version ?? '';
+  BomItem(this.purl);
 
   void addLicenses(Iterable<String> values) {
     licenses.addAll(values.where((lic) => lic.isNotEmpty));
@@ -20,22 +21,18 @@ class BomItem implements Comparable<BomItem> {
       identical(this, other) ||
       other is BomItem &&
           runtimeType == other.runtimeType &&
-          package == other.package &&
-          version == other.version;
+          purl == other.purl;
 
   @override
-  int get hashCode => package.hashCode ^ version.hashCode;
+  int get hashCode => purl.hashCode;
 
   @override
   int compareTo(BomItem other) {
-    final diff = package.compareTo(other.package);
-    if (diff != 0) return diff;
-
-    return version.compareTo(other.version);
+    return purl.compareTo(other.purl);
   }
 
   @override
   String toString() {
-    return '$package-$version';
+    return purl.toString();
   }
 }

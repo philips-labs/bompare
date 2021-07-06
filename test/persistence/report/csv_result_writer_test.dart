@@ -4,6 +4,7 @@ import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/report/csv_result_writer.dart';
 import 'package:bompare/service/domain/bom_item.dart';
 import 'package:bompare/service/domain/scan_result.dart';
+import 'package:bompare/service/purl.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
@@ -25,39 +26,40 @@ void main() {
           CsvResultWriter(File(path.join('does', 'not', 'exist.csv')), []);
 
       expect(
-          () => writer.writeBomComparison({BomItem('a', 'b')}),
+          () => writer.writeBomComparison(
+              {BomItem(Purl.of(type: 'generic', name: 'a', version: 'b'))}),
           throwsA(predicate<PersistenceException>(
               (e) => e.toString().contains('write'))));
     });
 
     test('writes bill-of-materials file', () async {
-      final ids = {BomItem('p', 'v')};
-      final scans = [ScanResult('A')..addItem(ids.first), ScanResult('B')];
+      final items = {BomItem(Purl('pkg:t/n@v'))};
+      final scans = [ScanResult('A')..addItem(items.first), ScanResult('B')];
       final writer = CsvResultWriter(file, scans);
 
-      await writer.writeBomComparison(ids);
+      await writer.writeBomComparison(items);
 
       final csv = file.readAsStringSync();
       expect(
           csv,
-          equals('"package","version","A","B"\r\n'
-              '"p","v","yes",""\r\n'));
+          equals('"package","A","B"\r\n'
+              '"pkg:t/n@v","yes",""\r\n'));
     });
 
     test('writes licenses file', () async {
-      final ids = {
-        BomItem('p', 'v')..addLicenses(['lic1', '""'])
+      final items = {
+        BomItem(Purl('pkg:t/n@v'))..addLicenses(['lic1', '""'])
       };
-      final scans = [ScanResult('A')..addItem(ids.first), ScanResult('B')];
+      final scans = [ScanResult('A')..addItem(items.first), ScanResult('B')];
       final writer = CsvResultWriter(file, scans);
 
-      await writer.writeLicensesComparison(ids);
+      await writer.writeLicensesComparison(items);
 
       final csv = file.readAsStringSync();
       expect(
           csv,
-          equals('"package","version","A","B"\r\n'
-              '"p","v","lic1 OR """"",""\r\n'));
+          equals('"package","A","B"\r\n'
+              '"pkg:t/n@v","lic1 OR """"",""\r\n'));
     });
   });
 }

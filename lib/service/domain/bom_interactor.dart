@@ -42,14 +42,14 @@ class BomInteractor implements BomService {
 
     final all = <BomItem>{};
     final common = _buildBom(_scans[0].items, all);
-    final ids = diffOnly ? all.difference(common) : all;
+    final items = diffOnly ? all.difference(common) : all;
 
     if (bomFile != null) {
-      await reports.writeBomComparison(bomFile, ids, _scans);
+      await reports.writeBomComparison(bomFile, items, _scans);
     }
 
     if (verbose) {
-      _printBomResults(ids);
+      _printBomResults(items);
     }
 
     return _bomResultPerScanResult(all, common);
@@ -83,13 +83,13 @@ class BomInteractor implements BomService {
     final bom = _commonBom();
     final common = _commonLicenses(bom);
 
-    final ids = diffOnly ? bom.difference(common) : bom;
+    final items = diffOnly ? bom.difference(common) : bom;
     if (licensesFile != null) {
-      await reports.writeLicenseComparison(licensesFile, ids, _scans);
+      await reports.writeLicenseComparison(licensesFile, items, _scans);
     }
 
     if (verbose) {
-      _printLicenseResults(ids);
+      _printLicenseResults(items);
     }
 
     return LicenseResult(bom.length, common.length);
@@ -103,24 +103,24 @@ class BomInteractor implements BomService {
     return bom;
   }
 
-  Set<BomItem> _commonLicenses(Set<BomItem> bom) =>
-      bom.where(_scannedLicensesMatch).toSet();
+  Set<BomItem> _commonLicenses(Set<BomItem> items) =>
+      items.where(_scannedLicensesMatch).toSet();
 
-  bool _scannedLicensesMatch(BomItem itemId) => !_scans.any((s) {
-        final scan = s[itemId]!;
-        final match = scan.licenses.containsAll(itemId.licenses) &&
-            itemId.licenses.containsAll(scan.licenses);
+  bool _scannedLicensesMatch(BomItem item) => !_scans.any((s) {
+        final scan = s[item]!;
+        final match = scan.licenses.containsAll(item.licenses) &&
+            item.licenses.containsAll(scan.licenses);
         return !match;
       });
 
-  void _printBomResults(Iterable<BomItem> ids) {
+  void _printBomResults(Iterable<BomItem> items) {
     _printTablePerItemId(
-        ids, (scan, item) => (scan[item] != null) ? 'Yes' : 'No');
+        items, (scan, item) => (scan[item] != null) ? 'Yes' : 'No');
   }
 
-  void _printLicenseResults(Iterable<BomItem> ids) {
+  void _printLicenseResults(Iterable<BomItem> items) {
     _printTablePerItemId(
-        ids, (scan, item) => scan[item]!.licenses.join(' OR '));
+        items, (scan, item) => scan[item]!.licenses.join(' OR '));
   }
 
   void _printTablePerItemId(Iterable<BomItem> items,
@@ -128,7 +128,7 @@ class BomInteractor implements BomService {
     const separator = ' | ';
 
     final scans = _scans.map((s) => s.name).join(separator);
-    final headline = 'Package | Version | $scans';
+    final headline = 'Package | $scans';
     print(headline);
     print(headline.replaceAll(RegExp(r'[^|]'), '-'));
 
@@ -136,7 +136,7 @@ class BomInteractor implements BomService {
       ..sort()
       ..forEach((item) {
         final columns = _scans.map((s) => columnValue(s, item)).join(separator);
-        print('${item.package} | ${item.version} | $columns');
+        print('${item.purl} | $columns');
       });
 
     print('');

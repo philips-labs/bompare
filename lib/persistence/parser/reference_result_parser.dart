@@ -6,6 +6,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bompare/service/purl.dart';
 import 'package:path/path.dart' as path;
 
 import '../../service/domain/bom_item.dart';
@@ -14,8 +15,11 @@ import '../persistence_exception.dart';
 import '../result_parser.dart';
 
 /// Decoder for files in "reference" file format.
+///
 /// This format consists of a list of JSON objects containing (String) 'name',
 /// (String) 'version', and (array of String) 'licenses' fields.
+///
+/// The Package URL type of the [BomItem] assumes [Purl.defaultType].
 class ReferenceResultParser implements ResultParser {
   static const field_name = 'name';
   static const field_version = 'version';
@@ -31,7 +35,9 @@ class ReferenceResultParser implements ResultParser {
       final str = file.readAsStringSync();
 
       (jsonDecode(str) as Iterable)
-          .map((obj) => BomItem(obj[field_name], obj[field_version]))
+          // assuming this is only used for NPM packages
+          .map((obj) => BomItem(
+              Purl.of(name: obj[field_name], version: obj[field_version])))
           .forEach((id) => result.addItem(id));
 
       return Future.value(result);

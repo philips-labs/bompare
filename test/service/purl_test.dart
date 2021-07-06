@@ -1,4 +1,9 @@
-import 'package:bompare/persistence/parser/purl.dart';
+/*
+ * Copyright (c) 2020-2021, Koninklijke Philips N.V., https://www.philips.com
+ * SPDX-License-Identifier: MIT
+ */
+
+import 'package:bompare/service/purl.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -32,6 +37,36 @@ void main() {
           type: 'type', namespace: 'ns', name: 'name', version: 'version');
 
       expect(purl, Purl('pkg:type/ns/name@version'));
+    });
+
+    test('creates without namespace', () {
+      final purl = Purl.of(type: 'type', name: 'name', version: 'version');
+
+      expect(purl, Purl('pkg:type/name@version'));
+    });
+
+    test('creates with namespace in name', () {
+      final purl = Purl.of(type: 'type', name: 'ns/name', version: 'version');
+
+      expect(purl, Purl('pkg:type/ns/name@version'));
+    });
+
+    test('creates with default type', () {
+      final purl = Purl.of(name: 'name', version: 'version');
+
+      expect(purl, Purl('pkg:generic/name@version'));
+    });
+
+    test('assumes explicit default type', () {
+      final generic = Purl.defaultType;
+      addTearDown(() {
+        Purl.defaultType = generic;
+      });
+      Purl.defaultType = 'custom';
+
+      final purl = Purl.of(name: 'name', version: 'version');
+
+      expect(purl, Purl('pkg:custom/name@version'));
     });
 
     test('encodes purl parts', () {
@@ -88,6 +123,18 @@ void main() {
       expect(Purl('pkg:t/s/n@v'), isNot(Purl('pkg:t/x/n@v')));
       expect(Purl('pkg:t/s/n@v'), isNot(Purl('pkg:t/s/x@v')));
       expect(Purl('pkg:t/s/n@v'), isNot(Purl('pkg:t/s/n@x')));
+    });
+
+    test('implements comparable', () {
+      expect(Purl('pkg:t/n@v').compareTo(Purl('pkg:t/n@v')), 0);
+
+      expect(Purl('pkg:z/A@z').compareTo(Purl('pkg:a/Z@a')), -1);
+      expect(Purl('pkg:z/n@A').compareTo(Purl('pkg:a/n@Z')), -1);
+      expect(Purl('pkg:A/n@v').compareTo(Purl('pkg:Z/n@v')), -1);
+
+      expect(Purl('pkg:a/Z@a').compareTo(Purl('pkg:z/A@z')), 1);
+      expect(Purl('pkg:a/n@Z').compareTo(Purl('pkg:z/n@A')), 1);
+      expect(Purl('pkg:Z/n@v').compareTo(Purl('pkg:A/n@v')), 1);
     });
   });
 }

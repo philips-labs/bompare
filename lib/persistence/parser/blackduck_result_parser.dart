@@ -12,6 +12,7 @@ import 'package:path/path.dart' as path;
 import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
 import '../../service/domain/spdx_mapper.dart';
+import '../../service/purl.dart';
 import '../persistence_exception.dart';
 import '../result_parser.dart';
 import 'csv_parser.dart';
@@ -105,15 +106,16 @@ class BlackDuckResultParser implements ResultParser {
 
 /// Dictionary to lookup licenses per [BomItem].
 class _LicenseDictionary {
-  final _dict = <BomItem, Set<String>>{};
+  /// Version id -> Licenses
+  final _dict = <String, Set<String>>{};
 
-  void addLicenses(BomItem id, Iterable<String> values) {
-    final licenses = _dict[id] ?? {};
+  void addLicenses(String versionId, Iterable<String> values) {
+    final licenses = _dict[versionId] ?? {};
     licenses.addAll(values);
-    _dict[id] = licenses;
+    _dict[versionId] = licenses;
   }
 
-  Set<String>? operator [](BomItem id) => _dict[id];
+  Set<String>? operator [](String versionId) => _dict[versionId];
 }
 
 /// Extracts license info per component from the Black Duck components CSV file.
@@ -122,26 +124,22 @@ class _BlackDuckComponentsCsvParser extends CsvParser {
   final _LicenseDictionary _dictionary;
   final SpdxMapper mapper;
 
-  var _componentNameIndex = -1;
-  var _componentVersionIndex = -1;
-  var _licensesIndex = -1;
+  late final int _licensesIndex;
+  late final int _componentVersionIdIndex;
 
   _BlackDuckComponentsCsvParser(this._dictionary, this.mapper);
 
   @override
   void headerRow(List<String> columns) {
-    _componentNameIndex = columnIndexOf('Component name', columns);
-    _componentVersionIndex = columnIndexOf('Component version name', columns);
     _licensesIndex = columnIndexOf('License names', columns);
+    _componentVersionIdIndex = columnIndexOf('Version id', columns);
   }
 
   @override
   void dataRow(List<String> columns) {
-    final component = columns[_componentNameIndex];
-    final version = columns[_componentVersionIndex];
-    final id = BomItem(component, version);
     final license = columns[_licensesIndex];
-    _dictionary.addLicenses(id, mapper[license]);
+    final versionId = columns[_componentVersionIdIndex];
+    _dictionary.addLicenses(versionId, mapper[license]);
   }
 }
 
@@ -151,11 +149,12 @@ class _BlackDuckSourceCsvParser extends CsvParser {
   final _LicenseDictionary licenseDictionary;
   final assumed = <BomItem>{};
 
-  var _versionIndex = -1;
-  var _originIndex = -1;
-  var _nameIndex = -1;
-  var _componentNameIndex = -1;
-  var _componentVersionIndex = -1;
+  late final int _versionIndex;
+  late final int _originIndex;
+  late final int _nameIndex;
+  late final int _componentNameIndex;
+  late final int _componentVersionIndex;
+  late final int _componentVersionIdIndex;
 
   _BlackDuckSourceCsvParser(this.result, this.licenseDictionary);
 
@@ -166,62 +165,68 @@ class _BlackDuckSourceCsvParser extends CsvParser {
     _nameIndex = columnIndexOf('Origin name id', columns);
     _componentNameIndex = columnIndexOf('Component name', columns);
     _componentVersionIndex = columnIndexOf('Component version name', columns);
+    _componentVersionIdIndex = columnIndexOf('Version id', columns);
   }
 
   @override
   void dataRow(List<String> columns) {
-    final type = columns[_originIndex];
+    final origin = columns[_originIndex];
     final nameColumn = columns[_nameIndex];
     final versionColumn = columns[_versionIndex];
+    final versionId = columns[_componentVersionIdIndex];
+    final type = _purlType[origin] ?? origin;
 
-    var itemId;
-    switch (type) {
+    late BomItem item;
+    switch (origin) {
       case '': // Signature scan result
         final component = columns[_componentNameIndex];
         final componentVersion = columns[_componentVersionIndex];
-        itemId = BomItem(component, componentVersion);
+        item = BomItem(Purl.of(
+            type: 'generic', name: component, version: componentVersion));
         break;
       case 'maven':
       case 'github':
         final name2 = _stripFromLast(nameColumn, ':').replaceAll(':', '/');
-        itemId = BomItem(name2, versionColumn);
+        item =
+            BomItem(Purl.of(type: type, name: name2, version: versionColumn));
         break;
       case 'npmjs':
       case 'nuget':
         final name2 = _stripFromLast(nameColumn, '/');
-        itemId = BomItem(name2, versionColumn);
+        item =
+            BomItem(Purl.of(type: type, name: name2, version: versionColumn));
         break;
       case 'alpine':
         final name = _stripSeparatedPostFix(nameColumn, versionColumn);
         final version = _stripFromLast(versionColumn, '/');
-        itemId = BomItem(name, version);
+        item = BomItem(Purl.of(type: type, name: name, version: version));
         break;
       case 'centos':
         final name = _stripFrom(nameColumn, '/');
         final temp = versionColumn.substring(versionColumn.indexOf(':') + 1);
         final version = _stripFrom(temp, '-');
-        itemId = BomItem(name, version);
+        item = BomItem(Purl.of(type: type, name: name, version: version));
         break;
       case 'debian':
         final version = _stripFrom(versionColumn, '/');
         final name = _stripSeparatedPostFix(nameColumn, version);
-        itemId = BomItem(name, version);
+        item = BomItem(Purl.of(type: type, name: name, version: version));
         break;
       case 'long_tail':
         final name = _stripFromLast(nameColumn, '#');
-        itemId = BomItem(name, versionColumn);
+        item = BomItem(Purl.of(type: type, name: name, version: versionColumn));
         break;
       default:
         final name = _stripFromLast(nameColumn, '/');
-        itemId = BomItem(name, versionColumn);
-        if (!assumed.contains(itemId)) {
+        item = BomItem(Purl.of(type: type, name: name, version: versionColumn));
+        if (!assumed.contains(item)) {
           print(
-              'Warning: Assumed name=${itemId.package}, version=${itemId.version} for Black Duck type "$type"');
-          assumed.add(itemId);
+              'Warning: Assumed ${item.purl} for Black Duck type "$origin" -> "$nameColumn"');
+          assumed.add(item);
         }
     }
-    _addLicenses(columns, itemId);
-    result.addItem(itemId);
+    item.addLicenses(licenseDictionary[versionId] ?? {});
+    result.addItem(item);
   }
 
   String _stripFrom(String string, Pattern pattern) {
@@ -238,11 +243,19 @@ class _BlackDuckSourceCsvParser extends CsvParser {
     final index = string.lastIndexOf(postfix);
     return (index < 0) ? string : string.substring(0, index - 1);
   }
-
-  void _addLicenses(List<String> columns, BomItem itemId) {
-    final componentName = columns[_componentNameIndex];
-    final componentVersion = columns[_componentVersionIndex];
-    final component = BomItem(componentName, componentVersion);
-    itemId.addLicenses(licenseDictionary[component] ?? {});
-  }
 }
+
+const _purlType = {
+  'arch_linux': 'arch',
+  'centos': 'rpm',
+  'fedora': 'rpm',
+  'redhat': 'rpm',
+  'opensuse': 'rpm',
+  'crates': 'cargo',
+  'dart': 'pub',
+  'debian': 'deb',
+  'ubuntu': 'deb',
+  'long_tail': 'generic',
+  'npmjs': 'npm',
+  'rubygems': 'gem',
+};

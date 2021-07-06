@@ -11,9 +11,9 @@ import 'package:path/path.dart' as path;
 
 import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
+import '../../service/purl.dart';
 import '../persistence_exception.dart';
 import '../result_parser.dart';
-import 'purl.dart';
 
 /// Parser for SPDX tag-value files.
 /// See https://spdx.github.io/spdx-spec
@@ -47,8 +47,7 @@ class SpdxResultParser implements ResultParser {
   ScanResult _resultFor(String name, Iterable<_Package> packages) {
     final result = ScanResult(name);
     packages.forEach((pkg) {
-      final item = BomItem(pkg.purl.name, pkg.purl.version)
-        ..addLicenses(mapper[pkg.license]);
+      final item = BomItem(pkg.purl)..addLicenses(mapper[pkg.license]);
       result.addItem(item);
     });
     return result;

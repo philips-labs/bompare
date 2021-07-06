@@ -8,6 +8,7 @@ import 'package:bompare/service/business_exception.dart';
 import 'package:bompare/service/domain/bom_item.dart';
 import 'package:bompare/service/domain/scan_result.dart';
 import 'package:bompare/service/domain/spdx_mapper.dart';
+import 'package:bompare/service/purl.dart';
 import 'package:bompare/service/result_persistence.dart';
 import 'package:glob/glob.dart';
 import 'package:glob/list_local_fs.dart';
@@ -63,17 +64,17 @@ void main() {
 
       test('loads scan result(s)', () async {
         final file = wssGlob.listSync().first;
-        final itemId = BomItem('package', 'version');
+        final item = BomItem(Purl('pkg:generic/package@version'));
         when(() => parser
                 .parse(any(that: predicate<File>((f) => f.path == file.path))))
             .thenAnswer(
-                (_) => Future.value(ScanResult('Loaded')..addItem(itemId)));
+                (_) => Future.value(ScanResult('Loaded')..addItem(item)));
 
         final result =
             await persistence.load(ScannerType.white_source, wssGlob);
 
         expect(result.name, equals('wss_inventory'));
-        expect(result[itemId], isNotNull);
+        expect(result[item], isNotNull);
       });
 
       test('throws when no files match the provided glob', () {
