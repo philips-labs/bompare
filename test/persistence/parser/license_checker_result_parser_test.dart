@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:bompare/persistence/parser/license_checker_result_parser.dart';
 import 'package:bompare/persistence/persistence_exception.dart';
 import 'package:bompare/persistence/result_parser.dart';
-import 'package:bompare/service/domain/item_id.dart';
+import 'package:bompare/service/domain/bom_item.dart';
 import 'package:bompare/service/domain/spdx_mapper.dart';
+import 'package:bompare/service/purl.dart';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
@@ -19,14 +20,14 @@ void main() {
     test('parses from file', () async {
       final result = await parser.parse(resultFile);
 
-      expect(result.items, contains(ItemId('package', 'v1')));
-      expect(result.items, contains(ItemId('@package', 'v2')));
+      expect(result.items, contains(BomItem(Purl('pkg:npm/package@v1'))));
+      expect(result.items, contains(BomItem(Purl('pkg:npm/%40package@v2'))));
     });
 
     test('maps SPDX license identifiers', () async {
       final result = await parser.parse(resultFile);
 
-      expect(result[ItemId('package', 'v1')]!.licenses,
+      expect(result[BomItem(Purl('pkg:npm/package@v1'))]!.licenses,
           containsAll({'MIT', '"Unknown"'}));
     });
 

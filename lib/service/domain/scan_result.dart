@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import 'item_id.dart';
+import 'bom_item.dart';
 
 /// Tool-independent summary of BOM scan results.
 class ScanResult {
@@ -11,24 +11,24 @@ class ScanResult {
   final String name;
 
   /// Returns the bill-of-material.
-  final items = <ItemId>{};
+  final items = <BomItem>{};
 
   ScanResult(this.name);
 
   /// Combines the [other] result with this one.
   void merge(ScanResult other) {
-    other.items.forEach((itemId) {
-      items.add(itemId);
-      this[itemId]?.addLicenses(itemId.licenses);
+    other.items.forEach((item) {
+      items.add(item);
+      this[item]?.addLicenses(item.licenses);
     });
   }
 
   /// Registers a bill-of-material item.
-  void addItem(ItemId id) {
-    items.add(id);
+  void addItem(BomItem item) {
+    items.add(item);
   }
 
-  /// Returns actual item of the scan for the provided [itemId], or null if
+  /// Returns actual item of the scan for the provided [item], or null if
   /// the scan does not include the item.
-  ItemId? operator [](ItemId itemId) => items.lookup(itemId);
+  BomItem? operator [](BomItem item) => items.lookup(item);
 }

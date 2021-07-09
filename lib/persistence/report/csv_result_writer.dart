@@ -7,7 +7,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import '../../service/domain/item_id.dart';
+import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
 import '../persistence_exception.dart';
 
@@ -27,17 +27,17 @@ class CsvResultWriter {
 
   CsvResultWriter(this.file, this.scans);
 
-  /// Writes a bill-of-materials based on the provided [ids].
-  Future<void> writeBomComparison(Iterable<ItemId> ids) =>
-      _writeCsvFile(_bomHeadline(), ids, _toBomLine);
+  /// Writes a bill-of-materials based on the provided [items].
+  Future<void> writeBomComparison(Iterable<BomItem> items) =>
+      _writeCsvFile(_bomHeadline(), items, _toBomLine);
 
-  /// Writes a licenses overview based on the provided [ids].
-  Future<void> writeLicensesComparison(Iterable<ItemId> ids) =>
-      _writeCsvFile(_bomHeadline(), ids, _toLicenseLine);
+  /// Writes a licenses overview based on the provided [items].
+  Future<void> writeLicensesComparison(Iterable<BomItem> items) =>
+      _writeCsvFile(_bomHeadline(), items, _toLicenseLine);
 
-  Future<void> _writeCsvFile(List<String> headLine, Iterable<ItemId> ids,
-      List<String> Function(ItemId id) formatter) async {
-    final list = ids.toList()..sort((l, r) => l.compareTo(r));
+  Future<void> _writeCsvFile(List<String> headLine, Iterable<BomItem> items,
+      List<String> Function(BomItem item) formatter) async {
+    final list = items.toList()..sort((l, r) => l.compareTo(r));
 
     IOSink sink;
     try {
@@ -54,23 +54,20 @@ class CsvResultWriter {
     }
   }
 
-  List<String> _bomHeadline() =>
-      ['package', 'version', for (final s in scans) s.name];
+  List<String> _bomHeadline() => ['package', for (final s in scans) s.name];
 
-  List<String> _toBomLine(ItemId id) => [
-        id.package,
-        id.version,
-        for (final s in scans) (s[id] != null) ? 'yes' : '',
+  List<String> _toBomLine(BomItem item) => [
+        item.purl.toString(),
+        for (final s in scans) (s[item] != null) ? 'yes' : '',
       ];
 
-  List<String> _toLicenseLine(ItemId id) {
+  List<String> _toLicenseLine(BomItem item) {
     final licenses = scans.map((s) {
-      return s[id]?.licenses.join(' OR ') ?? '';
+      return s[item]?.licenses.join(' OR ') ?? '';
     }).toList();
 
     return <String>[
-      id.package,
-      id.version,
+      item.purl.toString(),
       for (final lic in licenses) lic,
     ];
   }

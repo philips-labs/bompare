@@ -8,9 +8,10 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
-import '../../service/domain/item_id.dart';
+import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
 import '../../service/domain/spdx_mapper.dart';
+import '../../service/purl.dart';
 import '../persistence_exception.dart';
 import '../result_parser.dart';
 
@@ -40,7 +41,8 @@ class Jk1ResultParser implements ResultParser {
         final package = (obj[field_module_name] as String).replaceAll(':', '/');
         final version = obj[field_module_version];
         var license = obj[field_module_license];
-        return ItemId(package, version)..addLicenses(mapper[license]);
+        return BomItem(Purl.of(type: 'maven', name: package, version: version))
+          ..addLicenses(mapper[license]);
       }).forEach((id) => result.addItem(id));
 
       return Future.value(result);

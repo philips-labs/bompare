@@ -5,7 +5,7 @@
 
 import 'dart:io';
 
-import '../service/domain/item_id.dart';
+import '../service/domain/bom_item.dart';
 import '../service/domain/scan_result.dart';
 import '../service/report_persistence.dart';
 import 'report/csv_result_writer.dart';
@@ -13,11 +13,11 @@ import 'report/csv_result_writer.dart';
 class ReportWriter implements ReportPersistence {
   @override
   Future<void> writeBomComparison(
-          File file, Iterable<ItemId> ids, Iterable<ScanResult> scans) =>
-      CsvResultWriter(file, scans).writeBomComparison(ids);
+          File file, Iterable<BomItem> items, Iterable<ScanResult> scans) =>
+      CsvResultWriter(file, scans).writeBomComparison(items);
 
   @override
   Future<void> writeLicenseComparison(
-          File file, Iterable<ItemId> ids, Iterable<ScanResult> scans) =>
-      CsvResultWriter(file, scans).writeLicensesComparison(ids);
+          File file, Iterable<BomItem> items, Iterable<ScanResult> scans) =>
+      CsvResultWriter(file, scans).writeLicensesComparison(items);
 }
