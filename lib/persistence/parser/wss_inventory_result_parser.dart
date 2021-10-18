@@ -9,9 +9,10 @@ import 'dart:math' as math;
 
 import 'package:path/path.dart' as path;
 
-import '../../service/domain/item_id.dart';
+import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
 import '../../service/domain/spdx_mapper.dart';
+import '../../service/purl.dart';
 import '../persistence_exception.dart';
 import '../result_parser.dart';
 
@@ -24,7 +25,7 @@ class WhiteSourceInventoryResultParser implements ResultParser {
   static const field_type = 'type';
 
   final SpdxMapper mapper;
-  final assumed = <ItemId>{};
+  final assumed = <BomItem>{};
 
   WhiteSourceInventoryResultParser(this.mapper);
 
@@ -50,59 +51,78 @@ class WhiteSourceInventoryResultParser implements ResultParser {
     }
   }
 
-  ItemId _decodeItem(dynamic obj) {
-    final itemId = _decodeItemId(obj);
-
-    _decodeLicenses(itemId, obj);
-    return itemId;
+  BomItem _decodeItem(dynamic obj) {
+    final item = _decodeItemId(obj);
+    _decodeLicenses(item, obj);
+    return item;
   }
 
-  ItemId _decodeItemId(dynamic obj) {
-    final type = obj[field_type] as String? ?? '?';
+  BomItem _decodeItemId(dynamic obj) {
+    final origin = obj[field_type] as String? ?? '?';
+    final type = _purlTypes[origin] ?? 'generic';
     final version = obj[field_version] as String? ?? '';
     final name = obj[field_name] as String?;
     final group = obj[field_group_id] as String?;
     final artifact = obj[field_artifact_id] as String?;
 
-    switch (type) {
+    switch (origin) {
       case 'Java':
         final identifier =
             (group?.isNotEmpty ?? false ? '$group/' : '') + (artifact ?? '?');
-        return ItemId(identifier, version);
+        return BomItem(Purl.of(type: type, name: identifier, version: version));
       case 'javascript/Node.js':
       case 'JavaScript':
       case 'Alpine':
-        return ItemId(group ?? '?', version);
+        return BomItem(
+            Purl.of(type: type, name: group ?? '?', version: version));
       case 'Debian':
         final n = (group?.isNotEmpty ?? false)
             ? group!
             : name?.substring(0, name.indexOf(version) - 1) ?? '?';
-        return ItemId(n, version);
+        return BomItem(Purl.of(type: type, name: n, version: version));
       case 'ActionScript':
       case 'Source Library':
       case 'Unknown Library':
-        return ItemId(artifact ?? name ?? '?', version);
+        return BomItem(Purl.of(
+            type: type, name: artifact ?? name ?? '?', version: version));
       case 'RPM':
         final first = name?.substring(0, name.lastIndexOf('-')) ?? '';
         final pos = first.lastIndexOf('-');
         final v = first.substring(pos + 1);
-        return ItemId(first.substring(0, pos),
-            v.substring(math.max(v.indexOf(':') + 1, 0)));
+        return BomItem(Purl.of(
+            type: type,
+            name: first.substring(0, pos),
+            version: v.substring(math.max(v.indexOf(':') + 1, 0))));
       default:
-        final id = ItemId(group ?? '?', version);
-        if (!assumed.contains(id)) {
-          print('Warning: Assumed $id for WhiteSource type "$type"');
-          assumed.add(id);
+        final item =
+            BomItem(Purl.of(type: type, name: group ?? '?', version: version));
+        if (!assumed.contains(item)) {
+          print(
+              'Warning: Assumed $item for WhiteSource type "$origin" -> "$group", "$version');
+          assumed.add(item);
         }
-        return id;
+        return item;
     }
   }
 
-  void _decodeLicenses(ItemId itemId, dynamic obj) {
+  void _decodeLicenses(BomItem item, dynamic obj) {
     final licenses = obj['licenses'] as Iterable? ?? [];
     licenses.forEach((lic) {
       final name = lic['name'] ?? '';
-      itemId.addLicenses(mapper[name]);
+      item.addLicenses(mapper[name]);
     });
   }
 }
+
+const _purlTypes = {
+  'JavaScript': 'npm',
+  'javascript/Node.js': 'npm',
+  'Java': 'maven',
+  'Alpine': 'alpine',
+  'Debian': 'deb',
+  'ActionScript': 'generic',
+  'Source Library': 'generic',
+  'Unknown Library': 'generic',
+  'RPM': 'rpm',
+  '(not defined)': 'generic',
+};

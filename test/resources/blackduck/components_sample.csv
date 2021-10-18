@@ -1,4 +1,4 @@
 Used by,Component id,Version id,Component name,Component version name,Channel versions,License ids,License names,License families,Match type,Producer match type,Usage,In use,Operational Risk,Component policy status,Overridden By,Created At,Origin name,Origin id,Review Status,Reviewed by,Reviewed at,Project path,Source/Type,Snippet Review status
-,,,comp_name,comp_version,,,MIT,,,,,
-,,,"comma,trap",comma_version,,,"(Apache-2.0)",,,,
-,,,component,component_version,,,,,,,
+,,4,comp_name,comp_version,,,MIT,,,,,,,,,,maven
+,,2,"comma,trap",comma_version,,,"(Apache-2.0)",,,,,,,,,npmjs
+,,1,component,component_version,,,,,,,,,,,,,nuget

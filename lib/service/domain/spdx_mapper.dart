@@ -24,7 +24,7 @@ class SpdxMapper {
 
   /// Maps the [title] to one or more license identifiers.
   Set<String> operator [](String? title) {
-    if (title == null) return {};
+    if (title == null || title.isEmpty) return {};
 
     final unbraced = title.replaceAll(_enclosingBraces, '');
 

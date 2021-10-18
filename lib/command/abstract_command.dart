@@ -6,6 +6,7 @@
 import 'dart:io';
 
 import 'package:args/command_runner.dart';
+import 'package:bompare/service/purl.dart';
 import 'package:glob/glob.dart';
 
 import '../service/bom_service.dart';
@@ -20,6 +21,7 @@ abstract class AbstractCommand extends Command {
   static const option_spdx = 'spdx-tag-value';
   static const option_white_source = 'whitesource';
   static const option_black_duck = 'blackduck';
+  static const option_default_type = 'default-type';
   static const option_output = 'out';
   static const option_diff_only = 'diffOnly';
   static const option_verbose = 'verbose';
@@ -56,6 +58,9 @@ abstract class AbstractCommand extends Command {
           abbr: 'b',
           help: 'Scan result in Black Duck "report" (ZIP/directory) format',
           valueHelp: 'filename or directory glob pattern')
+      ..addOption(option_default_type,
+          help: 'Overrides the default package type (from "generic")',
+          valueHelp: 'type')
       ..addOption(option_spdx_mapping,
           help: 'Convert license texts using SPDX mapping CSV file, '
               'formatted as: "<license text>","<SPDX identifier>"',
@@ -92,6 +97,11 @@ abstract class AbstractCommand extends Command {
     final spdxMapping = argResults![option_spdx_mapping];
     if (spdxMapping != null) {
       await service.loadSpdxMapping(File(spdxMapping));
+    }
+
+    final defaultType = argResults![option_default_type];
+    if (defaultType != null) {
+      Purl.defaultType = defaultType;
     }
 
     await Future.wait([

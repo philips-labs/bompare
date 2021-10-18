@@ -9,17 +9,18 @@ import 'dart:io';
 import 'package:bompare/service/domain/spdx_mapper.dart';
 import 'package:path/path.dart' as path;
 
-import '../../service/domain/item_id.dart';
+import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
+import '../../service/purl.dart';
 import '../persistence_exception.dart';
 import '../result_parser.dart';
-import 'purl.dart';
 
 /// Parser for SPDX tag-value files.
 /// See https://spdx.github.io/spdx-spec
 /// Assumes "concluded license" as the (SPDX) license.
 class SpdxResultParser implements ResultParser {
   final SpdxMapper mapper;
+
   SpdxResultParser(this.mapper);
 
   @override
@@ -29,36 +30,45 @@ class SpdxResultParser implements ResultParser {
     }
 
     try {
-      final parser =
-          _LineParser(path.basenameWithoutExtension(file.path), mapper);
+      final parser = _LineParser();
       await for (var line in file
           .openRead()
           .transform(utf8.decoder)
           .transform(LineSplitter())) {
         parser.parse(line);
       }
-      return parser.result;
+      return _resultFor(
+          path.basenameWithoutExtension(file.path), parser.packages);
     } on FormatException catch (e) {
       throw PersistenceException(file, e.toString());
     }
+  }
+
+  ScanResult _resultFor(String name, Iterable<_Package> packages) {
+    final result = ScanResult(name);
+    packages.forEach((pkg) {
+      final item = BomItem(pkg.purl)..addLicenses(mapper[pkg.license]);
+      result.addItem(item);
+    });
+    return result;
   }
 }
 
 /// Parser implementation collecting the scan result.
 class _LineParser {
-  final SpdxMapper mapper;
-  final ScanResult _result;
+  final _packages = <_Package>[];
+  final _customLicenses = <String, String>{};
 
   String? _packageName;
   String? _license;
-  ItemId? _itemId;
+  String? _licenseId;
+  _Package? _currentPackage;
   var _isInTextValue = false;
 
-  _LineParser(String name, this.mapper) : _result = ScanResult(name);
-
-  ScanResult get result {
-    _addCurrentItem();
-    return _result;
+  Iterable<_Package> get packages {
+    _addCurrentPackage();
+    _applyCustomLicenses();
+    return _packages;
   }
 
   void parse(String line) {
@@ -89,23 +99,37 @@ class _LineParser {
 
   void _parseTagValue(String tag, String value) {
     _isInTextValue = value.startsWith('<text>');
-    if (_isInTextValue) return;
+    if (_isInTextValue || !_hasValue(value)) return;
 
     switch (tag) {
       case 'PackageName':
-        _addCurrentItem();
+        _addCurrentPackage();
         _packageName = value;
         break;
       case 'ExternalRef':
         _processExternalRef(value);
         break;
       case 'PackageLicenseConcluded':
-        if (value != 'NOASSERTION') {
+        _license = value;
+        break;
+      case 'PackageLicenseDeclared':
+        if (value != 'NOASSERTION' && _license == null) {
           _license = value;
         }
         break;
+      case 'LicenseID':
+        _licenseId = value;
+        break;
+      case 'LicenseName':
+        if (_licenseId != null) {
+          _customLicenses[_licenseId!] = value;
+        }
+        _licenseId = null;
     }
   }
+
+  bool _hasValue(String value) =>
+      value.trim().isNotEmpty && value != 'NOASSERTION';
 
   void _processExternalRef(String value) {
     final parts = value.split(' ');
@@ -114,24 +138,48 @@ class _LineParser {
         parts[1] != 'purl') return;
 
     var purl = Purl(parts[2]);
-    _itemId = ItemId(purl.name, purl.version);
+    _currentPackage = _Package(purl);
   }
 
-  void _addCurrentItem() {
+  void _addCurrentPackage() {
     if (_packageName == null) return;
 
-    if (_itemId == null) {
-      throw FormatException(
-          'Missing external PACKAGE-MANAGER purl reference in package "$_packageName"');
+    if (_currentPackage == null) {
+      print(
+          'Warning: Skipping package "$_packageName" because it defines no Package URL');
+      return;
     }
 
     if (_license != null) {
-      _itemId!.addLicenses(mapper[_license]);
+      _currentPackage!.license = _license!;
       _license = null;
     }
 
-    _result.addItem(_itemId!);
-    _itemId = null;
+    _packages.add(_currentPackage!);
+    _currentPackage = null;
     _packageName = null;
   }
+
+  void _applyCustomLicenses() {
+    void mergeCustomLicenses(_Package pkg) {
+      _customLicenses.forEach((id, name) {
+        pkg.license = pkg.license.replaceAll(id, name);
+      });
+    }
+
+    _packages.forEach((pkg) {
+      late String before;
+      do {
+        before = pkg.license;
+        mergeCustomLicenses(pkg);
+      } while (pkg.license != before);
+    });
+  }
+}
+
+class _Package {
+  final Purl purl;
+  String license = '';
+
+  _Package(this.purl);
 }

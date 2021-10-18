@@ -4,6 +4,7 @@ import 'package:args/command_runner.dart';
 import 'package:bompare/command/abstract_command.dart';
 import 'package:bompare/command/bom_command.dart';
 import 'package:bompare/service/bom_service.dart';
+import 'package:bompare/service/purl.dart';
 import 'package:glob/glob.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
@@ -115,6 +116,22 @@ void main() {
       verify(() =>
               service.compareBom(bomFile: any(that: isNull, named: 'bomFile')))
           .called(1);
+    });
+
+    test('configures default PURL type', () async {
+      const custom = 'custom';
+      final oldType = Purl.defaultType;
+      addTearDown(() {
+        Purl.defaultType = oldType;
+      });
+
+      await runner.run([
+        BomCommand.command,
+        '--${AbstractCommand.option_default_type}',
+        custom
+      ]);
+
+      expect(Purl.defaultType, custom);
     });
 
     test('outputs CSV to provided file name', () async {

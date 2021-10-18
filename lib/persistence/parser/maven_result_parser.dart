@@ -6,9 +6,10 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bompare/service/purl.dart';
 import 'package:path/path.dart' as path;
 
-import '../../service/domain/item_id.dart';
+import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
 import '../../service/domain/spdx_mapper.dart';
 import '../persistence_exception.dart';
@@ -52,14 +53,15 @@ class MavenResultParser implements ResultParser {
     }
   }
 
-  ItemId _itemFromPackage(String text, Iterable<String> licenses) {
+  BomItem _itemFromPackage(String text, Iterable<String> licenses) {
     final name = text.substring(0, text.indexOf(' - '));
     final pos = name.lastIndexOf(':');
     final package = name.substring(0, pos).replaceAll(':', '/');
     final version = name.substring(pos + 1);
 
-    final itemId = ItemId(package, version);
-    licenses.forEach((l) => itemId.addLicenses(spdxMapper[l]));
-    return itemId;
+    final item =
+        BomItem(Purl.of(type: 'maven', name: package, version: version));
+    licenses.forEach((l) => item.addLicenses(spdxMapper[l]));
+    return item;
   }
 }

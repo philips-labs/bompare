@@ -8,14 +8,18 @@ import 'dart:io';
 
 import 'package:path/path.dart' as path;
 
-import '../../service/domain/item_id.dart';
+import '../../service/domain/bom_item.dart';
 import '../../service/domain/scan_result.dart';
 import '../../service/domain/spdx_mapper.dart';
+import '../../service/purl.dart';
 import '../persistence_exception.dart';
 import '../result_parser.dart';
 
 /// Decoder for files in Tern JSON file format.
 /// See https://github.com/tern-tools/tern
+///
+/// Since the Tern format does not provide a package type, [Purl.defaultType]
+/// is assumed.
 class TernResultParser implements ResultParser {
   static const field_name = 'name';
   static const field_version = 'version';
@@ -46,11 +50,11 @@ class TernResultParser implements ResultParser {
             final string = package[field_version] as String?;
             final version = string?.startsWith(name) ?? false
                 ? string!.substring(name.length + 1)
-                : string;
-            final itemId = ItemId(name, version);
+                : string ?? '';
+            final item = BomItem(Purl.of(name: name, version: version));
             final licenses = package[field_license] as String?;
-            itemId.addLicenses(mapper[licenses]);
-            result.addItem(itemId);
+            item.addLicenses(mapper[licenses]);
+            result.addItem(item);
           });
         });
       });

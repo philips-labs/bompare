@@ -1,4 +1,3 @@
-![Coverage](coverage_badge.svg)
 # Bompare, a tool to compare the Software Bill-of-Materials from multiple sources
 
 ## Usage
@@ -31,6 +30,13 @@ E.g.:
     - OSX (Mac) using brew: `brew tap dart-lang/dart` and then `brew install dart`
     - Windows using [Chocolatey](https://chocolatey.org): `choco install dart-sdk`
     - With docker ` docker run -it --rm -v $(pwd):/work -w /work google/dart ./build.sh`
-2. Run `build.sh` to run all tests and build a native executable
-called `bompare`.
+1. Globally install the coverage helper tooling: `dart pub global activate coverage`.
+1. Globally install the flutter_coverage_badge: `dart pub global activate flutter_coverage_badge`.
+1. Install "lcov" coverage visualization tooling.
+1. Run `build.sh` to run all tests and build a native executable
+   called `bompare`.
+
+If the coverage tools are installed, the build results in an update of the
+coverage badge and a [static web site](coverage/index.html) with coverage
+details.
 
